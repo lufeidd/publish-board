@@ -1,0 +1,44 @@
+@charset "UTF-8";
+
+#userPage {
+  & .container {
+    padding: 15px 15px 70px 20px;
+    & .option {
+      font-size: $fontSize - 2;
+      margin-bottom: 20px;
+      & .lable {
+        display: inline-block;
+        width: 70px;
+        text-align: right;
+      }
+
+      & .normal {
+        display: inline-block;
+        position: relative;
+        color: $fontColor1;
+        margin-left: 5px;
+
+        & .change {
+          display: inline-block;
+          width: 28px;
+          line-height: 28px;
+          background-color: $clf;
+          border-radius: 50%;
+          position: absolute;
+          right: 0;
+          bottom: 0;
+          box-shadow: 0 0 3px rgba(0, 0, 0, 0.4);
+          font-size: $fontSize - 2;
+          color: $themeColor60;
+          cursor: pointer;
+          text-align: center;
+        }
+      }
+      & .edit{
+        font-size: $fontSize;
+        color: $themeColor80;
+        cursor: pointer;
+      }
+    }
+  }
+}

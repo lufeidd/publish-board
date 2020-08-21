@@ -1,0 +1,41 @@
+@charset "UTF-8";
+#functionPage{
+  & .main-container{
+    & .content{
+      padding: 50px 25px;
+      & .search{
+        text-align: center;
+      }
+      & .function{
+        margin-top: 65px;
+        & .left-cate{
+          display: inline-block;
+          padding:0 15px;
+          border-right: 1px solid $themeColor5;
+          margin-top: 38px;
+          & .cate-block{
+            width: 120px;
+            text-align: center;
+            line-height: 39px;
+            font-size: $fontSize - 1;
+            color: $themeColor80;
+            cursor: pointer;
+            &.active{
+              background-color: $themeColor10;
+            }
+          }
+          & .line{
+            height: 1px;
+            background-color: $themeColor5;
+            margin: 10px 0;
+          }
+        }
+        & .right-table{
+          display: inline-block;
+          width: 875px;
+          vertical-align: top;
+        }
+      }
+    }
+  }
+}

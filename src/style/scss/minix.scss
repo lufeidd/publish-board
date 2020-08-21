@@ -1,0 +1,60 @@
+@charset "UTF-8";
+
+// 清除浮动
+@mixin clearfix {
+  position: relative;
+
+  &::after {
+    display: block;
+    content: '';
+    height: 0;
+    width: 0;
+    clear: both;
+  }
+}
+
+// 字体溢出隐藏
+@mixin textOverflow {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+// 超出两行隐藏
+@mixin twoColtextOverflow {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  display: -moz-box;
+  display: -ms-flexbox;
+  display: -o-box;
+  display: box;
+  -webkit-line-clamp: 2;
+  -moz-line-clamp: 2;
+  -ms-line-clamp: 2;
+  -o-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  -moz-box-orient: vertical;
+  -ms-box-orient: vertical;
+  -o-box-orient: vertical;
+  box-orient: vertical;
+}
+
+@mixin displayFlex ($display, $content, $items) {
+  display: -moz-box;
+  display: -ms-flexbox;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: box;
+  display: flexbox;
+  display: flex;
+  -webkit-box-pack: $content;
+  -moz-justify-content: $content;
+  -webkit-justify-content: $content;
+  justify-content: $content;
+  -webkit-box-align: $items;
+  -moz-align-items: $items;
+  -webkit-align-items: $items;
+  align-items: $items;
+}

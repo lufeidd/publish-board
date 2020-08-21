@@ -1,0 +1,97 @@
+@charset "UTF-8";
+
+#paramPage {
+  & .container {
+    padding: 15px;
+    min-height: 600px;
+
+    & .name {
+      font-size: $fontSize - 2;
+    }
+
+    & .enter-click {
+      cursor: pointer;
+      display: inline-block;
+      width: 170px;
+      text-align: center;
+      line-height: 70px;
+      color: $themeColor80;
+      background-color: $themeColor5;
+      margin-right: 10px;
+      box-sizing: border-box;
+
+      &:hover {
+        color: $themeColor60;
+      }
+    }
+  }
+  & .search{
+    margin: 50px 0;
+    & .content.common{
+      width: 800px;
+      margin: 0 auto;
+      position: relative;
+      & .search-content{
+        position: absolute;
+        width: 800px;
+        padding: 5px 0;
+        left: 0;
+        top: 45px;
+        box-sizing: border-box;
+        background-color: $clf;
+        border-radius: 5px;
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.07);
+        z-index: 9;
+        min-height: 100px;
+        max-height: 400px;
+        overflow-y: auto;
+        & .search-item{
+          padding:15px 20px;
+          cursor: pointer;
+          color: $fontColor1;
+          font-size: $fontSize - 2;
+          &:hover{
+            background-color: $themeColor5;
+          }
+        }
+        & .loading{
+          position: absolute;
+          left: 50%;
+          top: 50%;
+          margin-top: -14.5px;
+          margin-left: -10px;
+        }
+      }
+    }
+  }
+  & .page{
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+  }
+}
+.popup{
+  font-size: $fontSize - 2;
+  color: $fontColor2;
+  padding-bottom: 50px;
+  & .option{
+    margin-top: 10px;
+    & .lable{
+      display: inline-block;
+      width: 90px;
+      text-align: right;
+      color: $fontColor2;
+    }
+    & .normal{
+      display: inline-block;
+      width: 460px;
+      margin-left: 5px;
+      color: $fontColor1;
+      line-height: 32px;
+      & .text{
+        margin-left: 200px;
+        color: $fontColor2;
+      }
+    }
+  }
+}

@@ -1,0 +1,81 @@
+@charset "UTF-8";
+
+#ownIndexPage {
+  padding-bottom: 20px;
+  & .main-container {
+
+    & .general-descrip {
+
+      & .general-container {
+        padding: 10px 15px;
+
+        & .content {
+          display: inline-block;
+          vertical-align: top;
+          & .data-block {
+            padding: 15px 10px;
+            background-color: $themeColor5;
+            width: 220px;
+            box-sizing: border-box;
+            margin-right: 10px;
+          }
+        }
+      }
+    }
+    & .choose{
+      padding: 7px 15px;
+      & .float-left{
+        margin-top: 7px;
+      }
+    }
+    & .core-data{
+      & .content{
+        padding: 10px 15px;
+        & .data-block{
+          width: 260px;
+          padding: 15px 20px;
+          box-sizing: border-box;
+          border: 1px solid $themeColor5;
+          cursor: pointer;
+          &.active{
+            border-color: $themeColor80;
+          }
+          & .compare{
+            font-size: $fontSize - 2;
+            & .down-number{
+              color:$green;
+            }
+            & .up-number{
+              color: $red;
+            }
+          }
+        }
+      }
+    }
+    & .area{
+      & .content{
+        width:520px;
+        position:relative;
+        padding: 15px 0;
+        box-sizing: border-box;
+        font-size: $fontSize - 2;
+        & .desc{
+          color: $fontColor1;
+        }
+        & .rank-number{
+          display: inline-block;
+          margin-right: 10px;
+          & .number{
+            line-height: 25px;
+            &:nth-child(8){
+              margin-top: 2px;
+            }
+            &:last-child{
+              margin-top: 1px;
+            }
+          }
+        }
+      }
+    }
+  }
+}

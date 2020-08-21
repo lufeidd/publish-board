@@ -1,0 +1,52 @@
+@charset "UTF-8";
+#taopuPage{
+  padding-bottom: 20px;
+  & .main-container{
+    & .search{
+      padding: 40px 140px;
+      & .title{
+        color: $fontColor1;
+        font-size: $fontSize + 2;
+        text-align: center;
+      }
+      & .curren{
+        font-size: $fontSize - 2;
+        margin-top: 40px;
+      }
+      & .history{
+        & .content{
+          text-align: center;
+          display: inline-block;
+          padding: 20px;
+          border:1px solid $clf;
+          cursor: pointer;
+          box-sizing: border-box;
+          background-color: $themeColor5;
+          margin-right: 10px;
+          max-width: 140px;
+          &:hover{
+            border-color: $themeColor60;
+          }
+          & .title{
+            color: $fontColor1;
+            font-size: $fontSize;
+            margin-top: 10px;
+            height: 42px;
+            @include twoColtextOverflow;
+          }
+          & .sale{
+            font-size: $fontSize - 2;
+          }
+        }
+      }
+    }
+    & .choose{
+      padding: 7px 15px;
+      & .float-left{
+        margin-top: 7px;
+      }
+    }
+    & .sale-rank{
+    }
+  }
+}

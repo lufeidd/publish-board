@@ -1,0 +1,114 @@
+@charset "UTF-8";
+#detailPage{
+  padding-bottom: 20px;
+  & .main-container{
+    & .goods-detail{
+      padding: 15px 15px 0 15px;
+      & img{
+        vertical-align: top;
+      }
+      & .goods-desc{
+        display: inline-block;
+        vertical-align: top;
+        margin-left: 10px;
+        font-size: $fontSize - 2;
+        & .title{
+          width: 350px;
+          font-size: $fontSize + 2;
+          @include twoColtextOverflow;
+          color: $fontColor1;
+          min-height: 48px;
+        }
+        & .money,& .author,& .publish,& .cate{
+          margin-top: 5px;
+        }
+        & .isbn{
+          margin-top: 20px;
+        }
+        & .value{
+          color: $fontColor1;
+          margin-left: 30px;
+        }
+        & .publish{
+          & .value{
+            margin-left: 18px;
+          }
+        }
+      }
+      & .radarMap{
+        display: inline-block;
+        margin-left: 100px;
+        vertical-align: middle;
+      }
+      & .tabs{
+        margin-top: 40px;
+      }
+    }
+    & .choose{
+      padding: 7px 15px;
+    }
+    & .core-data{
+      & .content{
+        padding: 10px 15px;
+        & .data-block{
+          width: 260px;
+          padding: 15px 20px;
+          box-sizing: border-box;
+          border: 1px solid $themeColor5;
+          cursor: pointer;
+          &.active{
+            border-color: $themeColor80;
+          }
+          & .compare{
+            font-size: $fontSize - 2;
+            & .down-number{
+              color:$green;
+            }
+            & .up-number{
+              color: $red;
+            }
+          }
+        }
+      }
+    }
+    & .life-cycle{
+      & .data-choose{
+        padding: 10px 15px;
+        & .data-block{
+          display: inline-block;
+          width: 220px;
+          padding:10px 15px;
+          background-color: $themeColor5;
+          margin-right: 10px;
+        }
+        & .set-compare{
+          position: relative;
+          display: inline-block;
+          border: 1px dashed $themeColor100;
+          width: 260px;
+          text-align: center;
+          line-height: 72px;
+          cursor: pointer;
+          & .word{
+            font-size: $fontSize - 2;
+            color: $themeColor100;
+          }
+          & .content{
+            padding: 10px;
+            position: absolute;
+            top: 76px;
+            left: 0px;
+            background-color: $clf;
+            box-shadow: 0 0 5px rgba(0,0,0,0.4);
+            z-index: 99;
+          }
+        }
+      }
+    }
+    & .basic{
+      & .feature{
+        padding: 15px;
+      }
+    }
+  }
+}

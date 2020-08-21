@@ -1,0 +1,121 @@
+@charset "UTF-8";
+#organizePage{
+  padding-bottom: 20px;
+  & .main-container{
+    position: relative;
+    & .search{
+      text-align: center;
+      margin-top: 50px;
+      margin-bottom: 50px;
+      & .content{
+        display: inline-block;
+        width: 800px;
+      }
+    }
+    & .page{
+      position: absolute;
+      bottom: 20px;
+      right: 20px;
+    }
+    & .total-user{
+      padding: 15px;
+      color: $fontColor1;
+      font-size: $fontSize - 2;
+    }
+  }
+}
+.popup{
+  font-size: $fontSize - 2;
+  padding-bottom: 50px;
+  & .option{
+    margin-top: 10px;
+    & .lable{
+      display: inline-block;
+      width: 90px;
+      text-align: right;
+      color: $fontColor2;
+    }
+    & .normal{
+      display: inline-block;
+      width: 460px;
+      margin-left: 5px;
+      color: $fontColor1;
+      line-height: 32px;
+      & .sub{
+        color: $fontColor2;
+      }
+      & img{
+        border-radius: 50%;
+      }
+    }
+    & .content{
+      text-align: left;
+      padding:15px 20px;
+      & .choose-item{
+        cursor: pointer;
+        padding: 5px;
+        position: relative;
+        &:hover{
+          background-color: rgba(64,158,255,0.04);
+          & .delete{
+            display: inline-block;
+          }
+        }
+        & .delete{
+          position: absolute;
+          right: 15px;
+          font-size: $fontSize;
+          top: 50%;
+          margin-top: -7px;
+          display: none;
+        }
+      }
+    }
+    & .role-content{
+      padding: 10px 100px;
+      position: relative;
+      & .admin,& .read-data{
+        position: absolute;
+        right: 100px;
+        font-size: $fontSize;
+        color: $fontColor2;
+      }
+      & .admin{
+        top: 20px;
+      }
+      & .read-data{
+        bottom: 20px;
+      }
+    }
+  }
+  & .scess{
+    padding:0 20px;
+    text-align: center;
+    color: $fontColor2;
+    & .url{
+      display: inline-block;
+      width: 400px;
+      padding: 15px 0;
+      background-color: $themeColor5;
+      font-size: $fontSize;
+      margin-top: 15px;
+      margin-bottom: 10px;
+    }
+    & .copy{
+      display: inline-block;
+      width: 400px;
+      margin-top: 75px;
+    }
+  }
+  & .organize-list{
+    padding: 0 15px;
+    padding-top: 10px;
+    & .select{
+      padding: 20px 10px;
+      cursor: pointer;
+      &:hover{
+        background-color: $themeColor5;
+      }
+    }
+  }
+}
