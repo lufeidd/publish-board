@@ -34,6 +34,22 @@
             margin-left: 18px;
           }
         }
+        & .authors{
+          width: 350px;
+          font-size: $fontSize + 2;
+          @include textOverflow;
+          color: $fontColor1;
+        }
+        & .description{
+          height: 80px;
+          // & .value{
+          //   display: inline-block;
+          //   width: 350px;
+          //   height: 75px;
+          //   overflow: hidden;
+          //   text-overflow: ellipsis;
+          // }
+        }
       }
       & .radarMap{
         display: inline-block;

@@ -60,7 +60,7 @@ export default {
       organization_name: null,
       inviteCode: null,
       mobile: "",
-      code: null,
+      code: "",
       desc: "获取验证码",
       isShort: false,
       sendTime: {
@@ -92,6 +92,13 @@ export default {
       if (!/^1[3456789]\d{9}$/.test(this.mobile)) {
         this.$message.info({
           content: "手机号码有误，请重新输入",
+          icon: <a-icon type="exclamation-circle" />
+        });
+        return;
+      }
+      if(this.code.length == 0){
+        this.$message.info({
+          content: "请输入验证码",
           icon: <a-icon type="exclamation-circle" />
         });
         return;

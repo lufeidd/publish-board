@@ -8,6 +8,7 @@ import taopu100 from '@/pages/publish/taopu100'
 import core from '@/pages/publish/core'
 import detail from '@/pages/publish/detail'
 import region from '@/pages/publish/region'
+import publishAuthors from '@/pages/publish/authors'
 // 竞争
 import publishMonitor from '@/pages/compete/publishmonitor'
 import goodsMonitor from '@/pages/compete/goodsmonitor'
@@ -15,6 +16,7 @@ import competeSet from '@/pages/compete/set'
 // 行业
 import industryMarket from '@/pages/industry/market'
 import industryAuthors from '@/pages/industry/authors'
+import industryAuthorDetail from '@/pages/industry/authordetail'
 // 登录注册
 import register from '@/pages/login/register'
 import loginIndex from '@/pages/login/index'
@@ -96,6 +98,14 @@ export default new Router({
         requireAuth: true // 需要登录才能进入的页面可以增加一个meta属性
       }
     },
+    {
+      path: '/publish/authors',
+      name: 'publishauthors',
+      component: publishAuthors,
+      meta: {
+        requireAuth: true // 需要登录才能进入的页面可以增加一个meta属性
+      }
+    },
     // 竞争
     {
       path: '/compete/publishmonitor',
@@ -134,6 +144,14 @@ export default new Router({
       path: '/industry/authors',
       name: 'industryauthors',
       component: industryAuthors,
+      meta: {
+        requireAuth: true // 需要登录才能进入的页面可以增加一个meta属性
+      }
+    },
+    {
+      path: '/industry/authordetail',
+      name: 'authordetail',
+      component: industryAuthorDetail,
       meta: {
         requireAuth: true // 需要登录才能进入的页面可以增加一个meta属性
       }

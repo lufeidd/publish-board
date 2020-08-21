@@ -9,7 +9,7 @@
         <div class="float-left">
           <div class="main-container" v-if="powerType == 1">
             <div class="model-container">
-              <div class="model-bg total-user">全平台总计 {{adminCount}} 个品种</div>
+              <div class="model-bg total-user">全平台总计 {{goodsCount}} 个品种</div>
             </div>
             <div class="model-container">
               <div class="model-bg" style="min-height:650px;padding-bottom:75px;">
@@ -128,7 +128,7 @@ export default {
   data() {
     return {
       powerType: 2,
-      adminCount: 0,
+      goodsCount: 0,
       readOrganize: false,
       page: 1,
       page_size: 20,
@@ -153,7 +153,7 @@ export default {
   },
   mounted() {
     this.powerType = this.$refs.head.accountInfo.type;
-    this.adminCount = this.$refs.head.accountInfo.user_total;
+    this.goodsCount = this.$refs.head.accountInfo.goods_count;
     if(this.powerType == 1){
       // this.getData()
     }

@@ -422,14 +422,14 @@ export default {
           _length = 0;
         res.data.all_info.chart_data.current_data.map((value, key) => {
           let _obj = {};
-          _obj.month = value.date;
+          _obj.month = value.date.toString();
           _obj.city = "当期";
           _obj.temperature = value.value;
           _arr1.unshift(_obj);
         });
         res.data.all_info.chart_data.last_data.map((value, key) => {
           let _obj = {};
-          _obj.month = value.date;
+          _obj.month = value.date.toString();
           _obj.city = "上年同期";
           _obj.temperature = value.value;
           _arr2.unshift(_obj);
@@ -459,6 +459,7 @@ export default {
             this.plateChart.i.changeData(this.plateList[i].data.chart_data.reverse());
           }
         }
+        console.log(this.brokenLineData)
         this.isFirst = false;
       } else {
         if (res.code == 1008) {

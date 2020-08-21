@@ -133,8 +133,8 @@ export default {
       inviteCode: null,
       showLogin: false,
       mobile: "",
-      code: null,
-      passCode: null,
+      code: "",
+      passCode: "",
       desc: "获取验证码",
       codeType: 2,
       codeDesc: "密码登录",
@@ -215,6 +215,15 @@ export default {
       if (!/^1[3456789]\d{9}$/.test(this.mobile)) {
         this.$message.info({
           content: "手机号码有误，请重新输入",
+          icon: <a-icon type="exclamation-circle" />
+        });
+        return;
+      }
+      let _code = this.codeType == 1 ? this.passCode : this.code
+      console.log(1010,_code)
+      if(_code.length == 0){
+        this.$message.info({
+          content: this.codeType == 1 ? "请输入密码" : "请输入验证码",
           icon: <a-icon type="exclamation-circle" />
         });
         return;

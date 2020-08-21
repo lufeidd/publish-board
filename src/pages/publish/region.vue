@@ -545,8 +545,16 @@ export default {
           popup: {
             enable: true,
             Html: props => {
-              return `<span>${props.NAME_CHN}</span>`;
-            }
+              // return `<span>${props.NAME_CHN}</span>`;
+              let _name = props.NAME_CHN,_num = 0;
+              this.list.map((value,key)=>{
+                if(_name.indexOf(value.name) > -1){
+                  _num = value.sale_total;
+                }
+              })
+              return `<span>${props.NAME_CHN}<br>销售点数：${_num}</span>`;
+            },
+            // lnglat :[116.2825, 39.9]
           }
         });
       });

@@ -102,7 +102,7 @@
             </div>
             <!-- 类目排名 -->
             <div class="model-container">
-              <div class="model-bg" style="padding-bottom:40px;min-height:500px;">
+              <div class="model-bg" style="min-height:500px;">
                 <div class="section-title">类目排名</div>
                 <div class="table">
                   <table style="table-layout:fixed;">
@@ -157,6 +157,20 @@
                         </td>
                       </tr>
                     </tbody>
+                    <tfoot>
+                      <tr>
+                        <td colspan="7" style="text-align:right;">
+                          <a-pagination
+                            :show-total="total => `共 ${total} 条数据`"
+                            :default-current="1"
+                            :total="total"
+                            v-model="page"
+                            :defaultPageSize="pageSize"
+                            @change="onShowSizeChange"
+                          />
+                        </td>
+                      </tr>
+                    </tfoot>
                   </table>
                 </div>
               </div>
@@ -194,7 +208,10 @@ export default {
         name: "一级类目",
         level: "one"
       },
-      list: []
+      list: [],
+      page:1,
+      pageSize:20,
+      total:0,
     };
   },
   mounted() {
@@ -217,19 +234,22 @@ export default {
         period: this.cycle,
         date_type: this.dateType,
         start_date: this.oneDay,
-        category_level: this.chooseCategory.level
+        category_level: this.chooseCategory.level,
+        page:this.page,
+        page_size:this.pageSize
       };
       let res = await MYCATE_INDEX(data);
       if (res.code == 0) {
         this.pagePower = true;
         this.list = [];
         this.list = res.data.category_ranks;
+        this.total = res.data.count
       } else {
         if (res.code == 1008) {
           this.$router.push({ name: "loginindex" });
-        }else if (res.code == 1009) {
+        } else if (res.code == 1009) {
           this.pagePower = false;
-        }else{
+        } else {
           this.$refs.head.globalTip(1, res.message);
         }
       }
@@ -257,6 +277,7 @@ export default {
       this.dateText = startDate + "~" + endDate;
       this.cycle = dateString.split("-")[0] + _weekth;
       this.oneDay = startDate.replace(/-/g, "");
+      this.page = 1;
       this.getData();
     },
     monthChange(date, dateString) {
@@ -288,6 +309,7 @@ export default {
       this.dateText = startDate + "~" + endDate;
       this.cycle = dateString.split("-")[0] + _month;
       this.oneDay = startDate.replace(/-/g, "");
+      this.page = 1;
       this.getData();
     },
     yearChange(e) {
@@ -309,6 +331,7 @@ export default {
       this.dateText =
         this.chooseYear + "-01-01 ~ " + this.chooseYear + "-12-31";
       this.showYear = false;
+      this.page = 1;
       this.getData();
     },
     subLeft() {
@@ -360,6 +383,7 @@ export default {
           this.canAdd = true;
         }
       }
+      this.page = 1;
       this.getData();
     },
     addRight() {
@@ -411,6 +435,7 @@ export default {
             if (this.chooseYear >= _max) this.canAdd = false;
           }
         }
+        this.page = 1;
         this.getData();
       }
     },
@@ -433,6 +458,12 @@ export default {
         this.chooseCategory.name = "三级类目";
         this.chooseCategory.level = type;
       }
+      this.page = 1;
+      this.getData();
+    },
+    onShowSizeChange(current, pageSize) {
+      console.log(current);
+      this.page = current;
       this.getData();
     },
     publisherChange() {
@@ -447,6 +478,7 @@ export default {
       this.canSub = true;
       this.chooseCategory.name = "一级类目";
       this.chooseCategory.level = "one";
+      this.page = 1;
       this.getData();
     }
   }

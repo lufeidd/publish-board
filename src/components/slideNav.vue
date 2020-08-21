@@ -40,6 +40,9 @@
         <router-link to="/publish/region">
           <div :class="sort=='region'?'active tab':'tab'">地域分布</div>
         </router-link>
+        <router-link to="/publish/authors">
+          <div :class="sort=='authors'?'active tab':'tab'">作者库</div>
+        </router-link>
       </div>
       <div class="slide-content" v-if="type == 'admin'">
         <router-link to="/admin/index">

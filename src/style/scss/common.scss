@@ -106,6 +106,12 @@ background-color: black;
   padding: 0 15px;
   box-sizing: border-box;
   font-weight: 700;
+  & .desc{
+    font-size: $fontSize - 2;
+    color: $fontColor2;
+    font-weight: normal;
+    margin-left: 5px;
+  }
 }
 
 // 次要文字
