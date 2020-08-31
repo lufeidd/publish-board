@@ -5,6 +5,7 @@
 body {
   background-color: $themeColor10 !important;
   color: $fontColor2 !important;
+  font-family:"Microsoft Yahei",微软雅黑 !important;
 }
 /* 隐藏滚动条 */
 ::-webkit-scrollbar {
@@ -49,7 +50,10 @@ background-color: black;
   position: relative;
   top: -2px;
 }
-
+img{
+  object-fit: contain;
+  // background-color: #A1A1A1;
+}
 // 主体内容居中
 .wd-1220 {
   width: 1220px;
@@ -419,6 +423,7 @@ background-color: black;
 
 .ant-tabs-bar {
   margin: 0 !important;
+  border-bottom: none !important;
 }
 
 .ant-modal-body {
@@ -476,9 +481,22 @@ background-color: black;
   overflow-y: auto;
 }
 // tab标签页
-.ant-tabs-nav .ant-tabs-tab-active{
-  color: $themeColor80 !important;
+.ant-tabs-nav{
+  & .ant-tabs-tab{
+    margin: 0;
+    &:hover{
+      color: $themeColor80;
+    }
+  }
+  & .ant-tabs-tab-disabled:hover{
+    color: rgba(0, 0, 0, .25);
+  }
+  & .ant-tabs-tab-active{
+    color: $themeColor80 !important;
+  }
 }
+
 .ant-tabs-ink-bar{
   background-color: $themeColor80 !important;
+  bottom: 2px !important;
 }

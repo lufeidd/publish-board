@@ -58,7 +58,7 @@
           <use xlink:href="#icon-zhongwen" />
         </svg>
         <div class="input">
-          <input type="text" placeholder="完善真实姓名，1~16个字母或中文" v-model="name" />
+          <input type="text" placeholder="完善真实姓名，1~16个字母或中文" v-model="name" style="text-align:center;" />
         </div>
       </div>
       <div class="name" style="margin-top:30px;">
@@ -66,7 +66,7 @@
           <use xlink:href="#icon-key" />
         </svg>
         <div class="input">
-          <input type="password" placeholder="完善登录密码，6~24位字母或数字" v-model="code" />
+          <input type="password" placeholder="完善登录密码，6~24位字母或数字" v-model="code" style="text-align:center;" />
         </div>
       </div>
       <div class="btn" style="width:330px;display:inline-block;margin-top:40px;">
@@ -107,10 +107,17 @@ export default {
           name: "index"
         });
       } else {
-        this.$message.info({
-          content: res.message,
-          icon: <a-icon type="exclamation-circle" />
-        });
+        if (this.$systemCode.test(res.code)) {
+          this.$message.info({
+            content: "系统错误",
+            icon: <a-icon type="exclamation-circle" />
+          });
+        } else {
+          this.$message.info({
+            content: res.message,
+            icon: <a-icon type="exclamation-circle" />
+          });
+        }
       }
     },
     toIndex() {

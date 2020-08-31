@@ -86,6 +86,7 @@
                           placeholder="Select Week"
                           @change="weekChange"
                           :disabledDate="disabledEndDate"
+                          format="YYYY-MM-DD"
                           :value="chooseWeek"
                         />
                       </span>
@@ -97,6 +98,7 @@
                           @change="monthChange"
                           placeholder="Select month"
                           :value="chooseMonth"
+                          format="YYYY-MM-DD"
                           :disabledDate="disabledEndDate"
                         />
                       </span>
@@ -447,7 +449,7 @@
               </div>
               <div v-if="regionPower">
                 <div class="clearfix model-bg" v-show="barData.length > 0">
-                  <div class="content float-left" style="">
+                  <div class="content float-left" style>
                     <div id="map" style="height:284px;width:100%;"></div>
                   </div>
                   <div class="content float-left" style="width:500px;margin-left:50px;">
@@ -484,13 +486,14 @@
         </div>
       </div>
     </div>
+    <Loading ref="load"></Loading>
   </div>
 </template>
 
 <style lang="scss" scoped src="@/style/scss/pages/publish/index.scss"></style>
 
 <script>
-import { Chart, Util } from "@antv/g2";
+import { Chart, Util, registerShape } from "@antv/g2";
 import DataSet from "@antv/data-set";
 import { Scene } from "@antv/l7";
 import { CountryLayer } from "@antv/l7-district";
@@ -511,18 +514,18 @@ export default {
       goodsPower: true,
       regionPower: true,
       cowData: [
-        { type: "滞销", sold: 350 },
-        { type: "一般", sold: 257 },
-        { type: "常销", sold: 180 },
-        { type: "畅销", sold: 155 },
-        { type: "新品", sold: 80 }
+        { type: "滞销", sold: 0 },
+        { type: "一般", sold: 0 },
+        { type: "常销", sold: 0 },
+        { type: "畅销", sold: 0 },
+        { type: "新品", sold: 0 }
       ],
       radarData: [
-        { item: "综合评分", 本社: 70 },
-        { item: "销售评分", 本社: 60 },
-        { item: "读者评分", 本社: 50 },
-        { item: "热点评分", 本社: 40 },
-        { item: "生命周期评分", 本社: 60 }
+        { item: "综合评分", 本社: 0 },
+        { item: "销售评分", 本社: 0 },
+        { item: "读者评分", 本社: 0 },
+        { item: "热点评分", 本社: 0 },
+        { item: "生命周期评分", 本社: 0 }
       ],
       brokenLineData: [
         // { month: "01月", city: "当期", temperature: 3000 },
@@ -692,13 +695,14 @@ export default {
           }, 1000);
         }
         this.radarFirst = false;
-        this.$setSlideHeight();
       } else {
         if (res.code == 1008) {
           this.$router.push({ name: "loginindex" });
-        }else if (res.code == 1009) {
+        } else if (res.code == 1009) {
           this.generalPower = false;
-        }else{
+        }else if(this.$systemCode.test(res.code)){
+          this.$refs.head.globalTip(1, "系统错误");
+        } else {
           this.$refs.head.globalTip(1, res.message);
         }
       }
@@ -716,13 +720,14 @@ export default {
       if (res.code == 0) {
         this.goodsRankList = res.data;
         this.goodsPower = true;
-        this.$setSlideHeight();
       } else {
         if (res.code == 1008) {
           this.$router.push({ name: "loginindex" });
-        }else if (res.code == 1009) {
+        } else if (res.code == 1009) {
           this.goodsPower = false;
-        }else{
+        }else if(this.$systemCode.test(res.code)){
+          this.$refs.head.globalTip(1, "系统错误");
+        } else {
           this.$refs.head.globalTip(1, res.message);
         }
       }
@@ -763,12 +768,17 @@ export default {
             console.log(666);
           }, 1000);
         }
-        this.$setSlideHeight();
+        this.$refs.load.isLoading = false;
       } else {
+        this.$refs.load.isLoading = false;
         if (res.code == 1008) {
           this.$router.push({ name: "loginindex" });
-        }else if (res.code == 1009) {
+        } else if (res.code == 1009) {
           this.regionPower = false;
+        }else if(this.$systemCode.test(res.code)){
+          this.$refs.head.globalTip(1, "系统错误");
+        } else {
+          this.$refs.head.globalTip(1, res.message);
         }
       }
     },
@@ -781,7 +791,9 @@ export default {
       } else {
         if (res.code == 1008) {
           this.$router.push({ name: "loginindex" });
-        }else{
+        }else if(this.$systemCode.test(res.code)){
+          this.$refs.head.globalTip(1, "系统错误");
+        } else {
           this.$refs.head.globalTip(1, res.message);
         }
       }
@@ -803,13 +815,14 @@ export default {
         this.sale_rank_info = res.data.sale_rank_info;
         this.sale_ratio_info = res.data.sale_ratio_info;
         this.onsale_goods_info = res.data.onsale_goods_info;
-
       } else {
         if (res.code == 1008) {
           this.$router.push({ name: "loginindex" });
-        }else if (res.code == 1009) {
+        } else if (res.code == 1009) {
           this.corePower = false;
-        }else{
+        }else if(this.$systemCode.test(res.code)){
+          this.$refs.head.globalTip(1, "系统错误");
+        } else {
           this.$refs.head.globalTip(1, res.message);
         }
       }
@@ -866,17 +879,22 @@ export default {
           this.$setSlideHeight();
           this.isFirst = false;
         }
+        this.$refs.load.isLoading = false;
       } else {
+        this.$refs.load.isLoading = false;
         if (res.code == 1008) {
           this.$router.push({ name: "loginindex" });
-        }else if (res.code == 1009) {
+        } else if (res.code == 1009) {
           this.corePower = false;
-        }else{
+        }else if(this.$systemCode.test(res.code)){
+          this.$refs.head.globalTip(1, "系统错误");
+        } else {
           this.$refs.head.globalTip(1, res.message);
         }
       }
     },
     weekChange(date, dateString) {
+      this.$refs.load.isLoading = true;
       // var _day = date._d.getDate();
       const startDate = date.day(1).format("YYYY-MM-DD"); // 周一日期
       const endDate = date.day(7).format("YYYY-MM-DD"); // 周日日期
@@ -902,6 +920,7 @@ export default {
       console.log(666, startDate, endDate);
     },
     monthChange(date, dateString) {
+      this.$refs.load.isLoading = true;
       const startDate = date
         .month(date.month())
         .startOf("month")
@@ -933,6 +952,7 @@ export default {
       console.log(startDate, endDate);
     },
     yearChange(e) {
+      this.$refs.load.isLoading = true;
       if (
         e._d.getFullYear().toString() >=
         this.$moment("2013-12-30").format("YYYY")
@@ -958,6 +978,7 @@ export default {
       console.log(this.oneDay);
     },
     subLeft() {
+      this.$refs.load.isLoading = true;
       let _max = "";
       if (this.dateType == 2) {
         _max = this.$weekDate("2013-12-30").start;
@@ -1013,6 +1034,7 @@ export default {
     },
     addRight() {
       if (this.canAdd) {
+        this.$refs.load.isLoading = true;
         let _max = "";
         if (this.dateType == 2) {
           _max = this.$weekDate().start;
@@ -1067,6 +1089,28 @@ export default {
       }
     },
     initData() {
+      // 可以通过调整这个数值控制分割空白处的间距，0-1 之间的数值
+      const sliceNumber = 0.003;
+      // 自定义 other 的图形，增加两条线
+      registerShape("interval", "slice-shape", {
+        draw(cfg, container) {
+          const points = cfg.points;
+          let path = [];
+          path.push(["M", points[0].x, points[0].y]);
+          path.push(["L", points[1].x, points[1].y - sliceNumber]);
+          path.push(["L", points[2].x, points[2].y - sliceNumber]);
+          path.push(["L", points[3].x, points[3].y]);
+          path.push("Z");
+          path = this.parsePath(path);
+          return container.addShape("path", {
+            attrs: {
+              fill: cfg.color,
+              path
+            }
+          });
+        }
+      });
+
       this.cowChart = new Chart({
         container: "cow-chart", // 指定图表容器 ID
         autoFit: true,
@@ -1114,7 +1158,8 @@ export default {
             name: type,
             value: sold
           };
-        });
+        })
+        .shape("slice-shape");
       this.cowChart.legend({
         position: "right"
       });
@@ -1215,7 +1260,7 @@ export default {
         },
         temperature: {
           nice: true,
-          min:0,
+          min: 0
         }
       });
       this.changeChart.tooltip({
@@ -1244,6 +1289,7 @@ export default {
         .shape("circle");
 
       this.changeChart.render();
+      this.$setSlideHeight();
     },
     initMap() {
       this.$setSlideHeight();
@@ -1379,7 +1425,8 @@ export default {
       this.barChart.data(this.barData);
       this.barChart.scale({
         sale_total_rate: {
-          max: this.barMax + 100,
+          // max: this.barMax + 100,
+          max: 110,
           min: 0,
           alias: " "
         }
@@ -1436,6 +1483,7 @@ export default {
     // 选择分类
     selectCategory(item, index) {
       // console.log(index)
+      this.$refs.load.isLoading = true;
       if (index == -1) {
         this.chooseCategory.name = "所有类目";
         this.chooseCategory.id = 0;
@@ -1461,6 +1509,7 @@ export default {
       });
     },
     publisherChange() {
+      this.$refs.load.isLoading = true;
       this.cycle = this.$weekDate().weekth;
       this.oneDay = this.$weekDate().start.replace(/-/g, "");
       this.chooseWeek = this.$weekDate().start;

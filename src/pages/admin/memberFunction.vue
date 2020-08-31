@@ -202,6 +202,8 @@ export default {
       } else {
         if (res.code == 1008) {
           this.$router.push({ name: "loginindex" });
+        }else if(this.$systemCode.test(res.code)){
+          this.$refs.head.globalTip(1, "系统错误");
         }else{
           this.$refs.head.globalTip(1, res.message);
         }
@@ -219,6 +221,8 @@ export default {
       } else {
         if (res.code == 1008) {
           this.$router.push({ name: "loginindex" });
+        }else if(this.$systemCode.test(res.code)){
+          this.$refs.head.globalTip(1, "系统错误");
         }else{
           this.$refs.head.globalTip(1, res.message);
         }
@@ -238,6 +242,8 @@ export default {
       } else {
         if (res.code == 1008) {
           this.$router.push({ name: "loginindex" });
+        }else if(this.$systemCode.test(res.code)){
+          this.$refs.head.globalTip(1, "系统错误");
         }else{
           this.$refs.head.globalTip(1, res.message);
         }
@@ -258,6 +264,8 @@ export default {
       } else {
         if (res.code == 1008) {
           this.$router.push({ name: "loginindex" });
+        }else if(this.$systemCode.test(res.code)){
+          this.$refs.head.globalTip(1, "系统错误");
         }else{
           this.$refs.head.globalTip(1, res.message);
         }

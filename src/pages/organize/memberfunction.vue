@@ -195,6 +195,8 @@ export default {
       } else {
         if (res.code == 1008) {
           this.$router.push({ name: "loginindex" });
+        }else if(this.$systemCode.test(res.code)){
+          this.$refs.head.globalTip(1, "系统错误");
         }else{
           this.$refs.head.globalTip(1, res.message);
         }
@@ -210,7 +212,13 @@ export default {
       if (res.code == 0) {
         // this.user_organization_type = res.data.user_type;
       } else {
-        if (res.code == 1008) this.$router.push({ name: "loginindex" });
+        if (res.code == 1008) {
+          this.$router.push({ name: "loginindex" });
+        }else if(this.$systemCode.test(res.code)){
+          this.$refs.head.globalTip(1, "系统错误");
+        }else{
+          this.$refs.head.globalTip(1,res.message)
+        }
       }
     },
     // 成员权限修改
@@ -227,6 +235,8 @@ export default {
       } else {
         if (res.code == 1008) {
           this.$router.push({ name: "loginindex" });
+        }else if(this.$systemCode.test(res.code)){
+          this.$refs.head.globalTip(1, "系统错误");
         }else{
           this.$refs.head.globalTip(1, res.message);
         }
@@ -247,6 +257,8 @@ export default {
       } else {
         if (res.code == 1008) {
           this.$router.push({ name: "loginindex" });
+        }else if(this.$systemCode.test(res.code)){
+          this.$refs.head.globalTip(1, "系统错误");
         }else{
           this.$refs.head.globalTip(1, res.message);
         }

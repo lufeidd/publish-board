@@ -9,7 +9,12 @@
             数据简报
             <span class="time" v-if="show">昨日 {{$beforeDate()}}</span>
             <span class="time" v-else>上周 {{$weekDate().start}} ~ {{$weekDate().end}}</span>
-            <span class="click-font" style="margin-left:15px;" @click="change">切换</span>
+            <span
+              class="click-font"
+              style="margin-left:15px;"
+              @click="change"
+              v-if="dataNewPower"
+            >切换</span>
           </div>
           <div class="content" v-if="dataNewPower">
             <div class="left">
@@ -386,9 +391,55 @@
             <span class="float-left">出版社TOP 5</span>
             <span class="click-font float-right" @click="$refs.head.noOpen()">更多</span>
           </div>
-          <!-- 暂未开放 -->
-          <div class="no-open" style="position:relative;">
-            <ModelNoPower type="noOpen"></ModelNoPower>
+          <div class="table-data" v-if="dataRankPower">
+            <div class="table small" v-if="publishTopList.length > 0">
+              <table style="table-layout:fixed;">
+                <colgroup>
+                  <col width="45" />
+                  <col width="190" />
+                  <col width="140" />
+                  <col width="100" />
+                  <col width="100" />
+                </colgroup>
+                <thead>
+                  <tr>
+                    <td style="text-align:center;">排行</td>
+                    <td>出版社</td>
+                    <td style="text-align:right;">主营类目</td>
+                    <td style="text-align:right;">销售点数</td>
+                    <td style="text-align:right;">较上周期</td>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="(item,index) in publishTopList" :key="index">
+                    <td style="text-align:center;">{{item.sale_rank}}</td>
+                    <td>
+                      <div class="goods">
+                        <span
+                          class="click-font goods-title"
+                          style="line-height:40px;width:190px;"
+                        >{{item.name}}</span>
+                      </div>
+                    </td>
+                    <td style="text-align:right;">{{item.top_cate}}</td>
+                    <td style="text-align:right;">{{item.sale_total}}</td>
+                    <td style="text-align:right;">
+                      <span
+                        class="percent"
+                        v-if="item.compare_rate > 0"
+                      >+{{item.compare_rate.toFixed(2)}}%</span>
+                      <span class="green" v-else>{{item.compare_rate.toFixed(2)}}%</span>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div v-else class="wrong-status">
+              <a-empty />
+            </div>
+          </div>
+          <div class="table-data" v-else>
+            <ModelNoPower type="noPower"></ModelNoPower>
           </div>
         </div>
         <!-- 竞社 -->
@@ -397,19 +448,54 @@
             <span class="float-left">竞社</span>
             <span class="click-font float-right" @click="$refs.head.noOpen()">更多</span>
           </div>
-          <!-- 暂未开放 -->
-          <div class="no-open" style="position:relative;">
-            <ModelNoPower type="noOpen"></ModelNoPower>
+          <div class="table-data" v-if="competePower">
+            <div class="compete-container" v-if="Object.keys(competeInfo).length > 0">
+              <div>
+                <span class="name">{{competeInfo.compete_publisher_name}}</span>
+                <span>上周销售点数</span>
+                <span class="num">{{competeInfo.sale_total}}</span>
+                <span>行业排名</span>
+                <span class="num">{{competeInfo.sale_rank}}</span>
+              </div>
+              <div class="clearfix" style="margin-top:20px;padding:0 5px;">
+                <div class="float-left" style="width:180px;">
+                  <div id="ring1"></div>
+                </div>
+                <div class="float-left" style="width:180px;">
+                  <div id="ring2"></div>
+                </div>
+                <div class="float-left" style="width:180px;">
+                  <div id="ring3"></div>
+                </div>
+              </div>
+              <div style="text-align:center;margin-top:50px;">
+                <span class="point pub"></span>
+                <span style="margin-right:15px;">本社</span>
+                <span class="point comp"></span>
+                <span>竞社</span>
+              </div>
+            </div>
+            <div v-else class="wrong-status">
+              <a-empty />
+            </div>
+          </div>
+          <div class="table-data" v-else>
+            <ModelNoPower type="noPower"></ModelNoPower>
           </div>
         </div>
       </div>
     </div>
+    <Loading ref="load"></Loading>
   </div>
 </template>
 <style scoped lang="scss" src="@/style/scss/pages/index.scss"></style>
 <script>
-import { INDEX_PUBLISHERINFO, INDEX_RANKS } from "../apis/index.js";
-import { Chart } from "@antv/g2";
+import {
+  INDEX_PUBLISHERINFO,
+  INDEX_RANKS,
+  INDEX_COMPETE
+} from "../apis/index.js";
+import { Chart, registerShape } from "@antv/g2";
 export default {
   data() {
     return {
@@ -498,17 +584,41 @@ export default {
       allUpRank: [],
       // 新品排行
       newGoodsRank: [],
+      // 出版社top排行
+      publishTopList: [],
+      // 竞社监控
+      competeInfo: {},
       isFirst: true,
       // 接口权限
       dataNewPower: true,
-      dataRankPower: true
+      dataRankPower: true,
+      competePower: true,
+      ringData1: [
+        { type: "本社", value: 0 },
+        { type: "竞社", value: 0 }
+      ],
+      ringData2: [
+        { type: "本社", value: 0 },
+        { type: "竞社", value: 0 }
+      ],
+      ringData3: [
+        { type: "本社", value: 0 },
+        { type: "竞社", value: 0 }
+      ],
+      ringChange: [null, null, null],
+      ringFirst: true
     };
   },
   mounted() {
+    // console.log('刚进来',this.$refs.head.publishInfo.organization_id)
     setTimeout(() => {
       this.getData();
       this.getRankData();
+      this.getCompeteData();
     }, 500);
+  },
+  updated() {
+    this.$refs.load.isLoading = false;
   },
   methods: {
     async getData() {
@@ -532,15 +642,21 @@ export default {
           this.changeChart.changeData(this.data);
         }
         this.isFirst = false;
+        this.publishSummaryInfo = res.data.publisher_summary_info;
         if (res.data.publisher_info.sale_rank) {
           this.publishInfos.sale_rank = res.data.publisher_info.sale_rank;
+        } else {
+          this.publishInfos.sale_rank = 0;
         }
         if (res.data.publisher_info.sale_ratio) {
           this.publishInfos.sale_ratio = res.data.publisher_info.sale_ratio;
+        } else {
+          this.publishInfos.sale_ratio = 0;
         }
         if (res.data.publisher_info.sale_total) {
           this.publishInfos.sale_total = res.data.publisher_info.sale_total;
-          this.publishSummaryInfo = res.data.publisher_summary_info;
+        } else {
+          this.publishInfos.sale_total = 0;
         }
         if (
           Object.keys(this.publishSummaryInfo).length > 0 &&
@@ -558,13 +674,14 @@ export default {
             this.publishSummaryInfo.sale_all.incr_rate.replace(/%/, "")
           );
         }
-
       } else {
         if (res.code == 1008) {
           this.$router.push({ name: "loginindex" });
-        }else if (res.code == 1009) {
+        } else if (res.code == 1009) {
           this.dataNewPower = false;
-        }else{
+        } else if (this.$systemCode.test(res.code)) {
+          this.$refs.head.globalTip(1, "系统错误");
+        } else {
           this.$refs.head.globalTip(1, res.message);
         }
       }
@@ -578,19 +695,76 @@ export default {
       };
       let res = await INDEX_RANKS(data);
       if (res.code == 0) {
+        this.dataRankPower = true;
         this.allGoodsRank = [];
         this.allUpRank = [];
         this.newGoodsRank = [];
+        this.publishTopList = [];
         this.allGoodsRank = res.data.rank_all;
         this.allUpRank = res.data.rank_incr;
         this.newGoodsRank = res.data.rank_new;
-        this.dataRankPower = true;
+        this.publishTopList = res.data.publisher_ranks;
       } else {
         if (res.code == 1008) {
           this.$router.push({ name: "loginindex" });
-        }else if (res.code == 1009) {
+        } else if (res.code == 1009) {
           this.dataRankPower = false;
-        }else{
+        } else if (this.$systemCode.test(res.code)) {
+          this.$refs.head.globalTip(1, "系统错误");
+        } else {
+          this.$refs.head.globalTip(1, res.message);
+        }
+      }
+    },
+    async getCompeteData() {
+      let data = {
+        organization_id: this.$refs.head.publishInfo.organization_id,
+        // publisher_id: 438,
+        publisher_id: this.$refs.head.publishInfo.publisher_id,
+        period: this.$weekDate().weekth,
+        date_type: 2,
+        start_date: this.$weekDate().start.replace(/-/g, "")
+      };
+      let res = await INDEX_COMPETE(data);
+      if (res.code == 0) {
+        this.competePower = true;
+        if (Object.keys(res.data).length > 0) {
+          this.competeInfo = res.data;
+          this.ringData1[0].value = res.data.sale_total_compare.my;
+          this.ringData1[1].value = res.data.sale_total_compare.compete;
+          this.ringData2[0].value =
+            res.data.sale_compare.my > 0
+              ? res.data.sale_compare.my
+              : res.data.sale_compare.my * -1;
+          this.ringData2[1].value =
+            res.data.sale_compare.compete > 0
+              ? res.data.sale_compare.compete
+              : res.data.sale_compare.compete * -1;
+          this.ringData3[0].value = res.data.onsale_goods.my;
+          this.ringData3[1].value = res.data.onsale_goods.compete;
+          let _this = this;
+          setTimeout(() => {
+            if (_this.ringFirst) {
+              _this.initRing();
+            } else {
+              _this.ringChange[0].changeData(_this.ringData1);
+              _this.ringChange[1].changeData(_this.ringData2);
+              _this.ringChange[2].changeData(_this.ringData3);
+            }
+            _this.ringFirst = false;
+          }, 500);
+        } else {
+          this.competeInfo = {};
+          this.ringFirst = true;
+        }
+      } else {
+        if (res.code == 1008) {
+          this.$router.push({ name: "loginindex" });
+        } else if (res.code == 1009) {
+          this.competePower = false;
+        } else if (this.$systemCode.test(res.code)) {
+          this.$refs.head.globalTip(1, "系统错误");
+        } else {
           this.$refs.head.globalTip(1, res.message);
         }
       }
@@ -718,10 +892,100 @@ export default {
         }
       });
     },
+    initRing() {
+      let _data, _text;
+      for (let i = 0; i < 3; i++) {
+        if (i == 0) {
+          _data = this.ringData1;
+          _text = "销售点数";
+        } else if (i == 1) {
+          _data = this.ringData2;
+          _text = "涨跌幅";
+        } else if (i == 2) {
+          _data = this.ringData3;
+          _text = "动销品种数";
+        }
+        // 可以通过调整这个数值控制分割空白处的间距，0-1 之间的数值
+        const sliceNumber = 0.003;
+
+        // 自定义 other 的图形，增加两条线
+        registerShape("interval", "slice-shape", {
+          draw(cfg, container) {
+            const points = cfg.points;
+            let path = [];
+            path.push(["M", points[0].x, points[0].y]);
+            path.push(["L", points[1].x, points[1].y - sliceNumber]);
+            path.push(["L", points[2].x, points[2].y - sliceNumber]);
+            path.push(["L", points[3].x, points[3].y]);
+            path.push("Z");
+            path = this.parsePath(path);
+            return container.addShape("path", {
+              attrs: {
+                fill: cfg.color,
+                path
+              }
+            });
+          }
+        });
+
+        this.ringChange[i] = new Chart({
+          container: "ring" + (i + 1),
+          autoFit: true,
+          height: 180
+        });
+
+        this.ringChange[i].data(_data);
+        this.ringChange[i].coordinate("theta", {
+          radius: 0.8,
+          innerRadius: 0.95
+        });
+        this.ringChange[i].legend(false);
+        this.ringChange[i].tooltip(false);
+        // 辅助文本
+        this.ringChange[i]
+          .annotation()
+          .text({
+            position: ["50%", "50%"],
+            content: "VS",
+            style: {
+              fontSize: 16,
+              fill: "#07193f",
+              textAlign: "center"
+            },
+            offsetY: -10
+          })
+          .text({
+            position: ["50%", "50%"],
+            content: _text,
+            style: {
+              fontSize: 12,
+              fill: "#7789af",
+              textAlign: "center"
+            },
+            offsetY: 15
+          });
+        this.ringChange[i]
+          .interval()
+          .adjust("stack")
+          .position("value")
+          .color("type", type => {
+            if (type == "本社") {
+              return "#4576DB";
+            } else if (type == "竞社") {
+              return "#FF9900";
+            }
+          })
+          .shape("slice-shape");
+
+        this.ringChange[i].render();
+      }
+    },
     publisherChange() {
       // console.log('hahah')
+      this.$refs.load.isLoading = true;
       this.getData();
       this.getRankData();
+      this.getCompeteData();
     }
   }
 };

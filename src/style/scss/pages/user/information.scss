@@ -2,6 +2,9 @@
 
 #userPage {
   & .container {
+    & img{
+      background-color: transparent;
+    }
     padding: 15px 15px 70px 20px;
     & .option {
       font-size: $fontSize - 2;

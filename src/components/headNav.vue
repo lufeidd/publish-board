@@ -275,10 +275,10 @@ export default {
         organization_name: "", // 机构名字
         type: 2, // 机构类型, 1正式, 2试用
         state: 1, // 机构状态
-        resource_ids: "1,2,3", // 机构开通权限
+        resource_ids: "", // 机构开通权限
         member_num: 0, // 机构人数
         create_time: "", // 机构创建时间
-        user_organization_type: 2, // 机构用户类型, 1 管理员, 2普通用户
+        user_organization_type: 0, // 机构用户类型, 1 管理员, 2普通用户
         auth_ids: [
           // 当前用户在当前机构用户权限
         ]

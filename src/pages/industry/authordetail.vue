@@ -24,7 +24,7 @@
                     class="no-pic"
                     style="min-width:175px;min-height:175px;border-radius:10px;"
                   ></span>
-                  <div class="goods-desc">
+                  <div class="goods-desc author">
                     <div class="authors" :title="authorInfo.name">{{authorInfo.name}}</div>
                     <div class>
                       <span>国家</span>
@@ -35,10 +35,10 @@
                       <span class="value" v-if="authorInfo.birthday">{{authorInfo.birthday}}</span>
                       <span class="value" v-else>--</span>
                     </div>
-                    <div class="description">
-                      <!-- <span style="vertical-align:top;">获奖</span>
-                      <span class="value" :title="authorInfo.description">{{authorInfo.description}}</span> -->
-                    </div>
+                    <!-- <div class="description">
+                      <span style="vertical-align:top;">获奖</span>
+                      <span class="value" :title="authorInfo.description">{{authorInfo.description}}</span>
+                    </div> -->
                     <div class="cate">
                       <span>类目</span>
                       <span class="value">{{authorInfo.category_name}}</span>
@@ -84,7 +84,7 @@
                     </thead>
                     <tbody>
                       <tr v-for="(item,index) in goodsList" :key="index">
-                        <td style="text-align:center;">{{index+1+((pageSize*page)-20)}}</td>
+                        <td style="text-align:center;">{{index+1+((pageSize*page)-pageSize)}}</td>
                         <td>
                           <div class="goods-desc">
                             <img
@@ -151,6 +151,7 @@
         </div>
       </div>
     </div>
+    <Loading ref="load"></Loading>
   </div>
 </template>
 <style scoped lang="scss" src="@/style/scss/pages/publish/detail.scss"></style>
@@ -190,11 +191,15 @@ export default {
       if (res.code == 0) {
         this.pagePower = true;
         this.authorInfo = res.data;
+        this.$refs.load.isLoading = false;
       } else {
+        this.$refs.load.isLoading = false;
         if (res.code == 1008) {
           this.$router.push({ name: "loginindex" });
         } else if (res.code == 1009) {
           this.pagePower = false;
+        }else if(this.$systemCode.test(res.code)){
+          this.$refs.head.globalTip(1, "系统错误");
         } else {
           this.$refs.head.globalTip(1, res.message);
         }
@@ -213,11 +218,15 @@ export default {
         this.goodsList = [];
         this.goodsList = res.data.list;
         this.total = res.data.total;
+        this.$refs.load.isLoading = false;
       } else {
+        this.$refs.load.isLoading = false;
         if (res.code == 1008) {
           this.$router.push({ name: "loginindex" });
         } else if (res.code == 1009) {
           this.pagePower = false;
+        }else if(this.$systemCode.test(res.code)){
+          this.$refs.head.globalTip(1, "系统错误");
         } else {
           this.$refs.head.globalTip(1, res.message);
         }
@@ -228,6 +237,7 @@ export default {
     },
     onShowSizeChange(current, pageSize) {
       console.log(current);
+      this.$refs.load.isLoading = true;
       this.page = current;
       this.getList();
     },

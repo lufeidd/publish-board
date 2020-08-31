@@ -7,12 +7,51 @@
           <SlideNav type="industry" sort="authors"></SlideNav>
         </div>
         <div class="float-left">
-          <div class="main-container">
+          <div class="main-container" v-if="pagePower">
             <div class="model-container">
               <div class="model-bg search">
                 <p class="title">搜索作者</p>
                 <div class="content common" style="position:relative;">
-                  <a-auto-complete
+                  <a-input
+                    placeholder="搜索作者名称"
+                    size="large"
+                    @input="inputSearch"
+                    @focus="inputSearch"
+                    @click.stop="inputClick"
+                    v-model="inputVal"
+                  >
+                    <div slot="prefix">
+                      <svg class="icon" aria-hidden="true">
+                        <use xlink:href="#icon-search" />
+                      </svg>
+                      <span class="rowLine">|</span>
+                    </div>
+                  </a-input>
+                  <div class="search-result" v-if="showResult">
+                    <div class="list" v-if="dataSource.length > 0">
+                      <div
+                        class="result-content"
+                        v-for="(item1,index1) in dataSource"
+                        :key="index1"
+                        @click.stop="selected(item1,index1)"
+                      >
+                        <img
+                          :src="item1.photo"
+                          alt
+                          width="35px"
+                          height="35px"
+                          v-if="item1.photo"
+                        />
+                        <span v-else class="no-pic" style="min-width:35px;min-height:35px;"></span>
+                        <span class="result-title" :title="item1.name">{{item1.name}}</span>
+                      </div>
+                    </div>
+                    <div class="no-result" v-if="dataSource.length == 0 && showAbout">没有相关作者</div>
+                    <div style="text-align:center;margin-top:100px;" v-if="searchLoading">
+                      <a-spin tip></a-spin>
+                    </div>
+                  </div>
+                  <!-- <a-auto-complete
                     option-label-prop="value"
                     style="width: 800px"
                     placeholder="搜索品种名称、ISBN"
@@ -41,7 +80,7 @@
                         <span class="rowLine">|</span>
                       </div>
                     </a-input>
-                  </a-auto-complete>
+                  </a-auto-complete>-->
                   <div style="text-align:center;margin-top:10px;" v-if="searchLoading">
                     <a-spin tip></a-spin>
                   </div>
@@ -55,17 +94,11 @@
                     @click="authorDetail(item,index)"
                   >
                     <div>
-                      <img
-                        :src="item.cover_pic"
-                        alt
-                        width="100px"
-                        height="100px"
-                        v-if="item.cover_pic"
-                      />
+                      <img :src="item.photo" alt width="100px" height="100px" v-if="item.photo" />
                       <span v-else class="no-pic" style="min-width:100px;min-height:100px;"></span>
                     </div>
-                    <div class="title" :title="item.title">{{item.title}}</div>
-                    <div class="sale">销售点数 {{item.sale_total}}</div>
+                    <div class="title" :title="item.name">{{item.name}}</div>
+                    <div class="sale">[{{item.country}}]</div>
                   </div>
                 </div>
               </div>
@@ -75,7 +108,7 @@
               <div class="model-bg">
                 <div class="section-title">
                   作者库
-                  <span class="desc">共2000名</span>
+                  <span class="desc">共{{total}}名</span>
                 </div>
                 <div class="table">
                   <table style="table-layout:fixed;">
@@ -98,35 +131,31 @@
                       </tr>
                     </thead>
                     <tbody>
-                      <tr v-for="(item,index) in 10" :key="index">
+                      <tr v-for="(item,index) in authorList" :key="index">
                         <td>
                           <div class="goods-desc">
-                            <img
-                              :src="item.cover_pic"
-                              alt
-                              width="40px"
-                              height="40px"
-                              v-if="item.cover_pic"
-                            />
+                            <img :src="item.photo" alt width="40px" height="40px" v-if="item.photo" />
                             <span v-else class="no-pic" style="min-width:40px;min-height:40px;"></span>
                             <span
                               class="click-font goods-name"
                               :title="item.name"
                               @click="authorDetail(item,index)"
-                            >东野</span>
+                            >{{item.name}}</span>
                           </div>
                         </td>
                         <td style="text-align:center;">
-                          <span class="click-font">32个品种</span>
+                          <span class="click-font">{{item.goods_count}}个品种</span>
                         </td>
                         <td style="text-align:center;">
-                          <span class="click-font">7个出版社</span>
+                          <span class="click-font">{{item.publisher_count}}个出版社</span>
                         </td>
                         <td style="text-align:right;">
-                          <span class="main-font">1988-08-08</span>
+                          <span class="main-font" v-if="item.birth_date">{{item.birth_date}}</span>
+                          <span class="main-font" v-else>--</span>
                         </td>
                         <td style="text-align:right;">
-                          <span class="main-font">日本</span>
+                          <span class="main-font" v-if="item.country">{{item.country}}</span>
+                          <span class="main-font" v-else>--</span>
                         </td>
                         <td style="text-align:right;">
                           <span class="click-dark">编辑</span>
@@ -152,28 +181,45 @@
               </div>
             </div>
           </div>
+          <div class="main-container" v-else>
+            <div class="model-container">
+              <div class="model-bg" style="min-height:650px;padding-bottom:75px;position:relative">
+                <PageNoPower></PageNoPower>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
+    <Loading ref="load"></Loading>
   </div>
 </template>
 <style scoped lang="scss" src="@/style/scss/pages/publish/taopu100.scss"></style>
 <script>
-import { INDUSTRY_AUTHOR_SEARCH } from "../../apis/industry.js";
+import {
+  INDUSTRY_AUTHOR_SEARCH,
+  INDUSTRY_AUTHOR_LISTS,
+  INDUSTRY_AUTHOR_HISTORY
+} from "../../apis/industry.js";
 export default {
   data() {
     return {
+      pagePower: true,
       inputVal: "",
       dataSource: [],
       searchLoading: false,
+      showResult: false,
+      showAbout:false,
       historyList: [],
-      total:0,
-      page:1,
-      pageSize:20,
+      authorList: [],
+      total: 0,
+      page: 1,
+      pageSize: 20
     };
   },
   mounted() {
-    this.$setSlideHeight();
+    this.getData();
+    this.getHistory();
   },
   updated() {
     this.$setSlideHeight();
@@ -192,49 +238,96 @@ export default {
         });
         // }
         this.searchLoading = false;
+        this.showAbout = true;
       } else {
         this.searchLoading = false;
         if (res.code == 1008) {
           this.$router.push({ name: "loginindex" });
+        }else if(this.$systemCode.test(res.code)){
+          this.$refs.head.globalTip(1, "系统错误");
         } else {
           this.$refs.head.globalTip(1, res.message);
         }
       }
     },
-    inputSearch(value) {
-      console.log(111);
-      this.dataSource = [];
-      if (value.length > 0) {
-        let _value = value.toString();
-        this.searchLoading = true;
-        this.search(_value);
-      }
-    },
-    selected(value) {
-      console.log(222);
-      let author_id;
-      for (let i = 0; i < this.dataSource.length; i++) {
-        if (value == this.dataSource[i].name) {
-          author_id = this.dataSource[i].author_id;
+    async getData() {
+      let data = {
+        organization_id: this.$refs.head.publishInfo.organization_id,
+        page: this.page,
+        page_size: this.pageSize
+      };
+      let res = await INDUSTRY_AUTHOR_LISTS(data);
+      if (res.code == 0) {
+        this.pagePower = true;
+        this.authorList = [];
+        this.authorList = res.data.list;
+        this.total = res.data.count;
+        this.$refs.load.isLoading = false;
+      } else {
+        this.$refs.load.isLoading = false;
+        if (res.code == 1008) {
+          this.$router.push({ name: "loginindex" });
+        } else if (res.code == 1009) {
+          this.pagePower = false;
+        } else if(this.$systemCode.test(res.code)){
+          this.$refs.head.globalTip(1, "系统错误");
+        }else {
+          this.$refs.head.globalTip(1, res.message);
         }
       }
+    },
+    async getHistory() {
+      let data = {};
+      let res = await INDUSTRY_AUTHOR_HISTORY(data);
+      if (res.code == 0) {
+        this.pagePower = true;
+        this.historyList = res.data;
+      } else {
+        if (res.code == 1008) {
+          this.$router.push({ name: "loginindex" });
+        } else if (res.code == 1009) {
+          this.pagePower = false;
+        }else if(this.$systemCode.test(res.code)){
+          this.$refs.head.globalTip(1, "系统错误");
+        } else {
+          this.$refs.head.globalTip(1, res.message);
+        }
+      }
+    },
+    inputClick(){},
+    inputSearch() {
+      console.log(111);
+      this.dataSource = [];
+      if (this.inputVal.length > 0) {
+        this.showResult = true;
+        this.showAbout = false;
+        this.searchLoading = true;
+        this.search(this.inputVal);
+      }else {
+        this.showResult = false;
+      }
+    },
+    selected(item1,index1) {
+      console.log(222);
       this.$router.push({
         name: "authordetail",
         query: {
-          author_id: author_id
+          author_id: item1.author_id
         }
       });
     },
-    onShowSizeChange(current,pageSize){
-
+    onShowSizeChange(current, pageSize) {
+      this.$refs.load.isLoading = true;
+      this.page = current;
+      this.getData();
     },
-    authorDetail(item,index){
+    authorDetail(item, index) {
       this.$router.push({
-        name:"authordetail",
-        query:{
-          author_id:item.author_id
+        name: "authordetail",
+        query: {
+          author_id: item.author_id
         }
-      })
+      });
     }
   }
 };

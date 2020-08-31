@@ -2,7 +2,9 @@
 export default {
   install: function (Vue, options) {
     // 全局loading
-    Vue.prototype.$loading = false;
+    Vue.prototype.$loading = true;
+    // 系统错误码
+    Vue.prototype.$systemCode = /^1\d{3}$/;
     // 获取当前时间
     Vue.prototype.$getDate = function () {
       let time = new Date("2013-12-30");

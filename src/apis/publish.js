@@ -24,9 +24,17 @@ export const TOP_GOODS_KERNELDATA = query => req('post', '/top/goods/kerneldata'
 export const TOP_GOODS_HISTORY = query => req('post', '/top/goods/history', query);
 // 淘普100--商品详情--生命周期核心数据
 export const TOP_GOODS_HISTORYCHART = query => req('post', '/top/goods/historychart', query);
+// 淘普100--商品详情--读者画像
+export const TOP_GOODS_READER_BASE = query => req('post', '/top/goods/reader/base', query);
 
 // 核心类目
 export const MYCATE_INDEX = query => req('post', '/mycate/index', query);
+
+// 读者画像
+export const READER_BASE = query => req('post', '/reader/base', query);
+
+// 作者库
+export const MYAUTHOR_LISTS = query => req('post', '/myauthor/lists', query);
 
 // 地域排行
 export const MYREGION_INDEX = query => req('post', '/myregion/index', query);

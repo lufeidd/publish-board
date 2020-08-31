@@ -345,6 +345,7 @@
         </div>
       </div>
     </div>
+    <Loading ref="load"></Loading>
   </div>
 </template>
 <style scoped lang="scss" src="@/style/scss/pages/industry/market.scss"></style>
@@ -461,17 +462,22 @@ export default {
         }
         console.log(this.brokenLineData)
         this.isFirst = false;
+        this.$refs.load.isLoading = false;
       } else {
+        this.$refs.load.isLoading = false;
         if (res.code == 1008) {
           this.$router.push({ name: "loginindex" });
         }else if (res.code == 1009) {
           this.pagePower = false;
+        }else if(this.$systemCode.test(res.code)){
+          this.$refs.head.globalTip(1, "系统错误");
         }else{
           this.$refs.head.globalTip(1, res.message);
         }
       }
     },
     weekChange(date, dateString) {
+      this.$refs.load.isLoading = true;
       // var _day = date._d.getDate();
       const startDate = date.day(1).format("YYYY-MM-DD"); // 周一日期
       const endDate = date.day(7).format("YYYY-MM-DD"); // 周日日期
@@ -497,6 +503,7 @@ export default {
       this.getData();
     },
     monthChange(date, dateString) {
+      this.$refs.load.isLoading = true;
       const startDate = date
         .month(date.month())
         .startOf("month")
@@ -528,6 +535,7 @@ export default {
       this.getData();
     },
     yearChange(e) {
+      this.$refs.load.isLoading = true;
       if (
         e._d.getFullYear().toString() >=
         this.$moment("2013-12-30").format("YYYY")
@@ -549,6 +557,7 @@ export default {
       this.getData();
     },
     subLeft() {
+      this.$refs.load.isLoading = true;
       let _max = "";
       if (this.dateType == 2) {
         _max = this.$weekDate("2013-12-30").start;
@@ -601,6 +610,7 @@ export default {
     },
     addRight() {
       if (this.canAdd) {
+        this.$refs.load.isLoading = true;
         let _max = "";
         if (this.dateType == 2) {
           _max = this.$weekDate().start;
@@ -732,6 +742,7 @@ export default {
       }
     },
     publisherChange(){
+      this.$refs.load.isLoading = true;
       this.cycle = this.$weekDate().weekth;
       this.oneDay = this.$weekDate().start.replace(/-/g, "");
       this.chooseWeek = this.$weekDate().start;

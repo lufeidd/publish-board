@@ -86,14 +86,14 @@
     margin-right: 10px;
   }
   & .publish-top{
-    width: 810px;
+    width: 605px;
     margin-right: 10px;
     & .no-open{
       height: 290px;
     }
   }
   & .compete-publish{
-    width: 400px;
+    width: 605px;
     & .no-open{
       height: 290px;
     }
@@ -108,7 +108,41 @@
     font-size: $fontSize - 2;
   }
   & .table-data{
-    height: 366px;
+    height: 350px;
     position: relative;
+    & .compete-container{
+      padding: 20px 15px;
+      font-size: $fontSize - 2;
+      & .name{
+        display: inline-block;
+        padding: 0 10px;
+        box-sizing: border-box;
+        line-height: 32px;
+        text-align: center;
+        color: $fontColor1;
+        background-color: $themeColor5;
+        min-width: 155px;
+        margin-right: 20px;
+      }
+      & .num{
+        color: $fontColor1;
+        margin-left: 5px;
+        margin-right: 20px;
+      }
+      & .point{
+        display: inline-block;
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        margin-right: 2px;
+        // vertical-align: middle;
+        &.pub{
+          background-color: #4576DB;
+        }
+        &.comp{
+          background-color: #FF9900;
+        }
+      }
+    }
   }
 }

@@ -1,5 +1,5 @@
 <template>
-  <div id="taopuPage" @click="showYear = false">
+  <div id="taopuPage" @click="showYear = false;showResult = false;">
     <HeadNav type="publish" ref="head" @publisherChange="publisherChange()"></HeadNav>
     <div class="wd-1220">
       <div class="clearfix">
@@ -17,44 +17,44 @@
               <div class="model-bg search">
                 <p class="title">搜索品种</p>
                 <div class="content common" style="position:relative;">
-                  <a-auto-complete
-                    option-label-prop="value"
-                    style="width: 800px"
+                  <a-input
                     placeholder="搜索品种名称、ISBN"
-                    @search="inputSearch"
-                    @select="selected"
+                    size="large"
+                    @input="inputSearch"
+                    @focus="inputSearch"
+                    @click.stop="inputClick"
                     v-model="inputVal"
                   >
-                    <template slot="dataSource">
-                      <a-select-option
-                        v-for="(opt,index) in dataSource"
-                        :key="index"
-                        :value="opt.title"
+                    <div slot="prefix">
+                      <svg class="icon" aria-hidden="true">
+                        <use xlink:href="#icon-search" />
+                      </svg>
+                      <span class="rowLine">|</span>
+                    </div>
+                  </a-input>
+                  <div class="search-result" v-if="showResult">
+                    <div class="list" v-if="dataSource.length > 0">
+                      <div
+                        class="result-content"
+                        v-for="(item1,index1) in dataSource"
+                        :key="index1"
+                        @click.stop="selected(item1,index1)"
                       >
-                        <div class="result">
-                          <img
-                            :src="opt.cover_pic"
-                            alt
-                            width="35px"
-                            height="35px"
-                            v-if="opt.cover_pic"
-                          />
-                          <span v-else class="no-pic" style="min-width:35px;min-height:35px;"></span>
-                          <span>{{opt.title}}</span>
-                        </div>
-                      </a-select-option>
-                    </template>
-                    <a-input style="height:40px;">
-                      <div slot="prefix">
-                        <svg class="icon" aria-hidden="true">
-                          <use xlink:href="#icon-search" />
-                        </svg>
-                        <span class="rowLine">|</span>
+                        <img
+                          :src="item1.cover_pic"
+                          alt
+                          width="35px"
+                          height="35px"
+                          v-if="item1.cover_pic"
+                        />
+                        <span v-else class="no-pic" style="min-width:35px;min-height:35px;"></span>
+                        <span class="result-title" :title="item1.title">{{item1.title}}</span>
                       </div>
-                    </a-input>
-                  </a-auto-complete>
-                  <div style="text-align:center;margin-top:10px;" v-if="searchLoading">
-                    <a-spin tip></a-spin>
+                    </div>
+                    <div class="no-result" v-if="dataSource.length == 0 && showAbout">没有相关商品</div>
+                    <div style="text-align:center;margin-top:100px;" v-if="searchLoading">
+                      <a-spin tip></a-spin>
+                    </div>
                   </div>
                 </div>
                 <p class="curren" v-if="historyList.length > 0">最近搜索</p>
@@ -141,7 +141,7 @@
                       </span>
                       <span class="time-picker">
                         <span :class="dateType == 4?'picker active':'picker'">年</span>
-                        <span @click.stop="showYear = true">
+                        <span @click.stop="showYear = true;showResult = false;">
                           <a-date-picker
                             class="week"
                             :allowClear="false"
@@ -269,6 +269,7 @@
         </div>
       </div>
     </div>
+    <Loading ref="load"></Loading>
   </div>
 </template>
 <style scoped lang="scss" src="@/style/scss/pages/publish/taopu100.scss"></style>
@@ -300,7 +301,9 @@ export default {
       canAdd: false,
       inputVal: "",
       dataSource: [],
-      searchLoading: false
+      showResult: false,
+      searchLoading: false,
+      showAbout:false,
     };
   },
   mounted() {
@@ -316,6 +319,7 @@ export default {
   },
   updated() {
     this.$setSlideHeight();
+    // this.$refs.load.isLoading = false;
   },
   methods: {
     // 获取商品排行
@@ -334,12 +338,16 @@ export default {
         this.total = res.data.total;
         this.goodsList = res.data.list;
         this.goodsPower = true;
+        this.$refs.load.isLoading = false;
       } else {
+        this.$refs.load.isLoading = false;
         if (res.code == 1008) {
           this.$router.push({ name: "loginindex" });
-        }else if (res.code == 1009) {
+        } else if (res.code == 1009) {
           this.goodsPower = false;
-        }else{
+        }else if(this.$systemCode.test(res.code)){
+          this.$refs.head.globalTip(1, "系统错误");
+        } else {
           this.$refs.head.globalTip(1, res.message);
         }
         this.$setSlideHeight();
@@ -357,7 +365,9 @@ export default {
       } else {
         if (res.code == 1008) {
           this.$router.push({ name: "loginindex" });
-        }else{
+        }else if (res.code == 1009) {
+          this.goodsPower = false;
+        } else {
           this.$refs.head.globalTip(1, res.message);
         }
       }
@@ -371,7 +381,9 @@ export default {
       } else {
         if (res.code == 1008) {
           this.$router.push({ name: "loginindex" });
-        }else{
+        }else if(this.$systemCode.test(res.code)){
+          this.$refs.head.globalTip(1, "系统错误");
+        } else {
           this.$refs.head.globalTip(1, res.message);
         }
       }
@@ -392,42 +404,44 @@ export default {
           });
         }
         this.searchLoading = false;
+        this.showAbout = true;
       } else {
         this.searchLoading = false;
         if (res.code == 1008) {
           this.$router.push({ name: "loginindex" });
-        }else{
+        }else if(this.$systemCode.test(res.code)){
+          this.$refs.head.globalTip(1, "系统错误");
+        } else {
           this.$refs.head.globalTip(1, res.message);
         }
       }
     },
-    inputSearch(value) {
+    inputClick(){},
+    inputSearch() {
       console.log(111);
       this.dataSource = [];
-      if (value.length > 0) {
-        let _value = value.toString();
+      if (this.inputVal.length > 0) {
+        this.showResult = true;
         this.searchLoading = true;
-        this.search(_value);
+        this.showAbout = false;
+        this.search(this.inputVal);
+      } else {
+        this.showResult = false;
       }
     },
-    selected(value) {
+    selected(item1, index1) {
       console.log(222);
-      let goods_id;
-      for (let i = 0; i < this.dataSource.length; i++) {
-        if (value == this.dataSource[i].title) {
-          goods_id = this.dataSource[i].goods_id;
-        }
-      }
       this.$router.push({
         name: "detail",
         query: {
-          goods_id: goods_id
+          goods_id: item1.goods_id
         }
       });
     },
     // 选择分类
     selectCategory(item, index) {
       // console.log(index)
+      this.$refs.load.isLoading = true;
       if (index == -1) {
         this.chooseCategory.name = "所有类目";
         this.chooseCategory.id = 0;
@@ -439,6 +453,7 @@ export default {
       this.getData();
     },
     weekChange(date, dateString) {
+      this.$refs.load.isLoading = true;
       // var _day = date._d.getDate();
       const startDate = date.day(1).format("YYYY-MM-DD"); // 周一日期
       const endDate = date.day(7).format("YYYY-MM-DD"); // 周日日期
@@ -462,6 +477,7 @@ export default {
     },
     monthChange(date, dateString) {
       // var _day = date._d.getDate();
+      this.$refs.load.isLoading = true;
       const startDate = date
         .month(date.month())
         .startOf("month")
@@ -489,6 +505,7 @@ export default {
       this.getData();
     },
     yearChange(e) {
+      this.$refs.load.isLoading = true;
       if (
         e._d.getFullYear().toString() >=
         this.$moment("2013-12-30").format("YYYY")
@@ -509,6 +526,7 @@ export default {
     },
     subLeft() {
       let _max = "";
+      this.$refs.load.isLoading = true;
       if (this.dateType == 2) {
         _max = this.$weekDate().start;
         if (this.chooseWeek <= _max) {
@@ -560,6 +578,7 @@ export default {
     },
     addRight() {
       if (this.canAdd) {
+        this.$refs.load.isLoading = true;
         let _max = "";
         if (this.dateType == 2) {
           _max = this.$weekDate().start;
@@ -620,6 +639,7 @@ export default {
     },
     onShowSizeChange(current, pageSize) {
       console.log(current);
+      this.$refs.load.isLoading = true;
       this.page = current;
       this.getData();
     },
@@ -632,6 +652,7 @@ export default {
       });
     },
     publisherChange() {
+      this.$refs.load.isLoading = true;
       this.cycle = this.$weekDate().weekth;
       this.chooseWeek = this.$weekDate().start;
       this.chooseMonth = this.$weekDate().start;

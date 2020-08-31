@@ -89,7 +89,10 @@
                         <p class="desc">
                           <span v-if="incrTop.name">{{incrTop.name}}</span>
                           <span v-else>--</span>
-                          <span class="text red" v-if="incrTop.compare_rate">+{{incrTop.compare_rate}}%</span>
+                          <span
+                            class="text red"
+                            v-if="incrTop.compare_rate"
+                          >+{{incrTop.compare_rate}}%</span>
                           <span v-else class="text red">--</span>
                         </p>
                       </div>
@@ -98,14 +101,20 @@
                         <p class="desc">
                           <span v-if="readerTop.name">{{readerTop.name}}</span>
                           <span v-else>--</span>
-                          <span class="text" v-if="readerTop.reader_total">{{readerTop.reader_total}}</span>
+                          <span
+                            class="text"
+                            v-if="readerTop.reader_total"
+                          >{{readerTop.reader_total}}</span>
                           <span class="text" v-else>--</span>
                         </p>
                         <div class="title">销售下降最多</div>
                         <p class="desc">
                           <span v-if="decrTop.name">{{decrTop.name}}</span>
                           <span v-else>--</span>
-                          <span class="text green" v-if="decrTop.compare_rate">{{decrTop.compare_rate}}%</span>
+                          <span
+                            class="text green"
+                            v-if="decrTop.compare_rate"
+                          >{{decrTop.compare_rate}}%</span>
                           <span class="text green" v-else>--</span>
                         </p>
                       </div>
@@ -176,13 +185,16 @@
             </div>
           </div>
           <div class="main-container" v-else>
-            <div class="model-bg" style="min-height:650px;padding-bottom:75px;position:relative">
+            <div class="model-container">
+              <div class="model-bg" style="min-height:650px;padding-bottom:75px;position:relative">
                 <PageNoPower></PageNoPower>
               </div>
+            </div>
           </div>
         </div>
       </div>
     </div>
+    <Loading ref="load"></Loading>
   </div>
 </template>
 <style lang="scss" scoped>
@@ -280,18 +292,23 @@ export default {
         this.incrTop = res.data.incr_top;
         this.decrTop = res.data.decr_top;
         this.initMap();
+        this.$refs.load.isLoading = false;
       } else {
+        this.$refs.load.isLoading = false;
         if (res.code == 1008) {
           this.$router.push({ name: "loginindex" });
-        }else if (res.code == 1009) {
+        } else if (res.code == 1009) {
           this.pagePower = false;
-        }else{
+        }else if(this.$systemCode.test(res.code)){
+          this.$refs.head.globalTip(1, "系统错误");
+        } else {
           this.$refs.head.globalTip(1, res.message);
         }
       }
     },
     weekChange(date, dateString) {
       // var _day = date._d.getDate();
+      this.$refs.load.isLoading = true;
       const startDate = date.day(1).format("YYYY-MM-DD"); // 周一日期
       const endDate = date.day(7).format("YYYY-MM-DD"); // 周日日期
       if (
@@ -313,6 +330,7 @@ export default {
       console.log(666, startDate, endDate);
     },
     monthChange(date, dateString) {
+      this.$refs.load.isLoading = true;
       const startDate = date
         .month(date.month())
         .startOf("month")
@@ -341,6 +359,7 @@ export default {
       console.log(startDate, endDate);
     },
     yearChange(e) {
+      this.$refs.load.isLoading = true;
       if (
         e._d.getFullYear().toString() >=
         this.$moment("2013-12-30").format("YYYY")
@@ -362,6 +381,7 @@ export default {
       this.getData();
     },
     subLeft() {
+      this.$refs.load.isLoading = true;
       let _max = "";
       if (this.dateType == 2) {
         _max = this.$weekDate("2013-12-30").start;
@@ -414,6 +434,7 @@ export default {
     },
     addRight() {
       if (this.canAdd) {
+        this.$refs.load.isLoading = true;
         let _max = "";
         if (this.dateType == 2) {
           _max = this.$weekDate().start;
@@ -546,14 +567,15 @@ export default {
             enable: true,
             Html: props => {
               // return `<span>${props.NAME_CHN}</span>`;
-              let _name = props.NAME_CHN,_num = 0;
-              this.list.map((value,key)=>{
-                if(_name.indexOf(value.name) > -1){
+              let _name = props.NAME_CHN,
+                _num = 0;
+              this.list.map((value, key) => {
+                if (_name.indexOf(value.name) > -1) {
                   _num = value.sale_total;
                 }
-              })
+              });
               return `<span>${props.NAME_CHN}<br>销售点数：${_num}</span>`;
-            },
+            }
             // lnglat :[116.2825, 39.9]
           }
         });
@@ -601,6 +623,7 @@ export default {
       this.$setSlideHeight();
     },
     publisherChange() {
+      this.$refs.load.isLoading = true;
       this.cycle = this.$weekDate().weekth;
       this.oneDay = this.$weekDate().start.replace(/-/g, "");
       this.chooseWeek = this.$weekDate().start;

@@ -221,6 +221,7 @@
         </div>
       </div>
     </div>
+    <Loading ref="load"></Loading>
   </div>
 </template>
 <style scoped lang="scss" src="@/style/scss/pages/compete/set.scss"></style>
@@ -270,9 +271,11 @@ export default {
       } else {
         if (res.code == 1008) {
           this.$router.push({ name: "loginindex" });
-        }else if (res.code == 1009) {
+        } else if (res.code == 1009) {
           this.pagePower = false;
-        }else{
+        }else if(this.$systemCode.test(res.code)){
+          this.$refs.head.globalTip(1, "系统错误");
+        } else {
           this.$refs.head.globalTip(1, res.message);
         }
       }
@@ -294,12 +297,16 @@ export default {
           this.goodsList = [];
           this.goodsList = res.data;
         }
+        this.$refs.load.isLoading = false;
       } else {
+        this.$refs.load.isLoading = false;
         if (res.code == 1008) {
           this.$router.push({ name: "loginindex" });
-        }else if (res.code == 1009) {
+        } else if (res.code == 1009) {
           this.pagePower = false;
-        }else{
+        }else if(this.$systemCode.test(res.code)){
+          this.$refs.head.globalTip(1, "系统错误");
+        } else {
           this.$refs.head.globalTip(1, res.message);
         }
       }
@@ -320,9 +327,11 @@ export default {
       } else {
         if (res.code == 1008) {
           this.$router.push({ name: "loginindex" });
-        }else if (res.code == 105) {
+        } else if (res.code == 105) {
           this.$refs.head.globalTip(1, "竞争监控已存在，请勿重复添加");
-        }else{
+        }else if(this.$systemCode.test(res.code)){
+          this.$refs.head.globalTip(1, "系统错误");
+        } else {
           this.$refs.head.globalTip(1, res.message);
         }
       }
@@ -341,7 +350,9 @@ export default {
       } else {
         if (res.code == 1008) {
           this.$router.push({ name: "loginindex" });
-        }else{
+        }else if(this.$systemCode.test(res.code)){
+          this.$refs.head.globalTip(1, "系统错误");
+        } else {
           this.$refs.head.globalTip(1, res.message);
         }
       }
@@ -360,7 +371,9 @@ export default {
         // this.$refs.head.globalTip(1, res.message);
         if (res.code == 1008) {
           this.$router.push({ name: "loginindex" });
-        }else {
+        }else if(this.$systemCode.test(res.code)){
+          this.$refs.head.globalTip(1, "系统错误");
+        } else {
           this.$refs.head.globalTip(1, res.message);
         }
       }
@@ -369,7 +382,7 @@ export default {
     async goodsearch(_value) {
       let data = {
         organization_id: this.$refs.head.publishInfo.organization_id,
-        publisher_id: this.$refs.head.publishInfo.publisher_id,
+        // publisher_id: this.$refs.head.publishInfo.publisher_id,
         search: _value,
         page: 1,
         page_size: 100
@@ -388,7 +401,9 @@ export default {
         this.searchLoading = false;
         if (res.code == 1008) {
           this.$router.push({ name: "loginindex" });
-        }else{
+        }else if(this.$systemCode.test(res.code)){
+          this.$refs.head.globalTip(1, "系统错误");
+        } else {
           this.$refs.head.globalTip(1, res.message);
         }
       }
@@ -430,8 +445,10 @@ export default {
       // let _val = value.toString();
       this.inputVal1 = value;
       this.dataSource1 = [];
-      this.searchLoading = true;
-      this.goodsearch(value);
+      if (value.length > 0) {
+        this.searchLoading = true;
+        this.goodsearch(value);
+      }
     },
     selected1(value) {
       if (this.initGoods.count < this.initGoods.max) {
@@ -461,7 +478,8 @@ export default {
       this.deleteMonitor(item.id);
     },
     publisherChange() {
-      this.tabKey = '1';
+      this.$refs.load.isLoading = true;
+      this.tabKey = "1";
       this.getInit();
       this.getData();
     }

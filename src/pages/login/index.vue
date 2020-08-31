@@ -243,10 +243,17 @@ export default {
           icon: <a-icon type="bell" />
         });
       } else {
-        this.$message.info({
-          content: res.message,
-          icon: <a-icon type="exclamation-circle" />
-        });
+        if (this.$systemCode.test(res.code)) {
+          this.$message.info({
+            content: "系统错误",
+            icon: <a-icon type="exclamation-circle" />
+          });
+        } else {
+          this.$message.info({
+            content: res.message,
+            icon: <a-icon type="exclamation-circle" />
+          });
+        }
       }
     },
     // 加入机构
@@ -274,10 +281,17 @@ export default {
         if (res.code == 5002) {
           this.codeType == 1 ? (this.isPassword = true) : (this.isShort = true);
         }
-        this.$message.info({
-          content: res.message,
-          icon: <a-icon type="exclamation-circle" />
-        });
+        if (this.$systemCode.test(res.code)) {
+          this.$message.info({
+            content: "系统错误",
+            icon: <a-icon type="exclamation-circle" />
+          });
+        } else {
+          this.$message.info({
+            content: res.message,
+            icon: <a-icon type="exclamation-circle" />
+          });
+        }
       }
     },
     // 解析邀请码
@@ -292,10 +306,17 @@ export default {
         this.showLogin = res.data.is_login;
         this.last_organization_id = res.data.organization_id;
       } else {
-        this.$message.info({
-          content: res.message,
-          icon: <a-icon type="exclamation-circle" />
-        });
+        if (this.$systemCode.test(res.code)) {
+          this.$message.info({
+            content: "系统错误",
+            icon: <a-icon type="exclamation-circle" />
+          });
+        } else {
+          this.$message.info({
+            content: res.message,
+            icon: <a-icon type="exclamation-circle" />
+          });
+        }
       }
     },
     // 使用邀请码
@@ -319,10 +340,17 @@ export default {
           });
         }, 2000);
       } else {
-        this.$message.info({
-          content: res.message,
-          icon: <a-icon type="exclamation-circle" />
-        });
+        if (this.$systemCode.test(res.code)) {
+          this.$message.info({
+            content: "系统错误",
+            icon: <a-icon type="exclamation-circle" />
+          });
+        } else {
+          this.$message.info({
+            content: res.message,
+            icon: <a-icon type="exclamation-circle" />
+          });
+        }
       }
     }
   }

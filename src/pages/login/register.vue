@@ -3,7 +3,13 @@
     <img src="../../assets/login-bg.png" alt width="100%" height="100%" />
     <div class="main-container">
       <div class="left">
-        <img src="../../assets/login-advertise.png" alt="" width="100%" height="100%" style="border-radius: 10px 0 0 10px;">
+        <img
+          src="../../assets/login-advertise.png"
+          alt
+          width="100%"
+          height="100%"
+          style="border-radius: 10px 0 0 10px;"
+        />
       </div>
       <div class="right">
         <p class="title">
@@ -31,7 +37,13 @@
           <div class="tips" v-if="isShort">短信验证码错误</div>
         </div>
         <div class="btn">
-          <a-button type="primary" size="large" block @click="test" style="font-size:14px !important;">注册并加入机构</a-button>
+          <a-button
+            type="primary"
+            size="large"
+            block
+            @click="test"
+            style="font-size:14px !important;"
+          >注册并加入机构</a-button>
           <div class="word">
             已有账号？
             <span class="click-font" @click="toLogin">去登陆</span>
@@ -72,8 +84,8 @@ export default {
     if (this.$route.query.inviteCode) {
       this.inviteCode = this.$route.query.inviteCode;
       this.translateInvite();
-    }else{
-      this.$router.replace({name:"nullpage"})
+    } else {
+      this.$router.replace({ name: "nullpage" });
     }
   },
   methods: {
@@ -96,7 +108,7 @@ export default {
         });
         return;
       }
-      if(this.code.length == 0){
+      if (this.code.length == 0) {
         this.$message.info({
           content: "请输入验证码",
           icon: <a-icon type="exclamation-circle" />
@@ -107,11 +119,11 @@ export default {
     },
     toLogin() {
       this.$router.push({
-        name:"loginindex",
-        query:{
-          inviteCode:this.inviteCode
+        name: "loginindex",
+        query: {
+          inviteCode: this.inviteCode
         }
-      })
+      });
     },
     // 注册并登录
     async login() {
@@ -129,10 +141,17 @@ export default {
           }
         });
       } else {
-        this.$message.info({
-          content: res.message,
-          icon: <a-icon type="exclamation-circle" />
-        });
+        if (this.$systemCode.test(res.code)) {
+          this.$message.info({
+            content: "系统错误",
+            icon: <a-icon type="exclamation-circle" />
+          });
+        } else {
+          this.$message.info({
+            content: res.message,
+            icon: <a-icon type="exclamation-circle" />
+          });
+        }
         this.isShort = true;
       }
     },
@@ -145,19 +164,26 @@ export default {
       if (res.code == 0) {
         this.invite_name = res.data.invite_name;
         this.organization_name = res.data.organization_name;
-        if(res.data.is_login){
+        if (res.data.is_login) {
           this.$router.push({
-            name:"loginindex",
-            query:{
-              inviteCode:this.inviteCode
+            name: "loginindex",
+            query: {
+              inviteCode: this.inviteCode
             }
-          })
+          });
         }
       } else {
-        this.$message.info({
-          content: res.message,
-          icon: <a-icon type="exclamation-circle" />
-        });
+        if (this.$systemCode.test(res.code)) {
+          this.$message.info({
+            content: "系统错误",
+            icon: <a-icon type="exclamation-circle" />
+          });
+        } else {
+          this.$message.info({
+            content: res.message,
+            icon: <a-icon type="exclamation-circle" />
+          });
+        }
       }
     },
     // 检测手机是否已经注册
@@ -177,17 +203,24 @@ export default {
               name: "loginindex",
               mobile: this.mobile
             });
-          },2000);
+          }, 2000);
         } else {
           this.sendTime.time = 60;
           this.$countDown(this.sendTime);
           this.sendCode();
         }
       } else {
-        this.$message.info({
-          content: res.message,
-          icon: <a-icon type="exclamation-circle" />
-        });
+        if (this.$systemCode.test(res.code)) {
+          this.$message.info({
+            content: "系统错误",
+            icon: <a-icon type="exclamation-circle" />
+          });
+        } else {
+          this.$message.info({
+            content: res.message,
+            icon: <a-icon type="exclamation-circle" />
+          });
+        }
       }
     },
     // 发送验证码
@@ -199,14 +232,21 @@ export default {
       let res = await COMMON_CAPTCHA_SMS(data);
       if (res.code == 0) {
         this.$message.info({
-          content: '发送成功',
+          content: "发送成功",
           icon: <a-icon type="bell" />
         });
       } else {
-        this.$message.info({
-          content: res.message,
-          icon: <a-icon type="exclamation-circle" />
-        });
+        if (this.$systemCode.test(res.code)) {
+          this.$message.info({
+            content: "系统错误",
+            icon: <a-icon type="exclamation-circle" />
+          });
+        } else {
+          this.$message.info({
+            content: res.message,
+            icon: <a-icon type="exclamation-circle" />
+          });
+        }
       }
     }
   }

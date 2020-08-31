@@ -4,3 +4,5 @@ import req from './http.js'
 export const INDEX_PUBLISHERINFO = query => req('post', '/index/publisherinfo', query);
 // 排行榜
 export const INDEX_RANKS = query => req('post', '/index/ranks', query);
+// 竞社信息
+export const INDEX_COMPETE = query => req('post', '/index/compete', query);

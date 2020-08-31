@@ -37,6 +37,9 @@
         </router-link>
         <div class="tab" @click="noOpen">新品追踪</div>
         <div class="tab" @click="noOpen">异常监控</div>
+        <router-link to="/publish/reader">
+          <div :class="sort=='reader'?'active tab':'tab'">读者画像</div>
+        </router-link>
         <router-link to="/publish/region">
           <div :class="sort=='region'?'active tab':'tab'">地域分布</div>
         </router-link>
@@ -101,11 +104,14 @@
   width: 130px;
   margin-right: 10px;
   box-sizing: border-box;
+  & img{
+    background-color: transparent;
+  }
   & .top-container {
     background-color: $clf;
     height: 100%;
     &.other {
-      height: 100%;
+      height: calc(100% - 10px);
     }
     & .slide-desc {
       width: 100%;

@@ -1,5 +1,5 @@
 <template>
-  <div id="corePage">
+  <div id="corePage" style="padding-bottom:20px;">
     <HeadNav type="publish" ref="head" @publisherChange="publisherChange()"></HeadNav>
     <div class="wd-1220">
       <div class="clearfix">
@@ -128,7 +128,9 @@
                     </thead>
                     <tbody v-if="list.length > 0">
                       <tr v-for="(item,index) in list" :key="index">
-                        <td style="text-align:center;">{{item.sale_rank}}</td>
+                        <td style="text-align:center;">
+                          <div style="line-height:36px;">{{item.sale_rank}}</div>
+                        </td>
                         <td>
                           <span class="main-font">{{item.category_name}}</span>
                         </td>
@@ -157,7 +159,7 @@
                         </td>
                       </tr>
                     </tbody>
-                    <tfoot>
+                    <tfoot v-if="list.length > 0">
                       <tr>
                         <td colspan="7" style="text-align:right;">
                           <a-pagination
@@ -186,6 +188,7 @@
         </div>
       </div>
     </div>
+    <Loading ref="load"></Loading>
   </div>
 </template>
 <script>
@@ -215,6 +218,7 @@ export default {
     };
   },
   mounted() {
+    this.$loading = true;
     this.cycle = this.$weekDate().weekth;
     this.oneDay = this.$weekDate().start.replace(/-/g, "");
     this.chooseWeek = this.$weekDate().start;
@@ -244,11 +248,15 @@ export default {
         this.list = [];
         this.list = res.data.category_ranks;
         this.total = res.data.count
+        this.$refs.load.isLoading = false;
       } else {
+        this.$refs.load.isLoading = false;
         if (res.code == 1008) {
           this.$router.push({ name: "loginindex" });
         } else if (res.code == 1009) {
           this.pagePower = false;
+        }else if(this.$systemCode.test(res.code)){
+          this.$refs.head.globalTip(1, "系统错误");
         } else {
           this.$refs.head.globalTip(1, res.message);
         }
@@ -256,6 +264,7 @@ export default {
     },
     weekChange(date, dateString) {
       // var _day = date._d.getDate();
+      this.$refs.load.isLoading = true;
       const startDate = date.day(1).format("YYYY-MM-DD"); // 周一日期
       const endDate = date.day(7).format("YYYY-MM-DD"); // 周日日期
       let _weekth = date.week();
@@ -281,6 +290,7 @@ export default {
       this.getData();
     },
     monthChange(date, dateString) {
+      this.$refs.load.isLoading = true;
       const startDate = date
         .month(date.month())
         .startOf("month")
@@ -313,6 +323,7 @@ export default {
       this.getData();
     },
     yearChange(e) {
+      this.$refs.load.isLoading = true;
       if (
         e._d.getFullYear().toString() >=
         this.$moment("2013-12-30").format("YYYY")
@@ -335,6 +346,7 @@ export default {
       this.getData();
     },
     subLeft() {
+      this.$refs.load.isLoading = true;
       let _max = "";
       if (this.dateType == 2) {
         _max = this.$weekDate("2013-12-30").start;
@@ -388,6 +400,7 @@ export default {
     },
     addRight() {
       if (this.canAdd) {
+        this.$refs.load.isLoading = true;
         let _max = "";
         if (this.dateType == 2) {
           _max = this.$weekDate().start;
@@ -448,6 +461,7 @@ export default {
       return startValue.valueOf() <= endValue.valueOf();
     },
     selectCategory(type) {
+      this.$refs.load.isLoading = true;
       if (type == "one") {
         this.chooseCategory.name = "一级类目";
         this.chooseCategory.level = type;
@@ -467,6 +481,7 @@ export default {
       this.getData();
     },
     publisherChange() {
+      this.$refs.load.isLoading = true;
       this.cycle = this.$weekDate().weekth;
       this.oneDay = this.$weekDate().start.replace(/-/g, "");
       this.chooseWeek = this.$weekDate().start;

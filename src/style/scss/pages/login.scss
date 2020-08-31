@@ -1,6 +1,9 @@
 @charset "UTF-8";
 #registerPage{
   height: 100%;
+  & img{
+    background-color: transparent;
+  }
   & .main-container{
     width: 860px;
     height: 480px;

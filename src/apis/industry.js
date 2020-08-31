@@ -7,3 +7,7 @@ export const INDUSTRY_AUTHOR_SEARCH = query => req('post', '/industry/author/sea
 export const INDUSTRY_AUTHOR_INFO = query => req('post', '/industry/author/info', query);
 // 作者商品列表
 export const INDUSTRY_AUTHOR_GOODS = query => req('post', '/industry/author/goods', query);
+// 作者商品列表
+export const INDUSTRY_AUTHOR_LISTS = query => req('post', '/industry/author/lists', query);
+// 作者历史搜索
+export const INDUSTRY_AUTHOR_HISTORY = query => req('post', '/industry/author/history', query);

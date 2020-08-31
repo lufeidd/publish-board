@@ -13,6 +13,7 @@
           padding:0 15px;
           border-right: 1px solid $themeColor5;
           margin-top: 38px;
+          box-sizing: border-box;
           & .cate-block{
             width: 120px;
             text-align: center;
@@ -32,7 +33,7 @@
         }
         & .right-table{
           display: inline-block;
-          width: 875px;
+          width: 874px;
           vertical-align: top;
         }
       }

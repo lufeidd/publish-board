@@ -82,10 +82,10 @@
                       {{text1}}
                       <a-icon type="close" v-if="close1" @click.stop="delete1" />
                       <div class="search" v-if="show1">
-                        <div style="padding:0 10px;">
+                        <!-- <div style="padding:0 10px;">
                           <a-input placeholder="搜索出版社名称" v-model="inputVal1" @input="onSearch1" />
-                        </div>
-                        <div class="list">
+                        </div> -->
+                        <div class="list" v-if="publishList1.length > 0">
                           <div
                             class="content"
                             v-for="(item1,index1) in publishList1"
@@ -93,6 +93,7 @@
                             @click.stop="onSelect1(item1,index1,1)"
                           >{{item1.publisher_name}}</div>
                         </div>
+                        <div class="no-choose" v-else>无可选择的出版社</div>
                       </div>
                     </div>
                     <span style="margin:0 8px;">对比</span>
@@ -104,10 +105,10 @@
                       {{text2}}
                       <a-icon type="close" v-if="close2" @click.stop="delete2" />
                       <div class="search" v-if="show2">
-                        <div style="padding:0 10px;">
+                        <!-- <div style="padding:0 10px;">
                           <a-input placeholder="搜索出版社名称" v-model="inputVal2" @input="onSearch2" />
-                        </div>
-                        <div class="list">
+                        </div> -->
+                        <div class="list" v-if="publishList2.length > 0">
                           <div
                             class="content"
                             v-for="(item2,index2) in publishList2"
@@ -115,6 +116,7 @@
                             @click.stop="onSelect2(item2,index2,2)"
                           >{{item2.publisher_name}}</div>
                         </div>
+                        <div class="no-choose" v-else>无可选择的出版社</div>
                       </div>
                     </div>
                     <span style="margin:0 8px;">对比</span>
@@ -126,10 +128,10 @@
                       {{text3}}
                       <a-icon type="close" v-if="close3" @click.stop="delete3" />
                       <div class="search" v-if="show3">
-                        <div style="padding:0 10px;">
+                        <!-- <div style="padding:0 10px;">
                           <a-input placeholder="搜索出版社名称" v-model="inputVal3" @input="onSearch3" />
-                        </div>
-                        <div class="list">
+                        </div> -->
+                        <div class="list" v-if="publishList3.length > 0">
                           <div
                             class="content"
                             v-for="(item3,index3) in publishList3"
@@ -137,6 +139,7 @@
                             @click.stop="onSelect3(item3,index3,3)"
                           >{{item3.publisher_name}}</div>
                         </div>
+                        <div class="no-choose" v-else>无可选择的出版社</div>
                       </div>
                     </div>
                   </div>
@@ -378,6 +381,7 @@
         </div>
       </div>
     </div>
+    <Loading ref="load"></Loading>
   </div>
 </template>
 <style scoped lang="scss" src="@/style/scss/pages/compete/set.scss"></style>
@@ -484,12 +488,15 @@ export default {
         this.pagePower = true;
         this.list = [];
         this.list = res.data;
-        this.$setSlideHeight();
+        this.$refs.load.isLoading = false;
       } else {
+        this.$refs.load.isLoading = false;
         if (res.code == 1008) {
           this.$router.push({ name: "loginindex" });
         }else if (res.code == 1009){
           this.pagePower = false;
+        }else if(this.$systemCode.test(res.code)){
+          this.$refs.head.globalTip(1, "系统错误");
         }else{
           this.$refs.head.globalTip(1, res.message);
         }
@@ -515,11 +522,15 @@ export default {
         } else {
           this.chooseInfo3 = res.data;
         }
+        this.$refs.load.isLoading = false;
       } else {
+        this.$refs.load.isLoading = false;
         if (res.code == 1008) {
           this.$router.push({ name: "loginindex" });
         }else if (res.code == 1009) {
           this.pagePower = false;
+        }else if(this.$systemCode.test(res.code)){
+          this.$refs.head.globalTip(1, "系统错误");
         }else{
           this.$refs.head.globalTip(1, res.message);
         }
@@ -584,10 +595,13 @@ export default {
         }
         this.lineArr();
       } else {
+        this.$refs.load.isLoading = false;
         if (res.code == 1008) {
           this.$router.push({ name: "loginindex" });
         }else if (res.code == 1009) {
           this.pagePower = false;
+        }else if(this.$systemCode.test(res.code)){
+          this.$refs.head.globalTip(1, "系统错误");
         }else{
           this.$refs.head.globalTip(1, res.message);
         }
@@ -615,12 +629,15 @@ export default {
       } else {
         if (res.code == 1008) {
           this.$router.push({ name: "loginindex" });
+        }else if(this.$systemCode.test(res.code)){
+          this.$refs.head.globalTip(1, "系统错误");
         }else{
           this.$refs.head.globalTip(1, res.message);
         }
       }
     },
     weekChange(date, dateString) {
+      this.$refs.load.isLoading = true;
       // var _day = date._d.getDate();
       const startDate = date.day(1).format("YYYY-MM-DD"); // 周一日期
       const endDate = date.day(7).format("YYYY-MM-DD"); // 周日日期
@@ -660,6 +677,7 @@ export default {
       }
     },
     monthChange(date, dateString) {
+      this.$refs.load.isLoading = true;
       const startDate = date
         .month(date.month())
         .startOf("month")
@@ -705,6 +723,7 @@ export default {
       }
     },
     yearChange(e) {
+      this.$refs.load.isLoading = true;
       if (
         e._d.getFullYear().toString() >=
         this.$moment("2013-12-30").format("YYYY")
@@ -740,6 +759,7 @@ export default {
       }
     },
     subLeft() {
+      this.$refs.load.isLoading = true;
       let _max = "";
       if (this.dateType == 2) {
         _max = this.$weekDate("2013-12-30").start;
@@ -806,6 +826,7 @@ export default {
     },
     addRight() {
       if (this.canAdd) {
+        this.$refs.load.isLoading = true;
         let _max = "";
         if (this.dateType == 2) {
           _max = this.$weekDate().start;
@@ -951,24 +972,31 @@ export default {
       }
       console.log(this.brokenLineData);
       this.isFirst = false;
+      this.$refs.load.isLoading = false;
     },
     showCompete1() {
       this.show1 = true;
       this.show2 = false;
       this.show3 = false;
       this.showYear = false;
+      this.publishList1 = [];
+      this.publishList1 = this.list;
     },
     showCompete2() {
       this.show1 = false;
       this.show2 = true;
       this.show3 = false;
       this.showYear = false;
+      this.publishList2 = [];
+      this.publishList2 = this.list;
     },
     showCompete3() {
       this.show1 = false;
       this.show2 = false;
       this.show3 = true;
       this.showYear = false;
+      this.publishList3 = [];
+      this.publishList3 = this.list;
     },
     onSearch1() {
       console.log(this.inputVal1);
@@ -1081,6 +1109,7 @@ export default {
       }
     },
     publisherChange() {
+      this.$refs.load.isLoading = true;
       this.cycle = this.$weekDate().weekth;
       this.oneDay = this.$weekDate().start.replace(/-/g, "");
       this.chooseWeek = this.$weekDate().start;

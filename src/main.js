@@ -25,6 +25,9 @@ import VueCookies from 'vue-cookies'
 // 复制粘贴
 import VueClipboard from 'vue-clipboard2'
 
+import { ConfigProvider } from 'ant-design-vue';//引用
+Vue.component(ConfigProvider.name, ConfigProvider);
+
 // moment插件
 import moment from 'moment';
 moment.locale('zh-cn');
