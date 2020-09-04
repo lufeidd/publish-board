@@ -8,6 +8,7 @@
         </div>
         <div class="float-left">
           <div class="main-container" v-if="pagePower">
+            <a-affix :offset-top="36">
             <div class="model-container">
               <div class="model-bg clearfix">
                 <div class="float-left"></div>
@@ -66,6 +67,7 @@
                 </div>
               </div>
             </div>
+            </a-affix>
             <!-- 列表 -->
             <div class="model-container">
               <div class="model-bg" style="padding-bottom:50px;">

@@ -8,6 +8,7 @@
         </div>
         <div class="float-left">
           <div class="main-container" v-if="pagePower">
+            <a-affix :offset-top="36">
             <div class="model-container">
               <div class="model-bg clearfix">
                 <div class="float-left"></div>
@@ -66,6 +67,7 @@
                 </div>
               </div>
             </div>
+            </a-affix>
             <!-- 数据对比 -->
             <div class="model-container">
               <div class="model-bg">
@@ -163,7 +165,7 @@
                         <span class="value float-right" v-else>--</span>
                       </div>
                       <div class="clearfix" style="line-height:normal;">
-                        <span class="name float-left">竞社1</span>
+                        <span class="name float-left one">竞社1</span>
                         <span
                           class="value float-right"
                           v-if="chooseInfo1.sale_total"
@@ -171,7 +173,7 @@
                         <span class="value float-right" v-else>--</span>
                       </div>
                       <div class="clearfix" style="line-height:normal;">
-                        <span class="name float-left">竞社2</span>
+                        <span class="name float-left two">竞社2</span>
                         <span
                           class="value float-right"
                           v-if="chooseInfo2.sale_total"
@@ -179,7 +181,7 @@
                         <span class="value float-right" v-else>--</span>
                       </div>
                       <div class="clearfix" style="line-height:normal;">
-                        <span class="name float-left">竞社3</span>
+                        <span class="name float-left three">竞社3</span>
                         <span
                           class="value float-right"
                           v-if="chooseInfo3.sale_total"
@@ -205,7 +207,7 @@
                         <span class="value float-right" v-else>--</span>
                       </div>
                       <div class="clearfix" style="line-height:normal;">
-                        <span class="name float-left">竞社1</span>
+                        <span class="name float-left one">竞社1</span>
                         <span
                           class="value float-right"
                           v-if="chooseInfo1.sale_rank"
@@ -213,7 +215,7 @@
                         <span class="value float-right" v-else>--</span>
                       </div>
                       <div class="clearfix" style="line-height:normal;">
-                        <span class="name float-left">竞社2</span>
+                        <span class="name float-left two">竞社2</span>
                         <span
                           class="value float-right"
                           v-if="chooseInfo2.sale_rank"
@@ -221,7 +223,7 @@
                         <span class="value float-right" v-else>--</span>
                       </div>
                       <div class="clearfix" style="line-height:normal;">
-                        <span class="name float-left">竞社3</span>
+                        <span class="name float-left three">竞社3</span>
                         <span
                           class="value float-right"
                           v-if="chooseInfo3.sale_rank"
@@ -247,7 +249,7 @@
                         <span class="value float-right" v-else>--</span>
                       </div>
                       <div class="clearfix" style="line-height:normal;">
-                        <span class="name float-left">竞社1</span>
+                        <span class="name float-left one">竞社1</span>
                         <span
                           class="value float-right"
                           v-if="chooseInfo1.market_share"
@@ -255,7 +257,7 @@
                         <span class="value float-right" v-else>--</span>
                       </div>
                       <div class="clearfix" style="line-height:normal;">
-                        <span class="name float-left">竞社2</span>
+                        <span class="name float-left two">竞社2</span>
                         <span
                           class="value float-right"
                           v-if="chooseInfo2.market_share"
@@ -263,7 +265,7 @@
                         <span class="value float-right" v-else>--</span>
                       </div>
                       <div class="clearfix" style="line-height:normal;">
-                        <span class="name float-left">竞社3</span>
+                        <span class="name float-left three">竞社3</span>
                         <span
                           class="value float-right"
                           v-if="chooseInfo3.market_share"
@@ -289,7 +291,7 @@
                         <span class="value float-right" v-else>--</span>
                       </div>
                       <div class="clearfix" style="line-height:normal;">
-                        <span class="name float-left">竞社1</span>
+                        <span class="name float-left one">竞社1</span>
                         <span
                           class="value float-right"
                           v-if="chooseInfo1.cate_count"
@@ -297,7 +299,7 @@
                         <span class="value float-right" v-else>--</span>
                       </div>
                       <div class="clearfix" style="line-height:normal;">
-                        <span class="name float-left">竞社2</span>
+                        <span class="name float-left two">竞社2</span>
                         <span
                           class="value float-right"
                           v-if="chooseInfo2.cate_count"
@@ -305,7 +307,7 @@
                         <span class="value float-right" v-else>--</span>
                       </div>
                       <div class="clearfix" style="line-height:normal;">
-                        <span class="name float-left">竞社3</span>
+                        <span class="name float-left three">竞社3</span>
                         <span
                           class="value float-right"
                           v-if="chooseInfo3.cate_count"
@@ -942,6 +944,7 @@ export default {
         .shape("circle");
 
       this.changeChart.render();
+      this.$setSlideHeight();
     },
     lineArr() {
       let _length = 0,

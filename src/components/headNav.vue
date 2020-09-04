@@ -318,8 +318,12 @@ export default {
           this.publishInfo = value;
         }
       });
-      if (this.publishInfo.organization_id == 0)
+      if (this.publishInfo.organization_id == 0) {
         this.publishInfo = this.allPublishList[0];
+      }
+      if (this.$route.name == "index") {
+        this.$emit("initPage");
+      }
     } else {
       this.getData();
     }
@@ -432,9 +436,9 @@ export default {
         this.accountInfo = res.data;
         this.allPublishList = res.data.extra;
         this.publishList = res.data.extra;
-        console.log(this.accountInfo.type);
+        // console.log(this.accountInfo.type);
         if (this.allPublishList.length == 0 && this.accountInfo.type !== 1) {
-          console.log(123456);
+          // console.log(123456);
           this.$router.push({ name: "noorganize" });
         }
         let a = 0;
@@ -450,12 +454,20 @@ export default {
             this.publishInfo = value;
           }
         });
-        if (this.publishInfo.organization_id == 0)
+        if (this.publishInfo.organization_id == 0) {
           this.publishInfo = this.allPublishList[0];
+        }
+        if (this.$route.name == "index") {
+          this.$emit("initPage");
+        }
         localStorage.setItem("headFirst", 1);
         localStorage.setItem("headInfo", JSON.stringify(res.data));
       } else {
-        this.globalTip(1, res.message);
+        if(this.$systemCode.test(res.code)){
+          this.globalTip(1, "系统错误");
+        }else{
+          this.globalTip(1, res.message);
+        }
       }
     }
   }

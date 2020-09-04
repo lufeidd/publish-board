@@ -136,6 +136,15 @@
         }
         & .name{
           font-size: $fontSize - 2;
+          &.one{
+            color: #5FD9A9;
+          }
+          &.two{
+            color: #5B6E8E;
+          }
+          &.three{
+            color: #F0B830;
+          }
         }
         & .value{
           font-size: $fontSize + 2;

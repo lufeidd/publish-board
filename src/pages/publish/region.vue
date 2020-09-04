@@ -8,6 +8,7 @@
         </div>
         <div class="float-right">
           <div class="main-container" v-if="pagePower">
+            <a-affix :offset-top="36">
             <div class="model-container">
               <div class="model-bg clearfix" style="padding:7px 15px;">
                 <div class="float-left"></div>
@@ -66,6 +67,7 @@
                 </div>
               </div>
             </div>
+            </a-affix>
             <!-- 地域简况 -->
             <div class="model-container">
               <div class="model-bg">

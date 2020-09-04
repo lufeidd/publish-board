@@ -154,16 +154,16 @@ export default {
       this.inviteCode = this.$route.query.inviteCode;
       this.translateInvite();
     }
-    document.onkeydown = function(event) {
-      var e = event || window.event || arguments.callee.caller.arguments[0];
-      if (e && e.keyCode == 13) {
-        if (_this.showLogin) {
-          _this.join();
-        } else {
-          _this.test();
-        }
-      }
-    };
+    // document.onkeydown = function(event) {
+    //   var e = event || window.event || arguments.callee.caller.arguments[0];
+    //   if (e && e.keyCode == 13) {
+    //     if (_this.showLogin) {
+    //       _this.join();
+    //     } else {
+    //       _this.test();
+    //     }
+    //   }
+    // };
   },
   watch: {
     code(val) {

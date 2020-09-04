@@ -600,7 +600,7 @@ export default {
       this.barChange1.data(this.barData1.reverse());
       this.barChange1.scale({
         value: {
-          max: 100,
+          max: 110,
           min: 0,
           alias: " "
         }
@@ -657,7 +657,7 @@ export default {
       this.barChange2.data(this.barData2.reverse());
       this.barChange2.scale({
         value: {
-          max: 100,
+          max: 150,
           min: 0,
           alias: " "
         }

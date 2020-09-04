@@ -642,29 +642,29 @@ export default {
         this.account = res.data;
         this.cowData = this.cowData.map((value, key) => {
           if (value.type == "滞销") {
-            value.sold = res.data.goods_num.num_short;
+            value.sold = res.data.goods_num.num_short?res.data.goods_num.num_short:0;
           } else if (value.type == "一般") {
-            value.sold = res.data.goods_num.num_normal;
+            value.sold = res.data.goods_num.num_normal?res.data.goods_num.num_normal:0;
           } else if (value.type == "常销") {
-            value.sold = res.data.goods_num.num_long;
+            value.sold = res.data.goods_num.num_long?res.data.goods_num.num_long:0;
           } else if (value.type == "畅销") {
-            value.sold = res.data.goods_num.num_hot;
+            value.sold = res.data.goods_num.num_hot?res.data.goods_num.num_hot:0;
           } else if (value.type == "新品") {
-            value.sold = res.data.goods_num.num_new;
+            value.sold = res.data.goods_num.num_new?res.data.goods_num.num_new:0;
           }
           return value;
         });
         this.radarData = this.radarData.map((value, key) => {
           if (value.item == "综合评分") {
-            value.本社 = res.data.score.score_all;
+            value.本社 = res.data.score.score_all?res.data.score.score_all:0;
           } else if (value.item == "销售评分") {
-            value.本社 = res.data.score.score_sale;
+            value.本社 = res.data.score.score_sale?res.data.score.score_sale:0;
           } else if (value.item == "读者评分") {
-            value.本社 = res.data.score.score_reader;
+            value.本社 = res.data.score.score_reader?res.data.score.score_reader:0;
           } else if (value.item == "热点评分") {
-            value.本社 = res.data.score.score_hot;
+            value.本社 = res.data.score.score_hot?res.data.score.score_hot:0;
           } else if (value.item == "生命周期评分") {
-            value.本社 = res.data.score.score_life;
+            value.本社 = res.data.score.score_life?res.data.score.score_life:0;
           }
           return value;
         });
@@ -679,7 +679,7 @@ export default {
           setTimeout(() => {
             this.initData();
             this.initRadarData();
-          }, 1000);
+          }, 500);
         } else {
           setTimeout(() => {
             this.cowChart.changeData(this.cowData);
@@ -692,7 +692,7 @@ export default {
               value: "score" // value字段
             });
             this.radarChart.changeData(this.radardv.rows);
-          }, 1000);
+          }, 500);
         }
         this.radarFirst = false;
       } else {
@@ -766,7 +766,7 @@ export default {
             this.barFirst = false;
             this.initMap();
             console.log(666);
-          }, 1000);
+          }, 500);
         }
         this.$refs.load.isLoading = false;
       } else {
@@ -869,12 +869,12 @@ export default {
             setTimeout(() => {
               this.initLineData();
               console.log("选");
-            }, 1000);
+            }, 500);
           } else {
             setTimeout(() => {
               this.changeChart.changeData(this.brokenLineData);
               console.log("不选");
-            }, 1000);
+            }, 500);
           }
           this.$setSlideHeight();
           this.isFirst = false;

@@ -36,7 +36,7 @@ vue-clipboard2 复制粘贴
 14、机构管理
 15、平台管理
 
-## install dependencies
+# install dependencies
 npm install
 
 # serve with hot reload at localhost:8080

@@ -25,9 +25,9 @@
                     >
                       <div slot="prefix">
                         <svg class="icon" aria-hidden="true">
-                            <use xlink:href="#icon-search" />
-                          </svg>
-                          <span class="rowLine">|</span>
+                          <use xlink:href="#icon-search" />
+                        </svg>
+                        <span class="rowLine">|</span>
                       </div>
                     </a-input-search>
                   </div>
@@ -66,11 +66,13 @@
                           <span class="main-font">{{item.mobile}}</span>
                         </td>
                         <td style="text-align:right;">
-                          <span
-                            class="click-font"
-                            @click="showModal(item,index)"
+                          <div
                             v-if="item.count == 1"
-                          >{{item.organization_name}}</span>
+                            class="click-font one-text"
+                            @click="showModal(item,index)"
+                            :title="item.organization_name"
+                            style="width:150px;"
+                          >{{item.organization_name}}</div>
                           <span
                             class="click-font"
                             @click="showModal(item,index)"
@@ -121,7 +123,12 @@
       </div>
     </div>
     <!-- 已加入机构 -->
-    <a-modal v-model="alreadyJoin" width="600px" :title="userInfo.account+'已加入的机构'" on-ok="handleOk">
+    <a-modal
+      v-model="alreadyJoin"
+      width="600px"
+      :title="userInfo.account+'已加入的机构'"
+      on-ok="handleOk"
+    >
       <template slot="footer">
         <div class="clearfix">
           <div
@@ -166,12 +173,48 @@
         <div class="option">
           <span class="lable">头像</span>
           <div class="normal">
-            <img src="../../assets/user1.png" alt width="60px" height="60px" v-if="userInfo.pic == 1" />
-            <img src="../../assets/user2.png" alt width="60px" height="60px" v-if="userInfo.pic == 2" />
-            <img src="../../assets/user3.png" alt width="60px" height="60px" v-if="userInfo.pic == 3" />
-            <img src="../../assets/user4.png" alt width="60px" height="60px" v-if="userInfo.pic == 4" />
-            <img src="../../assets/user5.png" alt width="60px" height="60px" v-if="userInfo.pic == 5" />
-            <img src="../../assets/user6.png" alt width="60px" height="60px" v-if="userInfo.pic == 6" />
+            <img
+              src="../../assets/user1.png"
+              alt
+              width="60px"
+              height="60px"
+              v-if="userInfo.pic == 1"
+            />
+            <img
+              src="../../assets/user2.png"
+              alt
+              width="60px"
+              height="60px"
+              v-if="userInfo.pic == 2"
+            />
+            <img
+              src="../../assets/user3.png"
+              alt
+              width="60px"
+              height="60px"
+              v-if="userInfo.pic == 3"
+            />
+            <img
+              src="../../assets/user4.png"
+              alt
+              width="60px"
+              height="60px"
+              v-if="userInfo.pic == 4"
+            />
+            <img
+              src="../../assets/user5.png"
+              alt
+              width="60px"
+              height="60px"
+              v-if="userInfo.pic == 5"
+            />
+            <img
+              src="../../assets/user6.png"
+              alt
+              width="60px"
+              height="60px"
+              v-if="userInfo.pic == 6"
+            />
           </div>
         </div>
         <div class="option">
@@ -217,7 +260,7 @@ import {
 export default {
   data() {
     return {
-      powerType:2,
+      powerType: 2,
       adminCount: 0,
       readOrganize: false,
       loading: false,
@@ -247,7 +290,7 @@ export default {
   mounted() {
     this.powerType = this.$refs.head.accountInfo.type;
     this.adminCount = this.$refs.head.accountInfo.user_total;
-    if(this.powerType == 1){
+    if (this.powerType == 1) {
       this.getData();
     }
     this.$setSlideHeight();
@@ -352,9 +395,9 @@ export default {
       } else {
         if (res.code == 1008) {
           this.$router.push({ name: "loginindex" });
-        }else if(this.$systemCode.test(res.code)){
+        } else if (this.$systemCode.test(res.code)) {
           this.$refs.head.globalTip(1, "系统错误");
-        }else{
+        } else {
           this.$refs.head.globalTip(1, res.message);
         }
       }
@@ -372,9 +415,9 @@ export default {
       } else {
         if (res.code == 1008) {
           this.$router.push({ name: "loginindex" });
-        }else if(this.$systemCode.test(res.code)){
+        } else if (this.$systemCode.test(res.code)) {
           this.$refs.head.globalTip(1, "系统错误");
-        }else{
+        } else {
           this.$refs.head.globalTip(1, res.message);
         }
       }
@@ -396,9 +439,9 @@ export default {
       } else {
         if (res.code == 1008) {
           this.$router.push({ name: "loginindex" });
-        }else if(this.$systemCode.test(res.code)){
+        } else if (this.$systemCode.test(res.code)) {
           this.$refs.head.globalTip(1, "系统错误");
-        }else{
+        } else {
           this.$refs.head.globalTip(1, res.message);
         }
       }
@@ -417,9 +460,9 @@ export default {
       } else {
         if (res.code == 1008) {
           this.$router.push({ name: "loginindex" });
-        }else if(this.$systemCode.test(res.code)){
+        } else if (this.$systemCode.test(res.code)) {
           this.$refs.head.globalTip(1, "系统错误");
-        }else{
+        } else {
           this.$refs.head.globalTip(1, res.message);
         }
       }

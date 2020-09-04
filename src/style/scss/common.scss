@@ -245,6 +245,9 @@ img{
         & .author{
           @include twoColtextOverflow;
         }
+        & .one-text{
+          @include textOverflow;
+        }
         & .tag {
           display: inline-block;
           padding: 2px 10px;
@@ -483,13 +486,13 @@ img{
 // tab标签页
 .ant-tabs-nav{
   & .ant-tabs-tab{
-    margin: 0;
+    margin: 0 !important;
     &:hover{
-      color: $themeColor80;
+      color: $themeColor80 !important;
     }
   }
   & .ant-tabs-tab-disabled:hover{
-    color: rgba(0, 0, 0, .25);
+    color: rgba(54, 26, 26, 0.25) !important;
   }
   & .ant-tabs-tab-active{
     color: $themeColor80 !important;

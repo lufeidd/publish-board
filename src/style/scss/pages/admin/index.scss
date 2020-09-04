@@ -110,6 +110,8 @@
   & .organize-list{
     padding: 0 15px;
     padding-top: 10px;
+    height: 430px;
+    overflow-y: auto;
     & .select{
       padding: 20px 10px;
       cursor: pointer;

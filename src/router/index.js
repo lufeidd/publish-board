@@ -10,6 +10,7 @@ import detail from '@/pages/publish/detail'
 import region from '@/pages/publish/region'
 import publishAuthors from '@/pages/publish/authors'
 import publishReader from '@/pages/publish/reader'
+import newProduct from '@/pages/publish/newproduct'
 // 竞争
 import publishMonitor from '@/pages/compete/publishmonitor'
 import goodsMonitor from '@/pages/compete/goodsmonitor'
@@ -111,6 +112,14 @@ export default new Router({
       path: '/publish/reader',
       name: 'publishreader',
       component: publishReader,
+      meta: {
+        requireAuth: true // 需要登录才能进入的页面可以增加一个meta属性
+      }
+    },
+    {
+      path: '/publish/newproduct',
+      name: 'newproduct',
+      component: newProduct,
       meta: {
         requireAuth: true // 需要登录才能进入的页面可以增加一个meta属性
       }

@@ -1,6 +1,6 @@
 <template>
   <div id="indexPage">
-    <HeadNav type="index" ref="head" @publisherChange="publisherChange()"></HeadNav>
+    <HeadNav type="index" ref="head" @publisherChange="publisherChange()" @initPage="initPage()"></HeadNav>
     <div class="wd-1220">
       <!-- 数据简报 -->
       <div class="data-paper model-container">
@@ -611,11 +611,11 @@ export default {
   },
   mounted() {
     // console.log('刚进来',this.$refs.head.publishInfo.organization_id)
-    setTimeout(() => {
-      this.getData();
-      this.getRankData();
-      this.getCompeteData();
-    }, 500);
+    // setTimeout(() => {
+    //   this.getData();
+    //   this.getRankData();
+    //   this.getCompeteData();
+    // }, 500);
   },
   updated() {
     this.$refs.load.isLoading = false;
@@ -979,6 +979,11 @@ export default {
 
         this.ringChange[i].render();
       }
+    },
+    initPage(){
+      this.getData();
+      this.getRankData();
+      this.getCompeteData();
     },
     publisherChange() {
       // console.log('hahah')

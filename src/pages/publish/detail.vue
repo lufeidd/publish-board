@@ -1879,7 +1879,7 @@ export default {
       chart.data(this.barData1.reverse());
       chart.scale({
         value: {
-          max: 100,
+          max: 120,
           min: 0,
           alias: " "
         }
@@ -1936,7 +1936,7 @@ export default {
       chart.data(this.barData2.reverse());
       chart.scale({
         value: {
-          max: 100,
+          max: 150,
           min: 0,
           alias: " "
         }

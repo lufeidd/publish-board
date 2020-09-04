@@ -1,6 +1,6 @@
 <template>
   <div id="slideNav">
-    <div :class="['taopu','index'].includes(sort)?'top-container other':'top-container'">
+    <div :class="['core','region','publishmonitor','goodsmonitor','market'].includes(sort)?'top-container other':'top-container'">
       <div class="slide-desc" v-if="type == 'publish'">
         <img src="../assets/publish.png" alt width="50px" height="50px" />
         <div class="text">本社数据</div>
@@ -104,6 +104,7 @@
   width: 130px;
   margin-right: 10px;
   box-sizing: border-box;
+  margin-top: 10px;
   & img{
     background-color: transparent;
   }
@@ -118,7 +119,7 @@
       text-align: center;
       padding: 30px 0;
       border-bottom: 1px solid $themeColor5;
-      margin-top: 10px;
+      // margin-top: 10px;
       & .text {
         font-size: $fontSize + 2;
         color: $themeColor100;
