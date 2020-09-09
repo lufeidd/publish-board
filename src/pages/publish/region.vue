@@ -1,6 +1,6 @@
 <template>
   <div id="regionPage" @click="showYear = false">
-    <HeadNav type="publish" ref="head" @publisherChange="publisherChange()"></HeadNav>
+    <HeadNav type="publish" ref="head" :show="1" @publisherChange="publisherChange()"></HeadNav>
     <div class="wd-1220">
       <div class="clearfix">
         <div class="float-left">
@@ -196,7 +196,7 @@
         </div>
       </div>
     </div>
-    <Loading ref="load"></Loading>
+    <Loading ref="load" :show="1"></Loading>
   </div>
 </template>
 <style lang="scss" scoped>
@@ -297,14 +297,10 @@ export default {
         this.$refs.load.isLoading = false;
       } else {
         this.$refs.load.isLoading = false;
-        if (res.code == 1008) {
-          this.$router.push({ name: "loginindex" });
-        } else if (res.code == 1009) {
+        if (res.code == 1009) {
           this.pagePower = false;
-        }else if(this.$systemCode.test(res.code)){
-          this.$refs.head.globalTip(1, "系统错误");
         } else {
-          this.$refs.head.globalTip(1, res.message);
+          this.$refs.head.globalTip(1, res.message,res.code);
         }
       }
     },

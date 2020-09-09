@@ -1,6 +1,6 @@
 <template>
   <div id="indexPage">
-    <HeadNav type="index" ref="head" @publisherChange="publisherChange()" @initPage="initPage()"></HeadNav>
+    <HeadNav type="index" :show="1" ref="head" @publisherChange="publisherChange()" @initPage="initPage()"></HeadNav>
     <div class="wd-1220">
       <!-- 数据简报 -->
       <div class="data-paper model-container">
@@ -485,7 +485,7 @@
         </div>
       </div>
     </div>
-    <Loading ref="load"></Loading>
+    <Loading ref="load" :show="1"></Loading>
   </div>
 </template>
 <style scoped lang="scss" src="@/style/scss/pages/index.scss"></style>
@@ -499,7 +499,7 @@ import { Chart, registerShape } from "@antv/g2";
 export default {
   data() {
     return {
-      show: true,
+      show: false,
       changeChart: null,
       data: [
         // { date: "06-01", value: 300 },
@@ -675,14 +675,10 @@ export default {
           );
         }
       } else {
-        if (res.code == 1008) {
-          this.$router.push({ name: "loginindex" });
-        } else if (res.code == 1009) {
+        if (res.code == 1009) {
           this.dataNewPower = false;
-        } else if (this.$systemCode.test(res.code)) {
-          this.$refs.head.globalTip(1, "系统错误");
         } else {
-          this.$refs.head.globalTip(1, res.message);
+          this.$refs.head.globalTip(1, res.message,res.code);
         }
       }
     },
@@ -705,14 +701,10 @@ export default {
         this.newGoodsRank = res.data.rank_new;
         this.publishTopList = res.data.publisher_ranks;
       } else {
-        if (res.code == 1008) {
-          this.$router.push({ name: "loginindex" });
-        } else if (res.code == 1009) {
+        if (res.code == 1009) {
           this.dataRankPower = false;
-        } else if (this.$systemCode.test(res.code)) {
-          this.$refs.head.globalTip(1, "系统错误");
         } else {
-          this.$refs.head.globalTip(1, res.message);
+          this.$refs.head.globalTip(1, res.message,res.code);
         }
       }
     },
@@ -758,14 +750,10 @@ export default {
           this.ringFirst = true;
         }
       } else {
-        if (res.code == 1008) {
-          this.$router.push({ name: "loginindex" });
-        } else if (res.code == 1009) {
+        if (res.code == 1009) {
           this.competePower = false;
-        } else if (this.$systemCode.test(res.code)) {
-          this.$refs.head.globalTip(1, "系统错误");
         } else {
-          this.$refs.head.globalTip(1, res.message);
+          this.$refs.head.globalTip(1, res.message,res.code);
         }
       }
     },
@@ -868,19 +856,14 @@ export default {
             val == _date7
           ) {
             return {
-              fillOpacity: 0.4,
+              fillOpacity: 1,
               lineWidth: 0,
-              stroke: "#636363"
-              // lineDash: [3, 2]
+              stroke: "#437AE7",
+              fill: "#FF9900"
             };
           }
-          return {
-            fillOpacity: 1,
-            lineWidth: 0,
-            stroke: "#437AE7",
-            lineDash: [3, 2]
-          };
-        });
+        })
+        .size(20);
 
       this.changeChart.render();
     },
@@ -980,7 +963,7 @@ export default {
         this.ringChange[i].render();
       }
     },
-    initPage(){
+    initPage() {
       this.getData();
       this.getRankData();
       this.getCompeteData();

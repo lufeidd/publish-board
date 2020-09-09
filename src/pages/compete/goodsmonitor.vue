@@ -1,6 +1,6 @@
 <template>
   <div id="competePage" @click="showYear = false">
-    <HeadNav type="compete" ref="head" @publisherChange="publisherChange()"></HeadNav>
+    <HeadNav type="compete" ref="head" :show="1" @publisherChange="publisherChange()"></HeadNav>
     <div class="wd-1220">
       <div class="clearfix">
         <div class="float-left">
@@ -149,7 +149,7 @@
         </div>
       </div>
     </div>
-    <Loading ref="load"></Loading>
+    <Loading ref="load" :show="1"></Loading>
   </div>
 </template>
 <style scoped lang="scss" src="@/style/scss/pages/compete/set.scss"></style>
@@ -201,14 +201,10 @@ export default {
         this.$refs.load.isLoading = false;
       } else {
         this.$refs.load.isLoading = false;
-        if (res.code == 1008) {
-          this.$router.push({ name: "loginindex" });
-        }else if (res.code == 1009) {
+        if (res.code == 1009) {
           this.pagePower = false;
-        }else if(this.$systemCode.test(res.code)){
-          this.$refs.head.globalTip(1, "系统错误");
-        }else{
-          this.$refs.head.globalTip(1, res.message);
+        } else{
+          this.$refs.head.globalTip(1, res.message,res.code);
         }
       }
     },
@@ -237,7 +233,7 @@ export default {
       this.cycle = dateString.split("-")[0] + _weekth;
       this.oneDay = startDate.replace(/-/g, "");
       this.getData();
-      console.log(666, this.cycle);
+      // console.log(666, this.cycle);
     },
     monthChange(date, dateString) {
       this.$refs.load.isLoading = true;
@@ -253,7 +249,7 @@ export default {
       if (_month < 10) {
         _month = "0" + _month;
       }
-      console.log(_month);
+      // console.log(_month);
       if (
         startDate <
         this.$moment("2013-12-30")
@@ -270,7 +266,7 @@ export default {
       this.cycle = dateString.split("-")[0] + _month;
       this.oneDay = startDate.replace(/-/g, "");
       this.getData();
-      console.log(startDate, endDate);
+      // console.log(startDate, endDate);
     },
     yearChange(e) {
       this.$refs.load.isLoading = true;

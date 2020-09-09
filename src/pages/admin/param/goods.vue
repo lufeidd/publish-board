@@ -1,6 +1,6 @@
 <template>
   <div id="paramPage" @click="showYear = false;showSearch = false">
-    <HeadNav type="admin" ref="head"></HeadNav>
+    <HeadNav type="admin" ref="head" :show="1"></HeadNav>
     <div class="wd-1220">
       <div class="clearfix">
         <div class="float-left">
@@ -9,10 +9,7 @@
         <div class="float-left">
           <div class="main-container">
             <div class="model-container" v-if="powerType == 1">
-              <div
-                class="model-bg"
-                style="min-height:600px;padding-bottom:75px;"
-              >
+              <div class="model-bg" style="min-height:600px;padding-bottom:75px;">
                 <div class="section-title clearfix">
                   <span class="float-left">品种系数配置</span>
                   <span class="float-right click-font" @click="addParamSet">新增系数配置</span>
@@ -118,12 +115,15 @@
               </div>
             </div>
             <div class="main-container" v-else>
-            <div class="model-container">
-              <div class="model-bg" style="min-height:650px;padding-bottom:75px;position:relative">
-                <PageNoPower></PageNoPower>
+              <div class="model-container">
+                <div
+                  class="model-bg"
+                  style="min-height:650px;padding-bottom:75px;position:relative"
+                >
+                  <PageNoPower></PageNoPower>
+                </div>
               </div>
             </div>
-          </div>
           </div>
         </div>
       </div>
@@ -160,8 +160,11 @@
                 </a-select-option>
               </template>
             </a-auto-complete>
-            <div style="text-align:center;position:absolute;z-index:99;left:50%;margin-left:-10px;" v-if="addLoading">
-              <a-spin tip=""></a-spin>
+            <div
+              style="text-align:center;position:absolute;z-index:99;left:50%;margin-left:-10px;"
+              v-if="addLoading"
+            >
+              <a-spin tip></a-spin>
             </div>
           </div>
           <div class="normal" v-else>{{addInfo.goods_name}}</div>
@@ -293,16 +296,16 @@ export default {
       defaultRatio: 0,
       showSearch: false,
       searchLoading: false,
-      addLoading:false,
-      goodsName:""
+      addLoading: false,
+      goodsName: ""
     };
   },
   mounted() {
     this.powerType = this.$refs.head.accountInfo.type;
     this.defaultRatio = this.$refs.head.accountInfo.default_ratio.publisher;
-    if(this.powerType == 1){
+    if (this.powerType == 1) {
       this.getData();
-    // this.getCurrenData();
+      // this.getCurrenData();
     }
     this.$setSlideHeight();
   },
@@ -325,13 +328,7 @@ export default {
         this.list = res.data.lists;
         this.totalSize = res.data.count;
       } else {
-        if (res.code == 1008) {
-          this.$router.push({ name: "loginindex" });
-        }else if(this.$systemCode.test(res.code)){
-          this.$refs.head.globalTip(1, "系统错误");
-        }else{
-          this.$refs.head.globalTip(1, res.message);
-        }
+        this.$refs.head.globalTip(1, res.message, res.code);
       }
     },
     // 获取日志列表
@@ -346,13 +343,7 @@ export default {
         this.recordInfo.recordList = res.data.lists;
         this.readRecord = true;
       } else {
-        if (res.code == 1008) {
-          this.$router.push({ name: "loginindex" });
-        }else if(this.$systemCode.test(res.code)){
-          this.$refs.head.globalTip(1, "系统错误");
-        }else{
-          this.$refs.head.globalTip(1, res.message);
-        }
+        this.$refs.head.globalTip(1, res.message, res.code);
       }
     },
     async getCurrenData() {
@@ -364,13 +355,7 @@ export default {
       if (res.code == 0) {
         this.addInfo.currenRatio = res.data.current_ratio;
       } else {
-        if (res.code == 1008) {
-          this.$router.push({ name: "loginindex" });
-        }else if(this.$systemCode.test(res.code)){
-          this.$refs.head.globalTip(1, "系统错误");
-        }else{
-          this.$refs.head.globalTip(1, res.message);
-        }
+        this.$refs.head.globalTip(1, res.message, res.code);
       }
     },
     // 新增系数
@@ -384,19 +369,13 @@ export default {
       };
       let res = await RATIO_ADD(data);
       if (res.code == 0) {
-        this.$refs.head.globalTip(2, "新增系数成功");
+        this.$refs.head.globalTip(2, "新增系数成功", 0);
         // this.page = 1;
         this.getData();
         this.addParam = false;
         this.dataSource = [];
       } else {
-        if (res.code == 1008) {
-          this.$router.push({ name: "loginindex" });
-        }else if(this.$systemCode.test(res.code)){
-          this.$refs.head.globalTip(1, "系统错误");
-        }else{
-          this.$refs.head.globalTip(1, res.message);
-        }
+        this.$refs.head.globalTip(1, res.message, res.code);
       }
     },
     // 商品列表获取
@@ -426,13 +405,7 @@ export default {
       } else {
         this.searchLoading = false;
         this.addLoading = false;
-        if (res.code == 1008) {
-          this.$router.push({ name: "loginindex" });
-        }else if(this.$systemCode.test(res.code)){
-          this.$refs.head.globalTip(1, "系统错误");
-        }else{
-          this.$refs.head.globalTip(1, res.message);
-        }
+        this.$refs.head.globalTip(1, res.message, res.code);
       }
     },
     // 修改系数
@@ -444,17 +417,11 @@ export default {
       };
       let res = await RATIO_EDIT(data);
       if (res.code == 0) {
-        this.$refs.head.globalTip(2, "修改成功");
+        this.$refs.head.globalTip(2, "修改成功", 0);
         this.getData();
         this.addParam = false;
       } else {
-        if (res.code == 1008) {
-          this.$router.push({ name: "loginindex" });
-        }else if(this.$systemCode.test(res.code)){
-          this.$refs.head.globalTip(1, "系统错误");
-        }else{
-          this.$refs.head.globalTip(1, res.message);
-        }
+        this.$refs.head.globalTip(1, res.message, res.code);
       }
     },
     addParamSet() {
@@ -502,17 +469,17 @@ export default {
       let _reg = /^\d+(\.\d+)?$/;
       if (this.addInfo.goods_id > 0) {
       } else {
-        this.$refs.head.globalTip(1, "请选择关联品种");
+        this.$refs.head.globalTip(1, "请选择关联品种", 0);
         return;
       }
       if (_reg.test(this.addInfo.ratio)) {
       } else {
-        this.$refs.head.globalTip(1, "请填写正确的系数类型");
+        this.$refs.head.globalTip(1, "请填写正确的系数类型", 0);
         return;
       }
       if (this.addInfo.year) {
       } else {
-        this.$refs.head.globalTip(1, "请选择生效年份");
+        this.$refs.head.globalTip(1, "请选择生效年份", 0);
         return;
       }
       if (this.paramType == 1) {
@@ -556,7 +523,7 @@ export default {
       let _year = e._d.getFullYear();
       let _min = Number(this.$moment().format("YYYY"));
       if (_min >= _year) {
-        this.$refs.head.globalTip(1, "只允许选择未来的年份");
+        this.$refs.head.globalTip(1, "只允许选择未来的年份", 0);
       } else {
         this.addInfo.year = _year.toString();
       }

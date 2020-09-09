@@ -52,7 +52,7 @@ export default new Router({
   routes: [
     // 首页
     {
-      path: '/',
+      path: '/index',
       name: 'index',
       component: index,
       meta: {
@@ -181,7 +181,7 @@ export default new Router({
       component: register,
     },
     {
-      path: '/login/index',
+      path: '/',
       name: 'loginindex',
       component: loginIndex
     },

@@ -1,6 +1,6 @@
 <template>
   <div id="paramPage">
-    <HeadNav type="admin" ref="head"></HeadNav>
+    <HeadNav type="admin" ref="head" :show="1"></HeadNav>
     <div class="wd-1220">
       <div class="clearfix">
         <div class="float-left">

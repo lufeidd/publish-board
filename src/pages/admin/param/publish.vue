@@ -1,6 +1,6 @@
 <template>
   <div id="paramPage" @click="showYear = false;showSearch = false">
-    <HeadNav type="admin" ref="head"></HeadNav>
+    <HeadNav type="admin" ref="head" :show="1"></HeadNav>
     <div class="wd-1220">
       <div class="clearfix">
         <div class="float-left">
@@ -301,16 +301,16 @@ export default {
       showYear: false,
       defaultRatio: 0,
       showSearch: false,
-      searchLoading:false,
-      publisherName:""
+      searchLoading: false,
+      publisherName: ""
     };
   },
   mounted() {
     this.powerType = this.$refs.head.accountInfo.type;
     this.defaultRatio = this.$refs.head.accountInfo.default_ratio.publisher;
-    if(this.powerType == 1){
+    if (this.powerType == 1) {
       this.getData();
-    // this.getCurrenData();
+      // this.getCurrenData();
     }
     this.$setSlideHeight();
   },
@@ -333,13 +333,7 @@ export default {
         this.list = res.data.lists;
         this.totalSize = res.data.count;
       } else {
-        if (res.code == 1008) {
-          this.$router.push({ name: "loginindex" });
-        }else if(this.$systemCode.test(res.code)){
-          this.$refs.head.globalTip(1, "系统错误");
-        }else{
-          this.$refs.head.globalTip(1, res.message);
-        }
+        this.$refs.head.globalTip(1, res.message, res.code);
       }
     },
     // 获取日志列表
@@ -354,13 +348,7 @@ export default {
         this.recordInfo.recordList = res.data.lists;
         this.readRecord = true;
       } else {
-        if (res.code == 1008) {
-          this.$router.push({ name: "loginindex" });
-        }else if(this.$systemCode.test(res.code)){
-          this.$refs.head.globalTip(1, "系统错误");
-        }else{
-          this.$refs.head.globalTip(1, res.message);
-        }
+        this.$refs.head.globalTip(1, res.message, res.code);
       }
     },
     async getCurrenData() {
@@ -372,13 +360,7 @@ export default {
       if (res.code == 0) {
         this.addInfo.currenRatio = res.data.current_ratio;
       } else {
-        if (res.code == 1008) {
-          this.$router.push({ name: "loginindex" });
-        }else if(this.$systemCode.test(res.code)){
-          this.$refs.head.globalTip(1, "系统错误");
-        }else{
-          this.$refs.head.globalTip(1, res.message);
-        }
+        this.$refs.head.globalTip(1, res.message, res.code);
       }
     },
     // 新增系数
@@ -392,19 +374,13 @@ export default {
       };
       let res = await RATIO_ADD(data);
       if (res.code == 0) {
-        this.$refs.head.globalTip(2, "新增系数成功");
+        this.$refs.head.globalTip(2, "新增系数成功", 0);
         // this.page = 1;
         this.getData();
         this.addParam = false;
         this.dataSource = [];
       } else {
-        if (res.code == 1008) {
-          this.$router.push({ name: "loginindex" });
-        }else if(this.$systemCode.test(res.code)){
-          this.$refs.head.globalTip(1, "系统错误");
-        }else{
-          this.$refs.head.globalTip(1, res.message);
-        }
+        this.$refs.head.globalTip(1, res.message, res.code);
       }
     },
     // 出版社列表获取
@@ -420,7 +396,9 @@ export default {
           if (res.data.search == this.inputVal) {
             this.searchList = res.data.list;
           }
-          if(this.searchList.length == 0){this.showSearch = false}
+          if (this.searchList.length == 0) {
+            this.showSearch = false;
+          }
           this.searchLoading = false;
         } else {
           this.dataSource = res.data.list;
@@ -428,13 +406,7 @@ export default {
         console.log(this.searchLoading, this.searchList);
       } else {
         this.searchLoading = false;
-        if (res.code == 1008) {
-          this.$router.push({ name: "loginindex" });
-        }else if(this.$systemCode.test(res.code)){
-          this.$refs.head.globalTip(1, "系统错误");
-        }else{
-          this.$refs.head.globalTip(1, res.message);
-        }
+        this.$refs.head.globalTip(1, res.message, res.code);
       }
     },
     // 修改系数
@@ -446,17 +418,11 @@ export default {
       };
       let res = await RATIO_EDIT(data);
       if (res.code == 0) {
-        this.$refs.head.globalTip(2, "修改成功");
+        this.$refs.head.globalTip(2, "修改成功", 0);
         this.getData();
         this.addParam = false;
       } else {
-        if (res.code == 1008) {
-          this.$router.push({ name: "loginindex" });
-        }else if(this.$systemCode.test(res.code)){
-          this.$refs.head.globalTip(1, "系统错误");
-        }else{
-          this.$refs.head.globalTip(1, res.message);
-        }
+        this.$refs.head.globalTip(1, res.message, res.code);
       }
     },
     addParamSet() {
@@ -504,17 +470,17 @@ export default {
       let _reg = /^\d+(\.\d+)?$/;
       if (this.addInfo.publisher_id > 0) {
       } else {
-        this.$refs.head.globalTip(1, "请选择出版社");
+        this.$refs.head.globalTip(1, "请选择出版社", 0);
         return;
       }
       if (_reg.test(this.addInfo.ratio)) {
       } else {
-        this.$refs.head.globalTip(1, "请填写正确的系数类型");
+        this.$refs.head.globalTip(1, "请填写正确的系数类型", 0);
         return;
       }
       if (this.addInfo.year) {
       } else {
-        this.$refs.head.globalTip(1, "请选择生效年份");
+        this.$refs.head.globalTip(1, "请选择生效年份", 0);
         return;
       }
       if (this.paramType == 1) {
@@ -550,13 +516,13 @@ export default {
         }
       });
       this.getCurrenData();
-      console.log(666,value,this.dataSource);
+      console.log(666, value, this.dataSource);
     },
     yearChange(e) {
       let _year = e._d.getFullYear();
       let _min = Number(this.$moment().format("YYYY"));
       if (_min >= _year) {
-        this.$refs.head.globalTip(1, "只允许选择未来的年份");
+        this.$refs.head.globalTip(1, "只允许选择未来的年份", 0);
       } else {
         this.addInfo.year = _year.toString();
       }

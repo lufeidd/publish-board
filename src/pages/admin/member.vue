@@ -1,6 +1,6 @@
 <template>
   <div id="organizePage">
-    <HeadNav type="admin" ref="head"></HeadNav>
+    <HeadNav type="admin" ref="head" :show="1"></HeadNav>
     <div class="wd-1220">
       <div class="clearfix">
         <div class="float-left">
@@ -9,7 +9,11 @@
         <div class="float-left">
           <div class="main-container" v-if="powerType == 1">
             <div class="model-container">
-              <div class="model-bg" style="min-height:650px;padding-bottom:75px;" v-if="powerType == 1">
+              <div
+                class="model-bg"
+                style="min-height:650px;padding-bottom:75px;"
+                v-if="powerType == 1"
+              >
                 <div class="section-title clearfix">
                   <span class="float-left">{{organization_name}} 成员列表</span>
                   <span class="float-right click-font" @click="showModal">添加成员</span>
@@ -92,7 +96,11 @@
                   />
                 </div>
               </div>
-              <div class="model-bg" style="min-height:650px;padding-bottom:75px;position:relative" v-else>
+              <div
+                class="model-bg"
+                style="min-height:650px;padding-bottom:75px;position:relative"
+                v-else
+              >
                 <PageNoPower></PageNoPower>
               </div>
             </div>
@@ -142,7 +150,49 @@
           </a-auto-complete>
           <div class="content">
             <div class="choose-item" v-for="(item,index) in chooseList" :key="index">
-              <img :src="item.pic" alt width="20px" height="20px" />
+              <!-- <img :src="item.pic" alt width="20px" height="20px" /> -->
+              <img
+                src="../../assets/user1.png"
+                alt
+                width="20px"
+                height="20px"
+                v-if="item.pic == 1"
+              />
+              <img
+                src="../../assets/user2.png"
+                alt
+                width="20px"
+                height="20px"
+                v-if="item.pic == 2"
+              />
+              <img
+                src="../../assets/user3.png"
+                alt
+                width="20px"
+                height="20px"
+                v-if="item.pic == 3"
+              />
+              <img
+                src="../../assets/user4.png"
+                alt
+                width="20px"
+                height="20px"
+                v-if="item.pic == 4"
+              />
+              <img
+                src="../../assets/user5.png"
+                alt
+                width="20px"
+                height="20px"
+                v-if="item.pic == 5"
+              />
+              <img
+                src="../../assets/user6.png"
+                alt
+                width="20px"
+                height="20px"
+                v-if="item.pic == 6"
+              />
               <span>{{item.account}} （{{item.mobile}}）</span>
               <a-icon type="close" class="delete" @click="remove(item,index)" />
             </div>
@@ -169,12 +219,48 @@
         <div class="option">
           <span class="lable">头像</span>
           <div class="normal">
-            <img src="../../assets/user1.png" alt width="60px" height="60px" v-if="memberInfo.pic == 1" />
-            <img src="../../assets/user2.png" alt width="60px" height="60px" v-if="memberInfo.pic == 2" />
-            <img src="../../assets/user3.png" alt width="60px" height="60px" v-if="memberInfo.pic == 3" />
-            <img src="../../assets/user4.png" alt width="60px" height="60px" v-if="memberInfo.pic == 4" />
-            <img src="../../assets/user5.png" alt width="60px" height="60px" v-if="memberInfo.pic == 5" />
-            <img src="../../assets/user6.png" alt width="60px" height="60px" v-if="memberInfo.pic == 6" />
+            <img
+              src="../../assets/user1.png"
+              alt
+              width="60px"
+              height="60px"
+              v-if="memberInfo.pic == 1"
+            />
+            <img
+              src="../../assets/user2.png"
+              alt
+              width="60px"
+              height="60px"
+              v-if="memberInfo.pic == 2"
+            />
+            <img
+              src="../../assets/user3.png"
+              alt
+              width="60px"
+              height="60px"
+              v-if="memberInfo.pic == 3"
+            />
+            <img
+              src="../../assets/user4.png"
+              alt
+              width="60px"
+              height="60px"
+              v-if="memberInfo.pic == 4"
+            />
+            <img
+              src="../../assets/user5.png"
+              alt
+              width="60px"
+              height="60px"
+              v-if="memberInfo.pic == 5"
+            />
+            <img
+              src="../../assets/user6.png"
+              alt
+              width="60px"
+              height="60px"
+              v-if="memberInfo.pic == 6"
+            />
           </div>
         </div>
         <div class="option">
@@ -226,7 +312,13 @@
           <div class="url">{{inviteUrl}}</div>
           <p>邀请链接将在24小时内有效，链接过期不会影响已加入项目的成员</p>
           <div class="copy">
-            <a-button type="primary" block size="large" @click="doCopy" style="font-size:14px !important;">复制链接</a-button>
+            <a-button
+              type="primary"
+              block
+              size="large"
+              @click="doCopy"
+              style="font-size:14px !important;"
+            >复制链接</a-button>
           </div>
         </div>
       </div>
@@ -247,7 +339,7 @@ import { USER_INVITE_CREATE } from "../../apis/login.js";
 export default {
   data() {
     return {
-      powerType:2,
+      powerType: 2,
       addOrganize: false,
       readOrganize: false,
       creatUrl: false,
@@ -265,7 +357,7 @@ export default {
       organization_name: "",
       user_id: 0,
       userList: [],
-      searchVal:"",
+      searchVal: "",
       page: 1,
       page_size: 20,
       totalCount: null,
@@ -279,17 +371,17 @@ export default {
         create_time: "2020-07-27 11:48:03", // 注册时间
         user_organization_type: 2, // 权限, 1机构管理员, 2普通用户
         join_time: "2020-07-27 11:48:03", // 加入时间,
-        inviter_account:""
+        inviter_account: ""
       },
       chooseList: [],
-      memberName:""
+      memberName: ""
     };
   },
   mounted() {
     this.powerType = this.$refs.head.accountInfo.type;
     this.organization_id = this.$route.query.organization_id;
     this.organization_name = this.$route.query.organization_name;
-    if(this.powerType == 1){
+    if (this.powerType == 1) {
       this.getData();
     }
     this.$setSlideHeight();
@@ -304,21 +396,16 @@ export default {
         organization_id: this.organization_id,
         page: this.page,
         page_size: this.page_size,
-        user_mix:this.searchVal,
-        user_state:1
+        user_mix: this.searchVal,
+        user_state: 1
       };
       let res = await ORGANIZATION_MEMBER_GETS(data);
       if (res.code == 0) {
         this.userList = res.data.lists;
         this.totalCount = res.data.total;
       } else {
-        if (res.code == 1008) {
-          this.$router.push({ name: "loginindex" });
-        }else if(this.$systemCode.test(res.code)){
-          this.$refs.head.globalTip(1, "系统错误");
-        }else{
-          this.$refs.head.globalTip(1, res.message);
-        }
+          this.$refs.head.globalTip(1, res.message,res.code);
+
       }
     },
     // 查看成员信息
@@ -333,13 +420,8 @@ export default {
         this.memberInfo.inviter_account = this.userList[_index].inviter_account;
         this.readOrganize = true;
       } else {
-        if (res.code == 1008) {
-          this.$router.push({ name: "loginindex" });
-        }else if(this.$systemCode.test(res.code)){
-          this.$refs.head.globalTip(1, "系统错误");
-        }else{
-          this.$refs.head.globalTip(1, res.message);
-        }
+          this.$refs.head.globalTip(1, res.message,res.code);
+
       }
     },
     // 删除成员
@@ -354,15 +436,10 @@ export default {
           return this.memberIndex != key;
         });
         this.readOrganize = false;
-        this.$refs.head.globalTip(2,"移出机构成功")
+        this.$refs.head.globalTip(2, "移出机构成功",0);
       } else {
-        if (res.code == 1008) {
-          this.$router.push({ name: "loginindex" });
-        }else if(this.$systemCode.test(res.code)){
-          this.$refs.head.globalTip(1, "系统错误");
-        }else{
-          this.$refs.head.globalTip(1, res.message);
-        }
+          this.$refs.head.globalTip(1, res.message,res.code);
+
       }
     },
     // 生成邀请码
@@ -380,13 +457,8 @@ export default {
         this.addOrganize = false;
         this.creatUrl = true;
       } else {
-        if (res.code == 1008) {
-          this.$router.push({ name: "loginindex" });
-        }else if(this.$systemCode.test(res.code)){
-          this.$refs.head.globalTip(1, "系统错误");
-        }else{
-          this.$refs.head.globalTip(1, res.message);
-        }
+          this.$refs.head.globalTip(1, res.message,res.code);
+
       }
     },
     // 添加成员时搜索成员
@@ -402,13 +474,8 @@ export default {
           return value;
         });
       } else {
-        if (res.code == 1008) {
-          this.$router.push({ name: "loginindex" });
-        }else if(this.$systemCode.test(res.code)){
-          this.$refs.head.globalTip(1, "系统错误");
-        }else{
-          this.$refs.head.globalTip(1, res.message);
-        }
+          this.$refs.head.globalTip(1, res.message,res.code);
+
       }
     },
     // 添加成员
@@ -421,15 +488,10 @@ export default {
       if (res.code == 0) {
         this.addOrganize = false;
         this.getData();
-        this.$refs.head.globalTip(2,"添加成功")
+        this.$refs.head.globalTip(2, "添加成功",0);
       } else {
-        if (res.code == 1008) {
-          this.$router.push({ name: "loginindex" });
-        }else if(this.$systemCode.test(res.code)){
-          this.$refs.head.globalTip(1, "系统错误");
-        }else{
-          this.$refs.head.globalTip(1, res.message);
-        }
+          this.$refs.head.globalTip(1, res.message,res.code);
+
       }
     },
     // 搜索成员列表
@@ -456,7 +518,7 @@ export default {
       this.readMemberInfo(index);
     },
     handleOk(e) {
-      let ids = '';
+      let ids = "";
       for (let i = 0; i < this.chooseList.length; i++) {
         if (ids) {
           ids += "," + this.chooseList[i].user_id;
@@ -468,7 +530,7 @@ export default {
       if (ids) {
         this.addMember(ids);
       } else {
-        this.$refs.head.globalTip(1,"请选择要添加的成员")
+        this.$refs.head.globalTip(1, "请选择要添加的成员",0);
       }
     },
     readhandleOk(e) {
@@ -528,7 +590,7 @@ export default {
         query: {
           user_id: item.user_id,
           user_name: item.account,
-          organization_id: this.organization_id,
+          organization_id: this.organization_id
         }
       });
     },
@@ -537,11 +599,11 @@ export default {
       var _this = this;
       this.$copyText(this.inviteUrl).then(
         function(e) {
-          _this.$refs.head.globalTip(2,"复制成功")
+          _this.$refs.head.globalTip(2, "复制成功",0);
           // console.log(e);
         },
         function(e) {
-          _this.$refs.head.globalTip(1,"复制失败")
+          _this.$refs.head.globalTip(1, "复制失败",0);
           // console.log(e);
         }
       );

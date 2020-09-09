@@ -1,6 +1,6 @@
 <template>
   <div id="competePage">
-    <HeadNav type="compete" ref="head" @publisherChange="publisherChange()"></HeadNav>
+    <HeadNav type="compete" ref="head" :show="1" @publisherChange="publisherChange()"></HeadNav>
     <div class="wd-1220">
       <div class="clearfix">
         <div class="float-left">
@@ -221,7 +221,7 @@
         </div>
       </div>
     </div>
-    <Loading ref="load"></Loading>
+    <Loading ref="load" :show="1"></Loading>
   </div>
 </template>
 <style scoped lang="scss" src="@/style/scss/pages/compete/set.scss"></style>
@@ -269,14 +269,10 @@ export default {
         this.initPublish = res.data.publisher;
         this.initGoods = res.data.goods;
       } else {
-        if (res.code == 1008) {
-          this.$router.push({ name: "loginindex" });
-        } else if (res.code == 1009) {
+        if (res.code == 1009) {
           this.pagePower = false;
-        }else if(this.$systemCode.test(res.code)){
-          this.$refs.head.globalTip(1, "系统错误");
         } else {
-          this.$refs.head.globalTip(1, res.message);
+          this.$refs.head.globalTip(1, res.message, res.code);
         }
       }
     },
@@ -300,14 +296,10 @@ export default {
         this.$refs.load.isLoading = false;
       } else {
         this.$refs.load.isLoading = false;
-        if (res.code == 1008) {
-          this.$router.push({ name: "loginindex" });
-        } else if (res.code == 1009) {
+        if (res.code == 1009) {
           this.pagePower = false;
-        }else if(this.$systemCode.test(res.code)){
-          this.$refs.head.globalTip(1, "系统错误");
         } else {
-          this.$refs.head.globalTip(1, res.message);
+          this.$refs.head.globalTip(1, res.message, res.code);
         }
       }
     },
@@ -321,18 +313,18 @@ export default {
       };
       let res = await PUBLISHER_COMPETE_ADD(data);
       if (res.code == 0) {
-        this.$refs.head.globalTip(2, "添加成功");
+        this.$refs.head.globalTip(2, "添加成功", 0);
         this.getInit();
         this.getData();
       } else {
-        if (res.code == 1008) {
-          this.$router.push({ name: "loginindex" });
-        } else if (res.code == 105) {
-          this.$refs.head.globalTip(1, "竞争监控已存在，请勿重复添加");
-        }else if(this.$systemCode.test(res.code)){
-          this.$refs.head.globalTip(1, "系统错误");
+        if (res.code == 105) {
+          this.$refs.head.globalTip(
+            1,
+            "竞争监控已存在，请勿重复添加",
+            res.code
+          );
         } else {
-          this.$refs.head.globalTip(1, res.message);
+          this.$refs.head.globalTip(1, res.message, res.code);
         }
       }
     },
@@ -344,17 +336,11 @@ export default {
       };
       let res = await PUBLISHER_COMPETE_DELETE(data);
       if (res.code == 0) {
-        this.$refs.head.globalTip(2, "取消成功");
+        this.$refs.head.globalTip(2, "取消成功", 0);
         this.getInit();
         this.getData();
       } else {
-        if (res.code == 1008) {
-          this.$router.push({ name: "loginindex" });
-        }else if(this.$systemCode.test(res.code)){
-          this.$refs.head.globalTip(1, "系统错误");
-        } else {
-          this.$refs.head.globalTip(1, res.message);
-        }
+        this.$refs.head.globalTip(1, res.message, res.code);
       }
     },
     // 出版社列表获取
@@ -368,14 +354,7 @@ export default {
       if (res.code == 0) {
         this.dataSource = res.data.list;
       } else {
-        // this.$refs.head.globalTip(1, res.message);
-        if (res.code == 1008) {
-          this.$router.push({ name: "loginindex" });
-        }else if(this.$systemCode.test(res.code)){
-          this.$refs.head.globalTip(1, "系统错误");
-        } else {
-          this.$refs.head.globalTip(1, res.message);
-        }
+        this.$refs.head.globalTip(1, res.message, res.code);
       }
     },
     // 品种列表获取
@@ -399,13 +378,7 @@ export default {
         this.searchLoading = false;
       } else {
         this.searchLoading = false;
-        if (res.code == 1008) {
-          this.$router.push({ name: "loginindex" });
-        }else if(this.$systemCode.test(res.code)){
-          this.$refs.head.globalTip(1, "系统错误");
-        } else {
-          this.$refs.head.globalTip(1, res.message);
-        }
+        this.$refs.head.globalTip(1, res.message, res.code);
       }
     },
     callback(key) {
@@ -438,7 +411,7 @@ export default {
           onCancel() {}
         });
       } else {
-        this.$refs.head.globalTip(1, "监控对象已达到数量上限");
+        this.$refs.head.globalTip(1, "监控对象已达到数量上限", 0);
       }
     },
     onChange1(value) {
@@ -471,7 +444,7 @@ export default {
           onCancel() {}
         });
       } else {
-        this.$refs.head.globalTip(1, "监控对象已达到数量上限");
+        this.$refs.head.globalTip(1, "监控对象已达到数量上限", 0);
       }
     },
     cancle(item, index) {

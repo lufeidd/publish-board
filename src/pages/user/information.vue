@@ -1,6 +1,6 @@
 <template>
   <div id="userPage">
-    <HeadNav type="user" ref="head"></HeadNav>
+    <HeadNav type="user" ref="head" :show="1"></HeadNav>
     <div class="wd-1220">
       <div class="clearfix">
         <div class="float-left">
@@ -57,7 +57,11 @@
                         height="80px"
                         v-if="userInfo.pic == 6"
                       />
-                      <span class="no-pic" style="width:80px;height:80px;border-radius:50%" v-if="userInfo.pic == 0"></span>
+                      <span
+                        class="no-pic"
+                        style="width:80px;height:80px;border-radius:50%"
+                        v-if="userInfo.pic == 0"
+                      ></span>
                       <span class="change" @click="changePic">
                         <a-icon type="swap" />
                       </span>
@@ -92,7 +96,7 @@
         <a-button key="back" @click="model = false">取消</a-button>
       </template>
       <div style="padding:15px;">
-        <a-input placeholder="" v-model="account" />
+        <a-input placeholder v-model="account" />
       </div>
     </a-modal>
   </div>
@@ -127,13 +131,7 @@ export default {
         if (res.data.pic) this.pic = res.data.pic;
         this.account = res.data.account;
       } else {
-        if (res.code == 1008) {
-          this.$router.push({ name: "loginindex" });
-        }else if(this.$systemCode.test(res.code)){
-          this.$refs.head.globalTip(1, "系统错误");
-        }else{
-          this.$refs.head.globalTip(1,res.message);
-        }
+        this.$refs.head.globalTip(1, res.message, res.code);
       }
     },
     changePic() {
@@ -144,10 +142,10 @@ export default {
       }
       this.edit(null, this.pic);
     },
-    handleOk(){
-      if(this.account.length > 0){
-        this.edit(this.account,null);
-      }else{
+    handleOk() {
+      if (this.account.length > 0) {
+        this.edit(this.account, null);
+      } else {
         this.$message.info({
           content: "姓名不能为空",
           icon: <a-icon type="exclamation-circle" />
@@ -178,13 +176,7 @@ export default {
           icon: <a-icon type="bell" />
         });
       } else {
-        if (res.code == 1008) {
-          this.$router.push({ name: "loginindex" });
-        }else if(this.$systemCode.test(res.code)){
-          this.$refs.head.globalTip(1, "系统错误");
-        }else{
-          this.$refs.head.globalTip(1, res.message);
-        }
+        this.$refs.head.globalTip(1, res.message, res.code);
       }
     }
   }

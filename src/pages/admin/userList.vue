@@ -1,6 +1,6 @@
 <template>
   <div id="organizePage">
-    <HeadNav type="admin" ref="head"></HeadNav>
+    <HeadNav type="admin" ref="head" :show="1"></HeadNav>
     <div class="wd-1220">
       <div class="clearfix">
         <div class="float-left">
@@ -8,12 +8,15 @@
         </div>
         <div class="float-left">
           <div class="main-container" v-if="powerType == 1">
-            <div class="model-container">
+            <!-- <div class="model-container">
               <div class="model-bg total-user">全平台总计 {{adminCount}} 个用户</div>
-            </div>
+            </div>-->
             <div class="model-container">
               <div class="model-bg" style="min-height:650px;padding-bottom:75px;">
-                <div class="section-title">用户列表</div>
+                <div class="section-title">
+                  用户列表
+                  <span class="desc">共{{total}}个用户</span>
+                </div>
                 <div class="search">
                   <div class="content common">
                     <a-input-search
@@ -369,7 +372,7 @@ export default {
           onCancel() {}
         });
       } else {
-        this.$refs.head.globalTip(1, "请选择需要移出的机构");
+        this.$refs.head.globalTip(1, "请选择需要移出的机构", 0);
       }
     },
     onChange(item, index, e) {
@@ -393,13 +396,7 @@ export default {
         this.userList = res.data.lists;
         this.total = res.data.count;
       } else {
-        if (res.code == 1008) {
-          this.$router.push({ name: "loginindex" });
-        } else if (this.$systemCode.test(res.code)) {
-          this.$refs.head.globalTip(1, "系统错误");
-        } else {
-          this.$refs.head.globalTip(1, res.message);
-        }
+        this.$refs.head.globalTip(1, res.message, res.code);
       }
     },
     // 注销用户
@@ -411,15 +408,9 @@ export default {
       if (res.code == 0) {
         this.readOrganize = false;
         this.getData();
-        this.$refs.head.globalTip(2, "注销成功");
+        this.$refs.head.globalTip(2, "注销成功", 0);
       } else {
-        if (res.code == 1008) {
-          this.$router.push({ name: "loginindex" });
-        } else if (this.$systemCode.test(res.code)) {
-          this.$refs.head.globalTip(1, "系统错误");
-        } else {
-          this.$refs.head.globalTip(1, res.message);
-        }
+        this.$refs.head.globalTip(1, res.message, res.code);
       }
     },
     // 已加入机构
@@ -437,13 +428,7 @@ export default {
         });
         this.alreadyJoin = true;
       } else {
-        if (res.code == 1008) {
-          this.$router.push({ name: "loginindex" });
-        } else if (this.$systemCode.test(res.code)) {
-          this.$refs.head.globalTip(1, "系统错误");
-        } else {
-          this.$refs.head.globalTip(1, res.message);
-        }
+        this.$refs.head.globalTip(1, res.message, res.code);
       }
     },
     // 移出机构
@@ -456,15 +441,9 @@ export default {
       if (res.code == 0) {
         this.alreadyJoin = false;
         this.getData();
-        this.$refs.head.globalTip(2, "移出机构成功");
+        this.$refs.head.globalTip(2, "移出机构成功", 0);
       } else {
-        if (res.code == 1008) {
-          this.$router.push({ name: "loginindex" });
-        } else if (this.$systemCode.test(res.code)) {
-          this.$refs.head.globalTip(1, "系统错误");
-        } else {
-          this.$refs.head.globalTip(1, res.message);
-        }
+        this.$refs.head.globalTip(1, res.message, res.code);
       }
     }
   }

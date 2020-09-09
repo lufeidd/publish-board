@@ -1,6 +1,6 @@
 <template>
   <div id="detailPage" @click="show1 = false,showYear = false">
-    <HeadNav type="publish" ref="head" @publisherChange="publisherChange()"></HeadNav>
+    <HeadNav type="publish" ref="head" :show="1" @publisherChange="publisherChange()"></HeadNav>
     <div class="wd-1220">
       <div class="clearfix">
         <div class="float-left">
@@ -59,7 +59,7 @@
                     <a-tab-pane key="1" tab="销售走势"></a-tab-pane>
                     <a-tab-pane key="2" tab="生命周期"></a-tab-pane>
                     <a-tab-pane key="3" tab="读者画像"></a-tab-pane>
-                    <a-tab-pane key="4" tab="相似品种" disabled></a-tab-pane>
+                    <a-tab-pane key="4" tab="详细介绍"></a-tab-pane>
                   </a-tabs>
                 </div>
               </div>
@@ -519,11 +519,53 @@
                 </div>
               </div>
             </div>
+            <!-- 详细介绍 -->
+            <div v-if="tabKey == '4'">
+              <div class="model-container">
+                <div class="model-bg">
+                  <div class="section-title">出版信息</div>
+                  <div class="detail-desc">
+                    <div class="content">
+                      <span class="title">出版社</span>
+                      <span class="desc">{{goodsInfo.publisher_short}}</span>
+                    </div>
+                    <div class="content">
+                      <span class="title">ISBN</span>
+                      <span class="desc">{{goodsInfo.isbn}}</span>
+                    </div>
+                    <div class="content">
+                      <span class="title">作者</span>
+                      <span class="desc">{{goodsInfo.author}}</span>
+                    </div>
+                    <div class="content">
+                      <span class="title">出版日期</span>
+                      <span class="desc">{{goodsInfo.publish_date}}</span>
+                    </div>
+                    <div class="content">
+                      <span class="title">包装</span>
+                      <span class="desc">--</span>
+                    </div>
+                    <div class="content">
+                      <span class="title">页数</span>
+                      <span class="desc">--</span>
+                    </div>
+                    <div class="content">
+                      <span class="title">开本</span>
+                      <span class="desc">{{goodsInfo.format}}</span>
+                    </div>
+                    <div class="content">
+                      <span class="title">字数</span>
+                      <span class="desc">--</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
     </div>
-    <Loading ref="load"></Loading>
+    <Loading ref="load" :show="1"></Loading>
   </div>
 </template>
 <style scoped lang="scss" src="@/style/scss/pages/publish/detail.scss"></style>
@@ -553,6 +595,7 @@ export default {
       salePower: true,
       lifePower: true,
       readerPower: true,
+      isOwnPublish: true,
       radarData: [
         { item: "综合评分", 本社: 70 },
         { item: "销售评分", 本社: 60 },
@@ -696,6 +739,12 @@ export default {
       if (res.code == 0) {
         this.goodsDetailPower = true;
         this.goodsInfo = res.data;
+        if(this.$refs.head.publishInfo.publisher_id != res.data.publisher_id){
+          this.isOwnPublish = false;
+          this.tabKey = '4';
+        }else{
+          this.isOwnPublish = true;
+        }
         this.radarData = this.radarData.map((value, key) => {
           if (value.item == "综合评分") {
             value.本社 = res.data.score_chart.score_all;
@@ -736,15 +785,12 @@ export default {
           }, 500);
         }
         this.radarFirst = false;
+        this.$setSlideHeight();
       } else {
-        if (res.code == 1008) {
-          this.$router.push({ name: "loginindex" });
-        } else if (res.code == 1009) {
+        if (res.code == 1009) {
           this.goodsDetailPower = false;
-        }else if(this.$systemCode.test(res.code)){
-          this.$refs.head.globalTip(1, "系统错误");
         } else {
-          this.$refs.head.globalTip(1, res.message);
+          this.$refs.head.globalTip(1, res.message, res.code);
         }
       }
     },
@@ -857,14 +903,10 @@ export default {
         }
         this.lineFirst1 = false;
       } else {
-        if (res.code == 1008) {
-          this.$router.push({ name: "loginindex" });
-        } else if (res.code == 1009) {
+        if (res.code == 1009) {
           this.salePower = false;
-        } else if(this.$systemCode.test(res.code)){
-          this.$refs.head.globalTip(1, "系统错误");
-        }else {
-          this.$refs.head.globalTip(1, res.message);
+        } else {
+          this.$refs.head.globalTip(1, res.message, res.code);
         }
       }
     },
@@ -881,14 +923,10 @@ export default {
         this.sale_type = res.data.sale_type;
         this.publish_duration = res.data.publish_duration;
       } else {
-        if (res.code == 1008) {
-          this.$router.push({ name: "loginindex" });
-        } else if (res.code == 1009) {
+        if (res.code == 1009) {
           this.lifePower = false;
-        }else if(this.$systemCode.test(res.code)){
-          this.$refs.head.globalTip(1, "系统错误");
         } else {
-          this.$refs.head.globalTip(1, res.message);
+          this.$refs.head.globalTip(1, res.message, res.code);
         }
       }
     },
@@ -925,14 +963,10 @@ export default {
         }
         this.$setSlideHeight();
       } else {
-        if (res.code == 1008) {
-          this.$router.push({ name: "loginindex" });
-        } else if (res.code == 1009) {
+        if (res.code == 1009) {
           this.lifePower = false;
-        }else if(this.$systemCode.test(res.code)){
-          this.$refs.head.globalTip(1, "系统错误");
         } else {
-          this.$refs.head.globalTip(1, res.message);
+          this.$refs.head.globalTip(1, res.message, res.code);
         }
       }
     },
@@ -956,13 +990,7 @@ export default {
         this.lineArr();
         // console.log(666, this.brokenLineData2);
       } else {
-        if (res.code == 1008) {
-          this.$router.push({ name: "loginindex" });
-        }else if(this.$systemCode.test(res.code)){
-          this.$refs.head.globalTip(1, "系统错误");
-        } else {
-          this.$refs.head.globalTip(1, res.message);
-        }
+        this.$refs.head.globalTip(1, res.message, res.code);
       }
     },
     // 搜索
@@ -980,13 +1008,7 @@ export default {
         this.searchLoading = false;
       } else {
         this.searchLoading = false;
-        if (res.code == 1008) {
-          this.$router.push({ name: "loginindex" });
-        }else if(this.$systemCode.test(res.code)){
-          this.$refs.head.globalTip(1, "系统错误");
-        } else {
-          this.$refs.head.globalTip(1, res.message);
-        }
+        this.$refs.head.globalTip(1, res.message, res.code);
       }
     },
     // 读者画像
@@ -1042,14 +1064,10 @@ export default {
           }, 500);
         }
       } else {
-        if (res.code == 1008) {
-          this.$router.push({ name: "loginindex" });
-        } else if (res.code == 1009) {
+        if (res.code == 1009) {
           this.readerPower = false;
-        }else if(this.$systemCode.test(res.code)){
-          this.$refs.head.globalTip(1, "系统错误");
         } else {
-          this.$refs.head.globalTip(1, res.message);
+          this.$refs.head.globalTip(1, res.message, res.code);
         }
       }
     },
@@ -1268,17 +1286,22 @@ export default {
       this.canRight = false;
     },
     callback(key) {
-      this.tabKey = key;
+      if(this.isOwnPublish){
+        this.tabKey = key;
+      }else{
+        this.tabKey = '4';
+        this.$refs.head.globalTip(1,'暂无权限',0)
+      }
       var _this = this;
-      if (key == "1") {
+      if (this.tabKey == "1") {
         setTimeout(function() {
           _this.initLineData1();
         }, 500);
-      } else if (key == "2") {
+      } else if (this.tabKey == "2") {
         setTimeout(function() {
           _this.initLineData2();
         }, 500);
-      } else if (key == "3") {
+      } else if (this.tabKey == "3") {
         this.getReaderData();
       }
       setTimeout(() => {

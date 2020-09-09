@@ -1,6 +1,6 @@
 <template>
   <div id="competePage" @click="showYear = false;show1=false;show2=false;show3=false">
-    <HeadNav type="compete" ref="head" @publisherChange="publisherChange()"></HeadNav>
+    <HeadNav type="compete" ref="head" :show="1" @publisherChange="publisherChange()"></HeadNav>
     <div class="wd-1220">
       <div class="clearfix">
         <div class="float-left">
@@ -9,64 +9,64 @@
         <div class="float-left">
           <div class="main-container" v-if="pagePower">
             <a-affix :offset-top="36">
-            <div class="model-container">
-              <div class="model-bg clearfix">
-                <div class="float-left"></div>
-                <div class="float-right" style="padding:7px 15px;">
-                  <div class="time-choose">
-                    <span class="time-text">统计时间 {{dateText}}</span>
-                    <span class="time-picker">
-                      <span :class="dateType == 2?'picker active':'picker'">周</span>
-                      <a-week-picker
-                        class="week"
-                        placeholder="Select Week"
-                        :allowClear="false"
-                        @change="weekChange"
-                        :disabledDate="disabledEndDate"
-                        :value="chooseWeek"
-                      />
-                    </span>
-                    <span class="time-picker">
-                      <span :class="dateType == 3?'picker active':'picker'">月</span>
-                      <a-month-picker
-                        class="week"
-                        :allowClear="false"
-                        @change="monthChange"
-                        placeholder="Select month"
-                        :value="chooseMonth"
-                        :disabledDate="disabledEndDate"
-                      />
-                    </span>
-                    <span class="time-picker">
-                      <span :class="dateType == 4?'picker active':'picker'">年</span>
-                      <span @click.stop="showYear = true;show1=false;show2=false;show3=false">
-                        <a-date-picker
+              <div class="model-container">
+                <div class="model-bg clearfix">
+                  <div class="float-left"></div>
+                  <div class="float-right" style="padding:7px 15px;">
+                    <div class="time-choose">
+                      <span class="time-text">统计时间 {{dateText}}</span>
+                      <span class="time-picker">
+                        <span :class="dateType == 2?'picker active':'picker'">周</span>
+                        <a-week-picker
                           class="week"
+                          placeholder="Select Week"
                           :allowClear="false"
-                          mode="year"
-                          format="YYYY"
-                          :open="showYear"
-                          @panelChange="yearChange($event)"
-                          :value="chooseYear"
+                          @change="weekChange"
                           :disabledDate="disabledEndDate"
-                          inputReadOnly
+                          :value="chooseWeek"
                         />
                       </span>
-                    </span>
-                    <span class="time-picker">
-                      <span :class="canSub?'picker':'picker disabled'" @click="subLeft">
-                        <a-icon type="left" />
+                      <span class="time-picker">
+                        <span :class="dateType == 3?'picker active':'picker'">月</span>
+                        <a-month-picker
+                          class="week"
+                          :allowClear="false"
+                          @change="monthChange"
+                          placeholder="Select month"
+                          :value="chooseMonth"
+                          :disabledDate="disabledEndDate"
+                        />
                       </span>
-                    </span>
-                    <span class="time-picker">
-                      <span :class="canAdd?'picker':'picker disabled'" @click="addRight">
-                        <a-icon type="right" />
+                      <span class="time-picker">
+                        <span :class="dateType == 4?'picker active':'picker'">年</span>
+                        <span @click.stop="showYear = true;show1=false;show2=false;show3=false">
+                          <a-date-picker
+                            class="week"
+                            :allowClear="false"
+                            mode="year"
+                            format="YYYY"
+                            :open="showYear"
+                            @panelChange="yearChange($event)"
+                            :value="chooseYear"
+                            :disabledDate="disabledEndDate"
+                            inputReadOnly
+                          />
+                        </span>
                       </span>
-                    </span>
+                      <span class="time-picker">
+                        <span :class="canSub?'picker':'picker disabled'" @click="subLeft">
+                          <a-icon type="left" />
+                        </span>
+                      </span>
+                      <span class="time-picker">
+                        <span :class="canAdd?'picker':'picker disabled'" @click="addRight">
+                          <a-icon type="right" />
+                        </span>
+                      </span>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
             </a-affix>
             <!-- 数据对比 -->
             <div class="model-container">
@@ -86,7 +86,7 @@
                       <div class="search" v-if="show1">
                         <!-- <div style="padding:0 10px;">
                           <a-input placeholder="搜索出版社名称" v-model="inputVal1" @input="onSearch1" />
-                        </div> -->
+                        </div>-->
                         <div class="list" v-if="publishList1.length > 0">
                           <div
                             class="content"
@@ -109,7 +109,7 @@
                       <div class="search" v-if="show2">
                         <!-- <div style="padding:0 10px;">
                           <a-input placeholder="搜索出版社名称" v-model="inputVal2" @input="onSearch2" />
-                        </div> -->
+                        </div>-->
                         <div class="list" v-if="publishList2.length > 0">
                           <div
                             class="content"
@@ -132,7 +132,7 @@
                       <div class="search" v-if="show3">
                         <!-- <div style="padding:0 10px;">
                           <a-input placeholder="搜索出版社名称" v-model="inputVal3" @input="onSearch3" />
-                        </div> -->
+                        </div>-->
                         <div class="list" v-if="publishList3.length > 0">
                           <div
                             class="content"
@@ -157,7 +157,7 @@
                         <span class="secondary-font">销售点数</span>
                       </div>
                       <div class="clearfix" style="line-height:normal;">
-                        <span class="name float-left">本社</span>
+                        <span class="name float-left own">本社</span>
                         <span
                           class="value float-right"
                           v-if="ownInfo.sale_total"
@@ -199,7 +199,7 @@
                         <span class="secondary-font">销售排名</span>
                       </div>
                       <div class="clearfix" style="line-height:normal;">
-                        <span class="name float-left">本社</span>
+                        <span class="name float-left own">本社</span>
                         <span
                           class="value float-right"
                           v-if="ownInfo.sale_rank"
@@ -241,7 +241,7 @@
                         <span class="secondary-font">市场占有率</span>
                       </div>
                       <div class="clearfix" style="line-height:normal;">
-                        <span class="name float-left">本社</span>
+                        <span class="name float-left own">本社</span>
                         <span
                           class="value float-right"
                           v-if="ownInfo.market_share"
@@ -283,7 +283,7 @@
                         <span class="secondary-font">动销品种数</span>
                       </div>
                       <div class="clearfix" style="line-height:normal;">
-                        <span class="name float-left">本社</span>
+                        <span class="name float-left own">本社</span>
                         <span
                           class="value float-right"
                           v-if="ownInfo.cate_count"
@@ -325,7 +325,7 @@
             </div>
             <!-- 监控列表 -->
             <div class="model-container">
-              <div class="model-bg" style="padding-bottom:40px;">
+              <div class="model-bg" style="min-height:300px;padding-bottom:20px;">
                 <div class="section-title">监控列表</div>
                 <div class="table">
                   <table style="table-layou:fixed;">
@@ -355,7 +355,10 @@
                           >{{item.publisher_name}}</span>
                         </td>
                         <td style="text-align:right;">{{item.sale_total}}</td>
-                        <td style="text-align:right;">{{item.industry_rank}}</td>
+                        <td style="text-align:right;">
+                          <span v-if="item.industry_rank">{{item.industry_rank}}</span>
+                          <span v-else>--</span>
+                        </td>
                         <td style="text-align:right;">
                           <span class="click-dark">详细分析</span>
                         </td>
@@ -383,7 +386,7 @@
         </div>
       </div>
     </div>
-    <Loading ref="load"></Loading>
+    <Loading ref="load" :show="1"></Loading>
   </div>
 </template>
 <style scoped lang="scss" src="@/style/scss/pages/compete/set.scss"></style>
@@ -430,6 +433,7 @@ export default {
       chooseList1: [],
       chooseList2: [],
       chooseList3: [],
+      selectList:[],
       text1: "+设置对比",
       text2: "+设置对比",
       text3: "+设置对比",
@@ -493,14 +497,10 @@ export default {
         this.$refs.load.isLoading = false;
       } else {
         this.$refs.load.isLoading = false;
-        if (res.code == 1008) {
-          this.$router.push({ name: "loginindex" });
-        }else if (res.code == 1009){
+        if (res.code == 1009) {
           this.pagePower = false;
-        }else if(this.$systemCode.test(res.code)){
-          this.$refs.head.globalTip(1, "系统错误");
-        }else{
-          this.$refs.head.globalTip(1, res.message);
+        } else {
+          this.$refs.head.globalTip(1, res.message, res.code);
         }
       }
     },
@@ -527,14 +527,10 @@ export default {
         this.$refs.load.isLoading = false;
       } else {
         this.$refs.load.isLoading = false;
-        if (res.code == 1008) {
-          this.$router.push({ name: "loginindex" });
-        }else if (res.code == 1009) {
+        if (res.code == 1009) {
           this.pagePower = false;
-        }else if(this.$systemCode.test(res.code)){
-          this.$refs.head.globalTip(1, "系统错误");
-        }else{
-          this.$refs.head.globalTip(1, res.message);
+        } else {
+          this.$refs.head.globalTip(1, res.message, res.code);
         }
       }
     },
@@ -598,14 +594,10 @@ export default {
         this.lineArr();
       } else {
         this.$refs.load.isLoading = false;
-        if (res.code == 1008) {
-          this.$router.push({ name: "loginindex" });
-        }else if (res.code == 1009) {
+        if (res.code == 1009) {
           this.pagePower = false;
-        }else if(this.$systemCode.test(res.code)){
-          this.$refs.head.globalTip(1, "系统错误");
-        }else{
-          this.$refs.head.globalTip(1, res.message);
+        } else {
+          this.$refs.head.globalTip(1, res.message, res.code);
         }
       }
     },
@@ -629,13 +621,7 @@ export default {
           this.publishList3 = res.data.list;
         }
       } else {
-        if (res.code == 1008) {
-          this.$router.push({ name: "loginindex" });
-        }else if(this.$systemCode.test(res.code)){
-          this.$refs.head.globalTip(1, "系统错误");
-        }else{
-          this.$refs.head.globalTip(1, res.message);
-        }
+        this.$refs.head.globalTip(1, res.message, res.code);
       }
     },
     weekChange(date, dateString) {
@@ -983,7 +969,11 @@ export default {
       this.show3 = false;
       this.showYear = false;
       this.publishList1 = [];
-      this.publishList1 = this.list;
+      for(let i = 0;i<this.list.length;i++){
+        if(!this.selectList.includes(this.list[i].publisher_name)){
+          this.publishList1.push(this.list[i])
+        }
+      }
     },
     showCompete2() {
       this.show1 = false;
@@ -991,7 +981,11 @@ export default {
       this.show3 = false;
       this.showYear = false;
       this.publishList2 = [];
-      this.publishList2 = this.list;
+      for(let i = 0;i<this.list.length;i++){
+        if(!this.selectList.includes(this.list[i].publisher_name)){
+          this.publishList2.push(this.list[i])
+        }
+      }
     },
     showCompete3() {
       this.show1 = false;
@@ -999,35 +993,39 @@ export default {
       this.show3 = true;
       this.showYear = false;
       this.publishList3 = [];
-      this.publishList3 = this.list;
+      for(let i = 0;i<this.list.length;i++){
+        if(!this.selectList.includes(this.list[i].publisher_name)){
+          this.publishList3.push(this.list[i])
+        }
+      }
     },
     onSearch1() {
       console.log(this.inputVal1);
       // this.getPublishList(this.inputVal1, 1);
       this.publishList1 = [];
-      this.list.map((value,key)=>{
-        if(value.publisher_name.indexOf(this.inputVal1) > -1){
-          this.publishList1.push(value)
+      this.list.map((value, key) => {
+        if (value.publisher_name.indexOf(this.inputVal1) > -1) {
+          this.publishList1.push(value);
         }
-      })
+      });
     },
     onSearch2() {
       // this.getPublishList(this.inputVal2, 2);
       this.publishList2 = [];
-      this.list.map((value,key)=>{
-        if(value.publisher_name.indexOf(this.inputVal2) > -1){
-          this.publishList2.push(value)
+      this.list.map((value, key) => {
+        if (value.publisher_name.indexOf(this.inputVal2) > -1) {
+          this.publishList2.push(value);
         }
-      })
+      });
     },
     onSearch3() {
       // this.getPublishList(this.inputVal3, 3);
       this.publishList3 = [];
-      this.list.map((value,key)=>{
-        if(value.publisher_name.indexOf(this.inputVal3) > -1){
-          this.publishList3.push(value)
+      this.list.map((value, key) => {
+        if (value.publisher_name.indexOf(this.inputVal3) > -1) {
+          this.publishList3.push(value);
         }
-      })
+      });
     },
     onSelect1(item1, index1, _index) {
       this.show1 = false;
@@ -1036,6 +1034,11 @@ export default {
       this.inputVal1 = "";
       this.publishList1 = [];
       this.text1 = item1.publisher_name;
+      if(this.selectList.includes(item1.publisher_name)){
+
+      }else{
+        this.selectList.push(item1.publisher_name);
+      }
       this.getCore(this.publishId1, 1);
       this.getTrend(this.publishId1, 1);
     },
@@ -1046,6 +1049,11 @@ export default {
       this.inputVal2 = "";
       this.publishList2 = [];
       this.text2 = item2.publisher_name;
+      if(this.selectList.includes(item2.publisher_name)){
+
+      }else{
+        this.selectList.push(item2.publisher_name);
+      }
       this.getCore(this.publishId2, 2);
       this.getTrend(this.publishId2, 2);
     },
@@ -1056,6 +1064,11 @@ export default {
       this.inputVal3 = "";
       this.publishList3 = [];
       this.text3 = item3.publisher_name;
+      if(this.selectList.includes(item3.publisher_name)){
+
+      }else{
+        this.selectList.push(item3.publisher_name);
+      }
       this.getCore(this.publishId3, 3);
       this.getTrend(this.publishId3, 3);
     },
@@ -1063,6 +1076,9 @@ export default {
       this.close1 = false;
       this.show1 = false;
       this.publishId1 = 0;
+      this.selectList = this.selectList.filter((value,key)=>{
+        return value != this.text1
+      });
       this.text1 = "+设置对比";
       this.chooseInfo1.sale_total = 0;
       this.chooseInfo1.sale_rank = 0;
@@ -1076,6 +1092,9 @@ export default {
       this.close2 = false;
       this.show2 = false;
       this.publishId2 = 0;
+      this.selectList = this.selectList.filter((value,key)=>{
+        return value != this.text2
+      });
       this.text2 = "+设置对比";
       this.chooseInfo2.sale_total = 0;
       this.chooseInfo2.sale_rank = 0;
@@ -1089,6 +1108,9 @@ export default {
       this.close3 = false;
       this.show3 = false;
       this.publishId3 = 0;
+      this.selectList = this.selectList.filter((value,key)=>{
+        return value != this.text3
+      });
       this.text3 = "+设置对比";
       this.chooseInfo3.sale_total = 0;
       this.chooseInfo3.sale_rank = 0;

@@ -1,5 +1,5 @@
 <template>
-  <div id="headPage">
+  <div id="headPage" v-if="show">
     <a-affix :offset-top="0">
       <div class="scroll-top" v-if="fixed">
         <div class="wd-1220">
@@ -145,7 +145,7 @@
           </div>
           <!-- 标签导航 -->
           <div class="tab-nav">
-            <router-link to="/">
+            <router-link to="/index">
               <span :class="type == 'index'?'active':''">首页</span>
             </router-link>
             <router-link to="/publish/index">
@@ -168,7 +168,7 @@
               <span class="logo-font" style="margin-right:20px;">出版数据中心</span>
               <!-- 标签导航 -->
               <div class="tab-nav" style="display:inline-block;">
-                <router-link to="/">
+                <router-link to="/index">
                   <span :class="type == 'index'?'active':''">首页</span>
                 </router-link>
                 <router-link to="/publish/index">
@@ -262,7 +262,7 @@
 import { PASSPORT_LOGOUT } from "../apis/login.js";
 import { PASSPORT_INIT } from "../apis/common.js";
 export default {
-  props: ["type"],
+  props: ["type","show"],
   data() {
     return {
       fixed: true,
@@ -325,7 +325,7 @@ export default {
         this.$emit("initPage");
       }
     } else {
-      this.getData();
+      if (localStorage.getItem("loginState") == 1) this.getData();
     }
   },
   created() {
@@ -342,10 +342,20 @@ export default {
   methods: {
     // 功能未开放
     noOpen() {
-      this.globalTip(1, "该功能还在施工中，暂未开放");
+      this.globalTip(1, "该功能还在施工中，暂未开放", 0);
     },
     // 全局提示
-    globalTip(type, content) {
+    globalTip(type, content, code) {
+      if (code == 1008) {
+        localStorage.setItem("loginState", 0);
+        this.$router.push({ name: "loginindex" });
+        return;
+      } else if (code == 5015) {
+        this.$router.push({ name: "improve" });
+        return;
+      } else if (this.$systemCode.test(code)) {
+        content = "系统错误";
+      }
       switch (type) {
         case 1:
           this.$message.info({
@@ -359,11 +369,6 @@ export default {
             icon: <a-icon type="bell" />
           });
           break;
-      }
-      if (content == "请先登入") {
-        this.$router.push({ name: "loginindex" });
-      } else if (content == "请补充用户信息") {
-        this.$router.push({ name: "improve" });
       }
     },
     listenerFunction(e) {
@@ -421,11 +426,12 @@ export default {
       let data = {};
       let res = await PASSPORT_LOGOUT(data);
       if (res.code == 0) {
+        localStorage.setItem("loginState", 0);
         this.$router.push({
           name: "loginindex"
         });
       } else {
-        this.globalTip(1, res.message);
+        this.globalTip(1, res.message, res.code);
       }
     },
     // 获取基础信息
@@ -463,11 +469,7 @@ export default {
         localStorage.setItem("headFirst", 1);
         localStorage.setItem("headInfo", JSON.stringify(res.data));
       } else {
-        if(this.$systemCode.test(res.code)){
-          this.globalTip(1, "系统错误");
-        }else{
-          this.globalTip(1, res.message);
-        }
+        this.globalTip(1, res.message, res.code);
       }
     }
   }

@@ -1,7 +1,7 @@
 <template>
   <div id="organizePage">
     <div>
-      <HeadNav type="organize" ref="head" @publisherChange="publisherChange()"></HeadNav>
+      <HeadNav type="organize" ref="head" :show="1" @publisherChange="publisherChange()"></HeadNav>
       <div class="wd-1220">
         <div class="clearfix">
           <div class="float-left">
@@ -167,7 +167,7 @@ export default {
   },
   mounted() {
     this.pagePower = this.$refs.head.publishInfo.user_organization_type;
-    if(this.pagePower == 1){
+    if (this.pagePower == 1) {
       this.getData();
       this.getPublisher();
     }
@@ -192,13 +192,7 @@ export default {
         this.baseInfo.contact_mobile = res.data.contact_mobile;
         this.baseInfo.contact_email = res.data.contact_email;
       } else {
-        if (res.code == 1008) {
-          this.$router.push({ name: "loginindex" });
-        }else if(this.$systemCode.test(res.code)){
-          this.$refs.head.globalTip(1, "系统错误");
-        }else{
-          this.$refs.head.globalTip(1, res.message);
-        }
+        this.$refs.head.globalTip(1, res.message, res.code);
       }
     },
     // 绑定出版社获取
@@ -211,13 +205,7 @@ export default {
         this.baseInfo.publisher_name = res.data.publisher_name;
         console.log(this.baseInfo);
       } else {
-        if (res.code == 1008) {
-          this.$router.push({ name: "loginindex" });
-        }else if(this.$systemCode.test(res.code)){
-          this.$refs.head.globalTip(1, "系统错误");
-        }else{
-          this.$refs.head.globalTip(1, res.message);
-        }
+        this.$refs.head.globalTip(1, res.message, res.code);
       }
     },
     async save() {
@@ -233,7 +221,7 @@ export default {
       };
       let res = await ORGANIZATION_EDIT(data);
       if (res.code == 0) {
-        this.$refs.head.globalTip(2, "修改成功");
+        this.$refs.head.globalTip(2, "修改成功", 0);
         this.baseInfo = this.editInfo;
         this.isEdit = false;
         this.$refs.head.publishInfo.organization_name = this.baseInfo.organization_name;
@@ -250,13 +238,7 @@ export default {
           JSON.stringify(this.$refs.head.accountInfo)
         );
       } else {
-        if (res.code == 1008) {
-          this.$router.push({ name: "loginindex" });
-        }else if(this.$systemCode.test(res.code)){
-          this.$refs.head.globalTip(1, "系统错误");
-        }else{
-          this.$refs.head.globalTip(1, res.message);
-        }
+        this.$refs.head.globalTip(1, res.message, res.code);
       }
     },
     edit() {

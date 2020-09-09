@@ -1,6 +1,6 @@
 <template>
   <div id="functionPage">
-    <HeadNav type="admin" ref="head"></HeadNav>
+    <HeadNav type="admin" ref="head" :show="1"></HeadNav>
     <div class="wd-1220">
       <div class="clearfix">
         <div class="float-left">
@@ -183,13 +183,7 @@ export default {
         }
         // console.log(this.publishList,this.competeList,this.industyList,this.applicationList)
       } else {
-        if (res.code == 1008) {
-          this.$router.push({ name: "loginindex" });
-        }else if(this.$systemCode.test(res.code)){
-          this.$refs.head.globalTip(1, "系统错误");
-        }else{
-          this.$refs.head.globalTip(1, res.message);
-        }
+          this.$refs.head.globalTip(1, res.message,res.code);
       }
     },
     // 功能权限修改
@@ -201,16 +195,10 @@ export default {
       };
       let res = await ORGANIZATION_AUTH_EDIT(data);
       if (res.code == 0) {
-        this.$refs.head.globalTip(2, "修改成功");
+        this.$refs.head.globalTip(2, "修改成功",0);
         this.getData();
       } else {
-        if (res.code == 1008) {
-          this.$router.push({ name: "loginindex" });
-        }else if(this.$systemCode.test(res.code)){
-          this.$refs.head.globalTip(1, "系统错误");
-        }else{
-          this.$refs.head.globalTip(1, res.message);
-        }
+          this.$refs.head.globalTip(1, res.message,res.code);
       }
     },
     onSearch(value) {

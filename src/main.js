@@ -43,14 +43,25 @@ Vue.use(VueCookies);
 Vue.config.productionTip = false
 
 // 本地存储数据localStorage
+  // 1、loginState：登录状态
+  // 2、headInfo：记录初始化信息
+  // 3、headFirst：记录登录后是否已经初始化
 
 // 注册一个全局前置守卫,确保要调用 next 方法，否则钩子就不会被 resolved
 // router.beforeEach((to, from, next) => {
-//   next()
-//   var replaceUrl = window.location.href.split('#')[0] + '#' + to.path;
-//   if(to.meta.requireAuth){
-//     next();
-//     // replaceUrl = window.location.href.split('#')[0] + '#' + '/login/index';
+//   if (!localStorage.getItem('loginState')) {
+//     localStorage.setItem('loginState', 0)
+//   }
+//   var _state = parseInt(localStorage.getItem('loginState'));
+//   console.log(111,from.name,to.name,_state);
+//   if(from.name == null && to.name == 'loginindex'){
+//     if(_state == 1){
+//       var replaceUrl = window.location.href.split('#')[0] + '#' + '/index';
+//       window.location.replace(replaceUrl);
+//       next();
+//     }else{
+//       next();
+//     }
 //     next();
 //   }
 //   next();

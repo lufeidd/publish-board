@@ -1,6 +1,6 @@
 <template>
   <div id="functionPage">
-    <HeadNav type="organize" ref="head" @publisherChange="publisherChange()"></HeadNav>
+    <HeadNav type="organize" ref="head" :show="1" @publisherChange="publisherChange()"></HeadNav>
     <div class="wd-1220">
       <div class="clearfix">
         <div class="float-left">
@@ -22,7 +22,7 @@
                       class="click-font"
                       @click="changePower(2)"
                       v-if="user_organization_type == 2"
-                    >设为普通成员</span> -->
+                    >设为普通成员</span>-->
                   </div>
                 </div>
                 <!-- 内容 -->
@@ -94,7 +94,11 @@
                               </td>
                               <td>{{item.auth_desc}}</td>
                               <td style="text-align:right;">
-                                <span class="click-font" v-if="item.click" @click="changeFunction(item,index)">{{item.click_desc}}</span>
+                                <span
+                                  class="click-font"
+                                  v-if="item.click"
+                                  @click="changeFunction(item,index)"
+                                >{{item.click_desc}}</span>
                                 <span v-else>{{item.click_desc}}</span>
                               </td>
                             </tr>
@@ -157,7 +161,7 @@ export default {
     this.user_id = this.$route.query.user_id;
     this.user_name = this.$route.query.user_name;
     this.organization_id = this.$route.query.organization_id;
-    if(this.powerType == 1){
+    if (this.powerType == 1) {
       this.getData();
     }
     this.$setSlideHeight();
@@ -193,13 +197,7 @@ export default {
         }
         // console.log(this.publishList,this.competeList,this.industyList,this.applicationList)
       } else {
-        if (res.code == 1008) {
-          this.$router.push({ name: "loginindex" });
-        }else if(this.$systemCode.test(res.code)){
-          this.$refs.head.globalTip(1, "系统错误");
-        }else{
-          this.$refs.head.globalTip(1, res.message);
-        }
+        this.$refs.head.globalTip(1, res.message, res.code);
       }
     },
     // 获取成员信息
@@ -212,13 +210,7 @@ export default {
       if (res.code == 0) {
         // this.user_organization_type = res.data.user_type;
       } else {
-        if (res.code == 1008) {
-          this.$router.push({ name: "loginindex" });
-        }else if(this.$systemCode.test(res.code)){
-          this.$refs.head.globalTip(1, "系统错误");
-        }else{
-          this.$refs.head.globalTip(1,res.message)
-        }
+        this.$refs.head.globalTip(1, res.message, res.code);
       }
     },
     // 成员权限修改
@@ -230,16 +222,10 @@ export default {
       };
       let res = await ORGANIZATION_MEMBER_TYPESET(data);
       if (res.code == 0) {
-        this.$refs.head.globalTip(2, "设置成功");
+        this.$refs.head.globalTip(2, "设置成功", 0);
         this.getData();
       } else {
-        if (res.code == 1008) {
-          this.$router.push({ name: "loginindex" });
-        }else if(this.$systemCode.test(res.code)){
-          this.$refs.head.globalTip(1, "系统错误");
-        }else{
-          this.$refs.head.globalTip(1, res.message);
-        }
+        this.$refs.head.globalTip(1, res.message, res.code);
       }
     },
     // 功能配置权限修改
@@ -248,20 +234,14 @@ export default {
         organization_id: this.organization_id,
         user_id: this.user_id,
         group_id: item.group_id,
-        type: item.status?'':'add'
+        type: item.status ? "" : "add"
       };
       let res = await ORGANIZATION_MEMBER_AUTH_EDIT(data);
       if (res.code == 0) {
-        this.$refs.head.globalTip(2, "修改成功");
+        this.$refs.head.globalTip(2, "修改成功", 0);
         this.getData();
       } else {
-        if (res.code == 1008) {
-          this.$router.push({ name: "loginindex" });
-        }else if(this.$systemCode.test(res.code)){
-          this.$refs.head.globalTip(1, "系统错误");
-        }else{
-          this.$refs.head.globalTip(1, res.message);
-        }
+        this.$refs.head.globalTip(1, res.message, res.code);
       }
     },
     onSearch(value) {
@@ -308,7 +288,7 @@ export default {
         this.showList = this.applicationList;
       }
     },
-    publisherChange(){
+    publisherChange() {
       this.powerType = this.$refs.head.publishInfo.user_organization_type;
       this.getData();
       this.$setSlideHeight();

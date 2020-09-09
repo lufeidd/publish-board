@@ -1,7 +1,7 @@
 <template>
   <div id="organizePage">
     <div>
-      <HeadNav type="admin" ref="head"></HeadNav>
+      <HeadNav type="admin" ref="head" :show="1"></HeadNav>
       <div class="wd-1220">
         <div class="clearfix">
           <div class="float-left">
@@ -16,7 +16,10 @@
                   v-if="powerType == 1"
                 >
                   <div class="section-title clearfix">
-                    <span class="float-left">机构列表</span>
+                    <span class="float-left">
+                      机构列表
+                      <span class="desc">共{{totalSize}}家机构</span>
+                    </span>
                     <span class="float-right click-font" @click="showModal">新增机构</span>
                   </div>
                   <div class="search">
@@ -78,7 +81,11 @@
                             <!-- <span v-if="item.state == 0">注销</span> -->
                           </td>
                           <td style="text-align:right;">
-                            <span class="click-font" v-if="item.state == 1" @click="toMember(item,index)">成员</span>
+                            <span
+                              class="click-font"
+                              v-if="item.state == 1"
+                              @click="toMember(item,index)"
+                            >成员</span>
                             <span
                               class="click-font"
                               style="margin-left:10px;"
@@ -137,12 +144,15 @@
               </div>
             </div>
             <div class="main-container" v-else>
-            <div class="model-container">
-              <div class="model-bg" style="min-height:650px;padding-bottom:75px;position:relative">
-                <PageNoPower></PageNoPower>
+              <div class="model-container">
+                <div
+                  class="model-bg"
+                  style="min-height:650px;padding-bottom:75px;position:relative"
+                >
+                  <PageNoPower></PageNoPower>
+                </div>
               </div>
             </div>
-          </div>
           </div>
         </div>
       </div>
@@ -345,8 +355,8 @@ export default {
   },
   mounted() {
     this.powerType = this.$refs.head.accountInfo.type;
-    if(this.powerType == 1){
-      this.getData()
+    if (this.powerType == 1) {
+      this.getData();
     }
     this.$setSlideHeight();
   },
@@ -368,13 +378,7 @@ export default {
         this.organizeList = res.data.lists;
         this.totalSize = res.data.total;
       } else {
-        if (res.code == 1008) {
-          this.$router.push({ name: "loginindex" });
-        }else if(this.$systemCode.test(res.code)){
-          this.$refs.head.globalTip(1, "系统错误");
-        }else{
-          this.$refs.head.globalTip(1, res.message);
-        }
+        this.$refs.head.globalTip(1, res.message, res.code);
       }
     },
     // 新增机构
@@ -392,7 +396,7 @@ export default {
       if (res.code == 0) {
         this.addOrganize = false;
         this.getData();
-        this.$refs.head.globalTip(2, "新增机构成功");
+        this.$refs.head.globalTip(2, "新增机构成功", 0);
         this.addOrganizeInfo.publish_id = 0;
         this.addOrganizeInfo.name = "";
         this.addOrganizeInfo.type = 0;
@@ -401,13 +405,7 @@ export default {
         this.addOrganizeInfo.contact_mobile = "";
         this.addOrganizeInfo.contact_email = "";
       } else {
-        if (res.code == 1008) {
-          this.$router.push({ name: "loginindex" });
-        }else if(this.$systemCode.test(res.code)){
-          this.$refs.head.globalTip(1, "系统错误");
-        }else{
-          this.$refs.head.globalTip(1, res.message);
-        }
+        this.$refs.head.globalTip(1, res.message, res.code);
       }
     },
     // 编辑机构
@@ -431,15 +429,9 @@ export default {
           }
           return value;
         });
-        this.$refs.head.globalTip(2, "修改成功");
+        this.$refs.head.globalTip(2, "修改成功", 0);
       } else {
-        if (res.code == 1008) {
-          this.$router.push({ name: "loginindex" });
-        }else if(this.$systemCode.test(res.code)){
-          this.$refs.head.globalTip(1, "系统错误");
-        }else{
-          this.$refs.head.globalTip(1, res.message);
-        }
+        this.$refs.head.globalTip(1, res.message, res.code);
       }
     },
     // 删除机构
@@ -450,19 +442,13 @@ export default {
       let res = await ORGANIZATION_DELETE(data);
       if (res.code == 0) {
         this.readOrganize = false;
-        this.$refs.head.globalTip(2, "删除成功");
+        this.$refs.head.globalTip(2, "删除成功", 0);
         this.getData();
         // this.organizeList = this.organizeList.filter((value, key) => {
         //   return index != key;
         // });
       } else {
-        if (res.code == 1008) {
-          this.$router.push({ name: "loginindex" });
-        }else if(this.$systemCode.test(res.code)){
-          this.$refs.head.globalTip(1, "系统错误");
-        }else{
-          this.$refs.head.globalTip(1, res.message);
-        }
+        this.$refs.head.globalTip(1, res.message, res.code);
       }
     },
     // 注销机构
@@ -473,19 +459,13 @@ export default {
       let res = await ORGANIZATION_LOGOFF(data);
       if (res.code == 0) {
         this.readOrganize = false;
-        this.$refs.head.globalTip(2, "注销成功");
+        this.$refs.head.globalTip(2, "注销成功", 0);
         this.getData();
         // this.organizeList = this.organizeList.filter((value, key) => {
         //   return index != key;
         // });
       } else {
-        if (res.code == 1008) {
-          this.$router.push({ name: "loginindex" });
-        }else if(this.$systemCode.test(res.code)){
-          this.$refs.head.globalTip(1, "系统错误");
-        }else{
-          this.$refs.head.globalTip(1, res.message);
-        }
+        this.$refs.head.globalTip(1, res.message, res.code);
       }
     },
     // 绑定出版社获取
@@ -498,13 +478,7 @@ export default {
         this.organizeInfo.publisher_name = res.data.publisher_name;
         this.readOrganize = true;
       } else {
-        if (res.code == 1008) {
-          this.$router.push({ name: "loginindex" });
-        }else if(this.$systemCode.test(res.code)){
-          this.$refs.head.globalTip(1, "系统错误");
-        }else{
-          this.$refs.head.globalTip(1, res.message);
-        }
+        this.$refs.head.globalTip(1, res.message, res.code);
       }
     },
     // 出版社列表获取
@@ -518,13 +492,7 @@ export default {
       if (res.code == 0) {
         this.dataSource = res.data.list;
       } else {
-        if (res.code == 1008) {
-          this.$router.push({ name: "loginindex" });
-        }else if(this.$systemCode.test(res.code)){
-          this.$refs.head.globalTip(1, "系统错误");
-        }else{
-          this.$refs.head.globalTip(1, res.message);
-        }
+        this.$refs.head.globalTip(1, res.message, res.code);
       }
     },
     // 恢复机构
@@ -534,19 +502,10 @@ export default {
       };
       let res = await ORGANIZATION_LOGON(data);
       if (res.code == 0) {
-        this.$message.info({
-          content: "恢复成功",
-          icon: <a-icon type="bell" />
-        });
+        this.$refs.head.globalTip(2, "恢复成功", 0);
         this.getData();
       } else {
-        if (res.code == 1008) {
-          this.$router.push({ name: "loginindex" });
-        }else if(this.$systemCode.test(res.code)){
-          this.$refs.head.globalTip(1, "系统错误");
-        }else{
-          this.$refs.head.globalTip(1, res.message);
-        }
+        this.$refs.head.globalTip(1, res.message, res.code);
       }
     },
     onShowSizeChange(page, pageSize) {
@@ -588,15 +547,15 @@ export default {
       // this.addOrganize = false;
       // this.loading = false;
       if (this.addOrganizeInfo.name.length == 0) {
-        this.$refs.head.globalTip(1, "请填写机构名称");
+        this.$refs.head.globalTip(1, "请填写机构名称", 0);
         return;
       }
       if (this.addOrganizeInfo.publisher_id == 0) {
-        this.$refs.head.globalTip(1, "请选择绑定出版社");
+        this.$refs.head.globalTip(1, "请选择绑定出版社", 0);
         return;
       }
       if (this.addOrganizeInfo.type == 0) {
-        this.$refs.head.globalTip(1, "请选择机构类型");
+        this.$refs.head.globalTip(1, "请选择机构类型", 0);
         return;
       }
       this.add();
@@ -643,7 +602,7 @@ export default {
         cancelText: "取消",
         okType: "danger",
         onOk() {
-          _this.organizeLogon(item.organization_id)
+          _this.organizeLogon(item.organization_id);
         },
         onCancel() {}
       });

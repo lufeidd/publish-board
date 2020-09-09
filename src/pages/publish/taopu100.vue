@@ -1,6 +1,6 @@
 <template>
   <div id="taopuPage" @click="showYear = false;showResult = false;">
-    <HeadNav type="publish" ref="head" @publisherChange="publisherChange()"></HeadNav>
+    <HeadNav type="publish" :show="1" ref="head" @publisherChange="publisherChange()"></HeadNav>
     <div class="wd-1220">
       <div class="clearfix">
         <div class="float-left">
@@ -269,7 +269,7 @@
         </div>
       </div>
     </div>
-    <Loading ref="load"></Loading>
+    <Loading ref="load" :show="1"></Loading>
   </div>
 </template>
 <style scoped lang="scss" src="@/style/scss/pages/publish/taopu100.scss"></style>
@@ -303,7 +303,7 @@ export default {
       dataSource: [],
       showResult: false,
       searchLoading: false,
-      showAbout:false,
+      showAbout: false
     };
   },
   mounted() {
@@ -341,14 +341,10 @@ export default {
         this.$refs.load.isLoading = false;
       } else {
         this.$refs.load.isLoading = false;
-        if (res.code == 1008) {
-          this.$router.push({ name: "loginindex" });
-        } else if (res.code == 1009) {
+        if (res.code == 1009) {
           this.goodsPower = false;
-        }else if(this.$systemCode.test(res.code)){
-          this.$refs.head.globalTip(1, "系统错误");
         } else {
-          this.$refs.head.globalTip(1, res.message);
+          this.$refs.head.globalTip(1, res.message, res.code);
         }
         this.$setSlideHeight();
       }
@@ -363,9 +359,7 @@ export default {
       if (res.code == 0) {
         this.historyList = res.data;
       } else {
-        if (res.code == 1008) {
-          this.$router.push({ name: "loginindex" });
-        }else if (res.code == 1009) {
+        if (res.code == 1009) {
           this.goodsPower = false;
         } else {
           this.$refs.head.globalTip(1, res.message);
@@ -379,13 +373,7 @@ export default {
       if (res.code == 0) {
         this.categoryList = res.data;
       } else {
-        if (res.code == 1008) {
-          this.$router.push({ name: "loginindex" });
-        }else if(this.$systemCode.test(res.code)){
-          this.$refs.head.globalTip(1, "系统错误");
-        } else {
-          this.$refs.head.globalTip(1, res.message);
-        }
+        this.$refs.head.globalTip(1, res.message, res.code);
       }
     },
     async search(_value) {
@@ -407,16 +395,10 @@ export default {
         this.showAbout = true;
       } else {
         this.searchLoading = false;
-        if (res.code == 1008) {
-          this.$router.push({ name: "loginindex" });
-        }else if(this.$systemCode.test(res.code)){
-          this.$refs.head.globalTip(1, "系统错误");
-        } else {
-          this.$refs.head.globalTip(1, res.message);
-        }
+        this.$refs.head.globalTip(1, res.message, res.code);
       }
     },
-    inputClick(){},
+    inputClick() {},
     inputSearch() {
       console.log(111);
       this.dataSource = [];

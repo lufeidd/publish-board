@@ -1,6 +1,6 @@
 <template>
   <div id="ownIndexPage" @click="showYear = false">
-    <HeadNav type="publish" ref="head" @publisherChange="publisherChange()"></HeadNav>
+    <HeadNav type="publish" ref="head" :show="1" @publisherChange="publisherChange()"></HeadNav>
     <div class="wd-1220">
       <div class="clearfix">
         <div class="float-left">
@@ -82,11 +82,10 @@
                         <span :class="dateType == 2?'picker active':'picker'">周</span>
                         <a-week-picker
                           class="week"
-                          :allowClear="false"
                           placeholder="Select Week"
+                          :allowClear="false"
                           @change="weekChange"
                           :disabledDate="disabledEndDate"
-                          format="YYYY-MM-DD"
                           :value="chooseWeek"
                         />
                       </span>
@@ -98,13 +97,12 @@
                           @change="monthChange"
                           placeholder="Select month"
                           :value="chooseMonth"
-                          format="YYYY-MM-DD"
                           :disabledDate="disabledEndDate"
                         />
                       </span>
                       <span class="time-picker">
                         <span :class="dateType == 4?'picker active':'picker'">年</span>
-                        <span @click.stop="showYear = true">
+                        <span @click.stop="showYear = true;showResult = false;">
                           <a-date-picker
                             class="week"
                             :allowClear="false"
@@ -486,7 +484,7 @@
         </div>
       </div>
     </div>
-    <Loading ref="load"></Loading>
+    <Loading ref="load" :show="1"></Loading>
   </div>
 </template>
 
@@ -642,29 +640,49 @@ export default {
         this.account = res.data;
         this.cowData = this.cowData.map((value, key) => {
           if (value.type == "滞销") {
-            value.sold = res.data.goods_num.num_short?res.data.goods_num.num_short:0;
+            value.sold = res.data.goods_num.num_short
+              ? res.data.goods_num.num_short
+              : 0;
           } else if (value.type == "一般") {
-            value.sold = res.data.goods_num.num_normal?res.data.goods_num.num_normal:0;
+            value.sold = res.data.goods_num.num_normal
+              ? res.data.goods_num.num_normal
+              : 0;
           } else if (value.type == "常销") {
-            value.sold = res.data.goods_num.num_long?res.data.goods_num.num_long:0;
+            value.sold = res.data.goods_num.num_long
+              ? res.data.goods_num.num_long
+              : 0;
           } else if (value.type == "畅销") {
-            value.sold = res.data.goods_num.num_hot?res.data.goods_num.num_hot:0;
+            value.sold = res.data.goods_num.num_hot
+              ? res.data.goods_num.num_hot
+              : 0;
           } else if (value.type == "新品") {
-            value.sold = res.data.goods_num.num_new?res.data.goods_num.num_new:0;
+            value.sold = res.data.goods_num.num_new
+              ? res.data.goods_num.num_new
+              : 0;
           }
           return value;
         });
         this.radarData = this.radarData.map((value, key) => {
           if (value.item == "综合评分") {
-            value.本社 = res.data.score.score_all?res.data.score.score_all:0;
+            value.本社 = res.data.score.score_all
+              ? res.data.score.score_all
+              : 0;
           } else if (value.item == "销售评分") {
-            value.本社 = res.data.score.score_sale?res.data.score.score_sale:0;
+            value.本社 = res.data.score.score_sale
+              ? res.data.score.score_sale
+              : 0;
           } else if (value.item == "读者评分") {
-            value.本社 = res.data.score.score_reader?res.data.score.score_reader:0;
+            value.本社 = res.data.score.score_reader
+              ? res.data.score.score_reader
+              : 0;
           } else if (value.item == "热点评分") {
-            value.本社 = res.data.score.score_hot?res.data.score.score_hot:0;
+            value.本社 = res.data.score.score_hot
+              ? res.data.score.score_hot
+              : 0;
           } else if (value.item == "生命周期评分") {
-            value.本社 = res.data.score.score_life?res.data.score.score_life:0;
+            value.本社 = res.data.score.score_life
+              ? res.data.score.score_life
+              : 0;
           }
           return value;
         });
@@ -696,14 +714,10 @@ export default {
         }
         this.radarFirst = false;
       } else {
-        if (res.code == 1008) {
-          this.$router.push({ name: "loginindex" });
-        } else if (res.code == 1009) {
+        if (res.code == 1009) {
           this.generalPower = false;
-        }else if(this.$systemCode.test(res.code)){
-          this.$refs.head.globalTip(1, "系统错误");
         } else {
-          this.$refs.head.globalTip(1, res.message);
+          this.$refs.head.globalTip(1, res.message, res.code);
         }
       }
     },
@@ -721,14 +735,10 @@ export default {
         this.goodsRankList = res.data;
         this.goodsPower = true;
       } else {
-        if (res.code == 1008) {
-          this.$router.push({ name: "loginindex" });
-        } else if (res.code == 1009) {
+        if (res.code == 1009) {
           this.goodsPower = false;
-        }else if(this.$systemCode.test(res.code)){
-          this.$refs.head.globalTip(1, "系统错误");
         } else {
-          this.$refs.head.globalTip(1, res.message);
+          this.$refs.head.globalTip(1, res.message, res.code);
         }
       }
     },
@@ -771,14 +781,10 @@ export default {
         this.$refs.load.isLoading = false;
       } else {
         this.$refs.load.isLoading = false;
-        if (res.code == 1008) {
-          this.$router.push({ name: "loginindex" });
-        } else if (res.code == 1009) {
+        if (res.code == 1009) {
           this.regionPower = false;
-        }else if(this.$systemCode.test(res.code)){
-          this.$refs.head.globalTip(1, "系统错误");
         } else {
-          this.$refs.head.globalTip(1, res.message);
+          this.$refs.head.globalTip(1, res.message, res.code);
         }
       }
     },
@@ -789,13 +795,7 @@ export default {
       if (res.code == 0) {
         this.categoryList = res.data;
       } else {
-        if (res.code == 1008) {
-          this.$router.push({ name: "loginindex" });
-        }else if(this.$systemCode.test(res.code)){
-          this.$refs.head.globalTip(1, "系统错误");
-        } else {
-          this.$refs.head.globalTip(1, res.message);
-        }
+        this.$refs.head.globalTip(1, res.message, res.code);
       }
     },
     // 获取核心数据
@@ -816,14 +816,10 @@ export default {
         this.sale_ratio_info = res.data.sale_ratio_info;
         this.onsale_goods_info = res.data.onsale_goods_info;
       } else {
-        if (res.code == 1008) {
-          this.$router.push({ name: "loginindex" });
-        } else if (res.code == 1009) {
+        if (res.code == 1009) {
           this.corePower = false;
-        }else if(this.$systemCode.test(res.code)){
-          this.$refs.head.globalTip(1, "系统错误");
         } else {
-          this.$refs.head.globalTip(1, res.message);
+          this.$refs.head.globalTip(1, res.message, res.code);
         }
       }
     },
@@ -882,14 +878,10 @@ export default {
         this.$refs.load.isLoading = false;
       } else {
         this.$refs.load.isLoading = false;
-        if (res.code == 1008) {
-          this.$router.push({ name: "loginindex" });
-        } else if (res.code == 1009) {
+        if (res.code == 1009) {
           this.corePower = false;
-        }else if(this.$systemCode.test(res.code)){
-          this.$refs.head.globalTip(1, "系统错误");
         } else {
-          this.$refs.head.globalTip(1, res.message);
+          this.$refs.head.globalTip(1, res.message, res.code);
         }
       }
     },
@@ -917,7 +909,7 @@ export default {
       this.getRegion();
       this.getCore();
       this.getCoreData();
-      console.log(666, startDate, endDate);
+      console.log(666, dateString, startDate, endDate);
     },
     monthChange(date, dateString) {
       this.$refs.load.isLoading = true;
@@ -929,7 +921,7 @@ export default {
         .month(date.month())
         .endOf("month")
         .format("YYYY-MM-DD");
-      console.log(dateString, startDate, endDate);
+      console.log(date, dateString, startDate, endDate);
       if (
         startDate <
         this.$moment("2013-12-30")
@@ -949,7 +941,7 @@ export default {
       this.getRegion();
       this.getCore();
       this.getCoreData();
-      console.log(startDate, endDate);
+      // console.log(startDate, endDate);
     },
     yearChange(e) {
       this.$refs.load.isLoading = true;

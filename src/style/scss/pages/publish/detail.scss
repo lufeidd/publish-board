@@ -161,5 +161,20 @@
         padding: 15px;
       }
     }
+    & .detail-desc{
+      padding:15px;
+      font-size: $fontSize - 2;
+      & .content{
+        margin-bottom: 5px;
+        & .title{
+          display: inline-block;
+          width: 50px;
+        }
+        & .desc{
+          color: $fontColor1;
+          margin-left: 60px;
+        }
+      }
+    }
   }
 }

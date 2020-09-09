@@ -5,7 +5,7 @@
         <div class="big">404</div>
         <p>抱歉，没有找到您访问的页面</p>
         <p>
-          <router-link to="/"><a-button type="primary">返回首页</a-button></router-link>
+          <router-link to="/index"><a-button type="primary">返回首页</a-button></router-link>
         </p>
         <p><span class="click-font" @click="returnPage">返回上一页</span></p>
       </div>

@@ -136,6 +136,9 @@
         }
         & .name{
           font-size: $fontSize - 2;
+          &.own{
+            color: #5A8BEE;
+          }
           &.one{
             color: #5FD9A9;
           }

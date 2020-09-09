@@ -1,9 +1,16 @@
 <template>
   <div id="registerPage">
+    <HeadNav type="login" :show="0" ref="head"></HeadNav>
     <img src="../../assets/login-bg.png" alt width="100%" height="100%" />
     <div class="main-container" v-if="showLogin == false">
       <div class="left">
-        <img src="../../assets/login-advertise.png" alt="" width="100%" height="100%" style="border-radius: 10px 0 0 10px;">
+        <img
+          src="../../assets/login-advertise.png"
+          alt
+          width="100%"
+          height="100%"
+          style="border-radius: 10px 0 0 10px;"
+        />
       </div>
       <div class="right">
         <p class="title" v-if="inviteCode">
@@ -43,7 +50,13 @@
           <div class="tips" v-if="isPassword">密码错误</div>
         </div>
         <div class="btn">
-          <a-button type="primary" size="large" block @click="test" style="font-size:14px !important;">登录</a-button>
+          <a-button
+            type="primary"
+            size="large"
+            block
+            @click="test"
+            style="font-size:14px !important;"
+          >登录</a-button>
           <div class="word clearfix">
             <span class="float-left" v-if="inviteCode">
               没有账号？
@@ -77,12 +90,7 @@
           height="80px"
           style="margin-right:5px;"
         />
-        <img
-          src="../../assets/login-invite3.png"
-          alt
-          width="80px"
-          height="80px"
-        />
+        <img src="../../assets/login-invite3.png" alt width="80px" height="80px" />
       </div>
       <div style="margin-bottom:40px;margin-top:10px;">
         <img
@@ -99,20 +107,22 @@
           height="80px"
           style="margin-right:5px;"
         />
-        <img
-          src="../../assets/login-invite6.png"
-          alt
-          width="80px"
-          height="80px"
-        />
+        <img src="../../assets/login-invite6.png" alt width="80px" height="80px" />
       </div>
       <div style="width:330px;display:inline-block;">
         <!-- <router-link to="/"> -->
-          <a-button type="primary" size="large" block @click="join" style="font-size:14px !important;">加入机构</a-button>
+        <a-button
+          type="primary"
+          size="large"
+          block
+          @click="join"
+          style="font-size:14px !important;"
+        >加入机构</a-button>
         <!-- </router-link> -->
       </div>
     </div>
     <div class="copy-right">———— · 淘普出版数据中心 · 博库数字出版传媒集团 · ————</div>
+    <Loading ref="load" :show="0"></Loading>
   </div>
 </template>
 <style scoped lang="scss" src="@/style/scss/pages/login.scss"></style>
@@ -145,6 +155,15 @@ export default {
       }
     };
   },
+  beforeCreate() {
+    let _this = this;
+    // console.log(_this);
+    if (!_this.$route.query.inviteCode) {
+      if (parseInt(localStorage.getItem("loginState")) == 1) {
+        _this.$router.push({ name: "index" });
+      }
+    }
+  },
   mounted() {
     var _this = this;
     if (this.$route.query.mobile) {
@@ -175,10 +194,11 @@ export default {
   },
   methods: {
     noOpen() {
-      this.$message.info({
-        content: "该功能还在施工中，暂未开放",
-        icon: <a-icon type="exclamation-circle" />
-      });
+      // this.$message.info({
+      //   content: "该功能还在施工中，暂未开放",
+      //   icon: <a-icon type="exclamation-circle" />
+      // });
+      this.$refs.head.globalTip(1, "该功能还在施工中，暂未开放", 0);
     },
     toRegister() {
       this.$router.push({
@@ -190,10 +210,7 @@ export default {
     },
     send() {
       if (!/^1[3456789]\d{9}$/.test(this.mobile)) {
-        this.$message.info({
-          content: "手机号码有误，请重新输入",
-          icon: <a-icon type="exclamation-circle" />
-        });
+        this.$refs.head.globalTip(1, "手机号码有误，请重新输入", 0);
         return;
       }
       this.sendTime.time = 60;
@@ -213,15 +230,12 @@ export default {
     },
     test() {
       if (!/^1[3456789]\d{9}$/.test(this.mobile)) {
-        this.$message.info({
-          content: "手机号码有误，请重新输入",
-          icon: <a-icon type="exclamation-circle" />
-        });
+        this.$refs.head.globalTip(1, "手机号码有误，请重新输入", 0);
         return;
       }
-      let _code = this.codeType == 1 ? this.passCode : this.code
-      console.log(1010,_code)
-      if(_code.length == 0){
+      let _code = this.codeType == 1 ? this.passCode : this.code;
+      console.log(1010, _code);
+      if (_code.length == 0) {
         this.$message.info({
           content: this.codeType == 1 ? "请输入密码" : "请输入验证码",
           icon: <a-icon type="exclamation-circle" />
@@ -238,22 +252,9 @@ export default {
       };
       let res = await COMMON_CAPTCHA_SMS(data);
       if (res.code == 0) {
-        this.$message.info({
-          content: "发送成功",
-          icon: <a-icon type="bell" />
-        });
+        this.$refs.head.globalTip(2, "发送成功", 0);
       } else {
-        if (this.$systemCode.test(res.code)) {
-          this.$message.info({
-            content: "系统错误",
-            icon: <a-icon type="exclamation-circle" />
-          });
-        } else {
-          this.$message.info({
-            content: res.message,
-            icon: <a-icon type="exclamation-circle" />
-          });
-        }
+        this.$refs.head.globalTip(1, res.message, res.code);
       }
     },
     // 加入机构
@@ -273,6 +274,7 @@ export default {
         if (this.inviteCode) {
           location.reload();
         } else {
+          localStorage.setItem("loginState", 1);
           this.$router.push({
             name: "index"
           });
@@ -280,17 +282,8 @@ export default {
       } else {
         if (res.code == 5002) {
           this.codeType == 1 ? (this.isPassword = true) : (this.isShort = true);
-        }
-        if (this.$systemCode.test(res.code)) {
-          this.$message.info({
-            content: "系统错误",
-            icon: <a-icon type="exclamation-circle" />
-          });
         } else {
-          this.$message.info({
-            content: res.message,
-            icon: <a-icon type="exclamation-circle" />
-          });
+          this.$refs.head.globalTip(1, res.message, res.code);
         }
       }
     },
@@ -306,17 +299,7 @@ export default {
         this.showLogin = res.data.is_login;
         this.last_organization_id = res.data.organization_id;
       } else {
-        if (this.$systemCode.test(res.code)) {
-          this.$message.info({
-            content: "系统错误",
-            icon: <a-icon type="exclamation-circle" />
-          });
-        } else {
-          this.$message.info({
-            content: res.message,
-            icon: <a-icon type="exclamation-circle" />
-          });
-        }
+        this.$refs.head.globalTip(1, res.message, res.code);
       }
     },
     // 使用邀请码
@@ -327,11 +310,9 @@ export default {
       let res = await USER_INVITE_CONSUME(data);
       if (res.code == 0) {
         localStorage.setItem("headFirst", 0);
-        this.$message.info({
-          content: "加入机构成功",
-          icon: <a-icon type="exclamation-circle" />
-        });
+        this.$refs.head.globalTip(2, "加入机构成功", 0);
         setTimeout(() => {
+          localStorage.setItem("loginState", 1);
           this.$router.replace({
             name: "index",
             query: {
@@ -340,17 +321,7 @@ export default {
           });
         }, 2000);
       } else {
-        if (this.$systemCode.test(res.code)) {
-          this.$message.info({
-            content: "系统错误",
-            icon: <a-icon type="exclamation-circle" />
-          });
-        } else {
-          this.$message.info({
-            content: res.message,
-            icon: <a-icon type="exclamation-circle" />
-          });
-        }
+        this.$refs.head.globalTip(1, res.message, res.code);
       }
     }
   }

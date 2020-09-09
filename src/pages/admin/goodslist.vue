@@ -1,6 +1,6 @@
 <template>
   <div id="organizePage">
-    <HeadNav type="admin" ref="head"></HeadNav>
+    <HeadNav type="admin" ref="head" :show="1"></HeadNav>
     <div class="wd-1220">
       <div class="clearfix">
         <div class="float-left">
@@ -8,12 +8,15 @@
         </div>
         <div class="float-left">
           <div class="main-container" v-if="powerType == 1">
-            <div class="model-container">
+            <!-- <div class="model-container">
               <div class="model-bg total-user">全平台总计 {{goodsCount}} 个品种</div>
-            </div>
+            </div>-->
             <div class="model-container">
               <div class="model-bg" style="min-height:650px;padding-bottom:75px;">
-                <div class="section-title">品种列表</div>
+                <div class="section-title">
+                  品种列表
+                  <span class="desc">共{{goodsCount}}个品种</span>
+                </div>
                 <div class="search">
                   <div class="content common">
                     <a-input-search
@@ -154,7 +157,7 @@ export default {
   mounted() {
     this.powerType = this.$refs.head.accountInfo.type;
     this.goodsCount = this.$refs.head.accountInfo.goods_count;
-    if(this.powerType == 1){
+    if (this.powerType == 1) {
       // this.getData()
     }
     this.$setSlideHeight();
@@ -169,8 +172,8 @@ export default {
         this.userList = [];
         this.searchLoading = true;
         this.getData();
-      }else{
-        this.$refs.head.globalTip(1, "请输入搜索内容");
+      } else {
+        this.$refs.head.globalTip(1, "请输入搜索内容", 0);
       }
     },
     onShowSizeChange(page, pageSize) {
@@ -202,13 +205,7 @@ export default {
       } else {
         this.searchLoading = false;
         this.total = 0;
-        if (res.code == 1008) {
-          this.$router.push({ name: "loginindex" });
-        }else if(this.$systemCode.test(res.code)){
-          this.$refs.head.globalTip(1, "系统错误");
-        }else{
-          this.$refs.head.globalTip(1, res.message);
-        }
+        this.$refs.head.globalTip(1, res.message, res.code);
       }
     }
   }

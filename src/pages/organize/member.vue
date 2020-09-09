@@ -1,6 +1,6 @@
 <template>
   <div id="organizePage">
-    <HeadNav type="organize" ref="head" @publisherChange="publisherChange()"></HeadNav>
+    <HeadNav type="organize" ref="head" :show="1" @publisherChange="publisherChange()"></HeadNav>
     <div class="wd-1220">
       <div class="clearfix">
         <div class="float-left">
@@ -285,7 +285,7 @@ export default {
     this.powerType = this.$refs.head.publishInfo.user_organization_type;
     this.organization_id = this.$refs.head.publishInfo.organization_id;
     this.organization_name = this.$refs.head.publishInfo.organization_name;
-    if(this.powerType == 1){
+    if (this.powerType == 1) {
       this.getData();
     }
     this.$setSlideHeight();
@@ -308,13 +308,7 @@ export default {
         this.userList = res.data.lists;
         this.totalCount = res.data.total;
       } else {
-        if (res.code == 1008) {
-          this.$router.push({ name: "loginindex" });
-        }else if(this.$systemCode.test(res.code)){
-          this.$refs.head.globalTip(1, "系统错误");
-        }else{
-          this.$refs.head.globalTip(1, res.message);
-        }
+        this.$refs.head.globalTip(1, res.message, res.code);
       }
     },
     // 查看成员信息
@@ -329,13 +323,7 @@ export default {
         this.memberInfo.inviter_account = this.userList[_index].inviter_account;
         this.readOrganize = true;
       } else {
-        if (res.code == 1008) {
-          this.$router.push({ name: "loginindex" });
-        }else if(this.$systemCode.test(res.code)){
-          this.$refs.head.globalTip(1, "系统错误");
-        }else{
-          this.$refs.head.globalTip(1, res.message);
-        }
+        this.$refs.head.globalTip(1, res.message, res.code);
       }
     },
     // 删除成员
@@ -350,15 +338,9 @@ export default {
           return this.memberIndex != key;
         });
         this.readOrganize = false;
-        this.$refs.head.globalTip(2, "移出机构成功");
+        this.$refs.head.globalTip(2, "移出机构成功", 0);
       } else {
-        if (res.code == 1008) {
-          this.$router.push({ name: "loginindex" });
-        }else if(this.$systemCode.test(res.code)){
-          this.$refs.head.globalTip(1, "系统错误");
-        }else{
-          this.$refs.head.globalTip(1, res.message);
-        }
+          this.$refs.head.globalTip(1, res.message, res.code);
       }
     },
     // 生成邀请码
@@ -375,13 +357,7 @@ export default {
           res.data.invite_code;
         this.creatUrl = true;
       } else {
-        if (res.code == 1008) {
-          this.$router.push({ name: "loginindex" });
-        }else if(this.$systemCode.test(res.code)){
-          this.$refs.head.globalTip(1, "系统错误");
-        }else{
-          this.$refs.head.globalTip(1, res.message);
-        }
+          this.$refs.head.globalTip(1, res.message, res.code);
       }
     },
     // 分页切换
@@ -437,11 +413,11 @@ export default {
       var _this = this;
       this.$copyText(this.inviteUrl).then(
         function(e) {
-          _this.$refs.head.globalTip(2, "复制成功");
+          _this.$refs.head.globalTip(2, "复制成功", 0);
           // console.log(e);
         },
         function(e) {
-          _this.$refs.head.globalTip(1, "复制失败");
+          _this.$refs.head.globalTip(1, "复制失败", 0);
           // console.log(e);
         }
       );

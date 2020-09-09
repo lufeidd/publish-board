@@ -103,6 +103,7 @@ export default {
       let res = await USER_EDIT(data);
       if (res.code == 0) {
         localStorage.setItem('headFirst',0);
+        localStorage.setItem('loginState',1);
         this.$router.push({
           name: "index"
         });

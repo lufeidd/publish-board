@@ -1,6 +1,6 @@
 <template>
   <div id="taopuPage">
-    <HeadNav type="industry" ref="head" @publisherChange="publisherChange()"></HeadNav>
+    <HeadNav type="industry" ref="head" :show="1" @publisherChange="publisherChange()"></HeadNav>
     <div class="wd-1220">
       <div class="clearfix">
         <div class="float-left">
@@ -35,13 +35,7 @@
                         :key="index1"
                         @click.stop="selected(item1,index1)"
                       >
-                        <img
-                          :src="item1.photo"
-                          alt
-                          width="35px"
-                          height="35px"
-                          v-if="item1.photo"
-                        />
+                        <img :src="item1.photo" alt width="35px" height="35px" v-if="item1.photo" />
                         <span v-else class="no-pic" style="min-width:35px;min-height:35px;"></span>
                         <span class="result-title" :title="item1.name">{{item1.name}}</span>
                       </div>
@@ -191,7 +185,7 @@
         </div>
       </div>
     </div>
-    <Loading ref="load"></Loading>
+    <Loading ref="load" :show="1"></Loading>
   </div>
 </template>
 <style scoped lang="scss" src="@/style/scss/pages/publish/taopu100.scss"></style>
@@ -209,7 +203,7 @@ export default {
       dataSource: [],
       searchLoading: false,
       showResult: false,
-      showAbout:false,
+      showAbout: false,
       historyList: [],
       authorList: [],
       total: 0,
@@ -241,13 +235,7 @@ export default {
         this.showAbout = true;
       } else {
         this.searchLoading = false;
-        if (res.code == 1008) {
-          this.$router.push({ name: "loginindex" });
-        }else if(this.$systemCode.test(res.code)){
-          this.$refs.head.globalTip(1, "系统错误");
-        } else {
-          this.$refs.head.globalTip(1, res.message);
-        }
+        this.$refs.head.globalTip(1, res.message, res.code);
       }
     },
     async getData() {
@@ -265,14 +253,10 @@ export default {
         this.$refs.load.isLoading = false;
       } else {
         this.$refs.load.isLoading = false;
-        if (res.code == 1008) {
-          this.$router.push({ name: "loginindex" });
-        } else if (res.code == 1009) {
+        if (res.code == 1009) {
           this.pagePower = false;
-        } else if(this.$systemCode.test(res.code)){
-          this.$refs.head.globalTip(1, "系统错误");
-        }else {
-          this.$refs.head.globalTip(1, res.message);
+        } else {
+          this.$refs.head.globalTip(1, res.message, res.code);
         }
       }
     },
@@ -283,18 +267,14 @@ export default {
         this.pagePower = true;
         this.historyList = res.data;
       } else {
-        if (res.code == 1008) {
-          this.$router.push({ name: "loginindex" });
-        } else if (res.code == 1009) {
+        if (res.code == 1009) {
           this.pagePower = false;
-        }else if(this.$systemCode.test(res.code)){
-          this.$refs.head.globalTip(1, "系统错误");
         } else {
-          this.$refs.head.globalTip(1, res.message);
+          this.$refs.head.globalTip(1, res.message, res.code);
         }
       }
     },
-    inputClick(){},
+    inputClick() {},
     inputSearch() {
       console.log(111);
       this.dataSource = [];
@@ -303,11 +283,11 @@ export default {
         this.showAbout = false;
         this.searchLoading = true;
         this.search(this.inputVal);
-      }else {
+      } else {
         this.showResult = false;
       }
     },
-    selected(item1,index1) {
+    selected(item1, index1) {
       console.log(222);
       this.$router.push({
         name: "authordetail",
