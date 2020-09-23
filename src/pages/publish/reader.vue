@@ -41,15 +41,15 @@
                       <div v-if="ringData1.length > 0">
                         <div id="ring1" style="width:400px;margin-top:20px;"></div>
                       </div>
-                      <div style="width:400px;margin-top:20px;" v-else>
-                        <a-empty />
+                      <div style="width:400px;" v-else>
+                        <div class="no-data">基础数据不足，暂无分析</div>
                       </div>
                       <div style="margin-top:20px;">消费能力</div>
                       <div v-if="ringData2.length > 0">
                         <div id="ring2" style="width:400px;margin-top:20px;"></div>
                       </div>
-                      <div style="width:400px;margin-top:20px;" v-else>
-                        <a-empty />
+                      <div style="width:400px;" v-else>
+                        <div class="no-data">基础数据不足，暂无分析</div>
                       </div>
                     </div>
                     <div class="float-left" style="margin-left:100px;">
@@ -57,15 +57,15 @@
                       <div v-if="columnData1.length > 0">
                         <div id="column1" style="width:400px;margin-left:40px;margin-top:20px;"></div>
                       </div>
-                      <div style="width:400px;margin-top:20px;" v-else>
-                        <a-empty />
+                      <div style="width:400px;" v-else>
+                        <div class="no-data">基础数据不足，暂无分析</div>
                       </div>
                       <div style="margin-top:20px;">兴趣分布</div>
                       <div v-if="columnData2.length > 0">
                         <div id="column2" style="width:400px;margin-left:40px;margin-top:20px;"></div>
                       </div>
-                      <div style="width:400px;margin-top:20px;" v-else>
-                        <a-empty />
+                      <div style="width:400px;" v-else>
+                        <div class="no-data">基础数据不足，暂无分析</div>
                       </div>
                     </div>
                   </div>
@@ -76,7 +76,7 @@
             <div class="model-container">
               <div class="model-bg">
                 <div class="section-title">地域</div>
-                <div class="clearfix" style="padding-bottom:15px;" v-if="barData1.length > 0">
+                <div class="clearfix" style="padding-bottom:15px;" v-if="barData1.length > 4">
                   <div class="float-left" style="position:relative;margin-top:15px;">
                     <div id="map" style="height:284px;width:520px;"></div>
                   </div>
@@ -85,9 +85,7 @@
                     <div id="bar-chart1"></div>
                   </div>
                 </div>
-                <div v-else style="padding:75px 0;">
-                  <a-empty />
-                </div>
+                <div class="no-data" v-else>基础数据不足，暂无分析</div>
               </div>
             </div>
             <!-- 偏好 -->
@@ -97,21 +95,17 @@
                 <div class="clearfix" style="padding:10px 15px 15px 15px;">
                   <div class="float-left" style="width:500px;margin-right:50px;">
                     <p>类目偏好</p>
-                    <div v-if="barData2.length > 0">
+                    <div v-if="barData2.length > 4">
                       <div id="bar-chart2"></div>
                     </div>
-                    <div style="width:400px;margin-top:20px;" v-else>
-                      <a-empty />
-                    </div>
+                    <div class="no-data" v-else>基础数据不足，暂无分析</div>
                   </div>
                   <div class="float-left" style="width:500px;">
                     <p>作家偏好</p>
-                    <div v-if="barData3.length > 0">
+                    <div v-if="barData3.length > 4">
                       <div id="bar-chart3"></div>
                     </div>
-                    <div style="width:400px;margin-top:20px;" v-else>
-                      <a-empty />
-                    </div>
+                    <div class="no-data" v-else>基础数据不足，暂无分析</div>
                   </div>
                 </div>
               </div>
@@ -119,7 +113,7 @@
           </div>
           <div class="main-container" v-else>
             <div class="model-container">
-              <div class="model-bg" style="min-height:650px;padding-bottom:75px;position:relative">
+              <div class="model-bg" style="min-height:660px;padding-bottom:75px;position:relative">
                 <PageNoPower></PageNoPower>
               </div>
             </div>
@@ -139,6 +133,11 @@
     padding: 10px 15px;
     background-color: #f4f7fd;
     margin-right: 10px;
+  }
+  & .no-data {
+    padding: 118px 0;
+    font-size: $fontSize - 2;
+    text-align: center;
   }
 }
 </style>
@@ -203,15 +202,15 @@ export default {
           this.columnData2 = res.data.persona_role;
           this.barData1 = res.data.persona_region.map((value, key) => {
             this.barMapData.push(value.name);
-            value.name = key + 1 + "    " + value.name;
+            value.name = value.name;
             return value;
           });
           this.barData2 = res.data.persona_cate.map((value, key) => {
-            value.name = key + 1 + "    " + value.name;
+            value.name = value.name;
             return value;
           });
           this.barData3 = res.data.persona_author.map((value, key) => {
-            value.name = key + 1 + "    " + value.name;
+            value.name = value.name;
             return value;
           });
           let _this = this;
@@ -221,21 +220,32 @@ export default {
               if (_this.columnData1.length > 0) _this.initColumn1();
               if (_this.ringData2.length > 0) _this.initRing2();
               if (_this.columnData2.length > 0) _this.initColumn2();
-              if (_this.barData1.length > 0) _this.initMap();
-              if (_this.barData1.length > 0) _this.inintBar1(_this.barData1[0].value);
-              if (_this.barData2.length > 0) _this.inintBar2(_this.barData2[0].value);
-              if (_this.barData3.length > 0) _this.inintBar3(_this.barData3[0].value);
+              if (_this.barData1.length > 4) _this.initMap();
+              if (_this.barData1.length > 4)
+                _this.inintBar1(_this.barData1[0].value);
+              if (_this.barData2.length > 4)
+                _this.inintBar2(_this.barData2[0].value);
+              if (_this.barData3.length > 4)
+                _this.inintBar3(_this.barData3[0].value);
             } else {
-              if (_this.ringData1.length > 0) _this.ringChange1.changeData(_this.ringData1);
-              if (_this.ringData2.length > 0) _this.ringChange2.changeData(_this.ringData2);
-              if (_this.columnData1.length > 0) _this.columnChange1.changeData(_this.columnData1);
-              if (_this.columnData2.length > 0) _this.columnChange2.changeData(_this.columnData2);
-              if (_this.barData1.length > 0) _this.barChange1.changeData(_this.barData1.reverse());
-              if (_this.barData2.length > 0) _this.barChange2.changeData(_this.barData2.reverse());
-              if (_this.barData3.length > 0) _this.barChange3.changeData(_this.barData3.reverse());
-              if (_this.barData1.length > 0) _this.initMap();
+              if (_this.ringData1.length > 0)
+                _this.ringChange1.changeData(_this.ringData1);
+              if (_this.ringData2.length > 0)
+                _this.ringChange2.changeData(_this.ringData2);
+              if (_this.columnData1.length > 0)
+                _this.columnChange1.changeData(_this.columnData1);
+              if (_this.columnData2.length > 0)
+                _this.columnChange2.changeData(_this.columnData2);
+              if (_this.barData1.length > 4)
+                _this.barChange1.changeData(_this.barData1.reverse());
+              if (_this.barData2.length > 4)
+                _this.barChange2.changeData(_this.barData2.reverse());
+              if (_this.barData3.length > 4)
+                _this.barChange3.changeData(_this.barData3.reverse());
+              if (_this.barData1.length > 4) _this.initMap();
             }
             _this.isFirst = false;
+            _this.$setSlideHeight();
           }, 500);
         } else {
           this.isFirst = true;
@@ -246,7 +256,7 @@ export default {
         if (res.code == 1009) {
           this.pagePower = false;
         } else {
-          this.$refs.head.globalTip(1, res.message,res.code);
+          this.$refs.head.globalTip(1, res.message, res.code);
         }
       }
     },

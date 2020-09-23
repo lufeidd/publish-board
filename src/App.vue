@@ -2,6 +2,16 @@
   <a-config-provider :locale="zh_CN">
     <div id="app">
       <router-view />
+      <div class="copyright" v-if="!['loginindex','register','improve'].includes($route.name)">
+        <div class="copy-link">
+          <span class="url" @click="link(1)">火把商户后台</span>
+          <span>&nbsp·&nbsp</span>
+          <span class="url"  @click="link(2)">博库官网</span>
+          <span>&nbsp·&nbsp</span>
+          <span class="url"  @click="link(3)">博库图书专营店</span>
+        </div>
+        <div class="copy-word">Copyright © 2020  博库数字出版传媒集团 All Rights Reserved</div>
+      </div>
     </div>
   </a-config-provider>
 </template>
@@ -26,6 +36,19 @@ export default {
       maxCount: 5
     });
   },
+  methods:{
+    link(type){
+      let _url;
+      if(type == 1){
+        _url = "https://shopadmin.mhuoba.com/";
+      }else if(type == 2){
+        _url = "https://www.bookuu.com/";
+      }else if(type == 3){
+        _url = "https://bokuts.tmall.com/";
+      }
+      window.location.replace(_url);
+    }
+  }
 };
 </script>
 

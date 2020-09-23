@@ -354,7 +354,10 @@
                             @click="$refs.head.noOpen()"
                           >{{item.publisher_name}}</span>
                         </td>
-                        <td style="text-align:right;">{{item.sale_total}}</td>
+                        <td style="text-align:right;">
+                          <span v-if="item.sale_total">{{item.sale_total}}</span>
+                          <span v-else>--</span>
+                        </td>
                         <td style="text-align:right;">
                           <span v-if="item.industry_rank">{{item.industry_rank}}</span>
                           <span v-else>--</span>
@@ -378,7 +381,7 @@
           </div>
           <div class="main-container" v-else>
             <div class="model-container">
-              <div class="model-bg" style="min-height:650px;padding-bottom:75px;position:relative">
+              <div class="model-bg" style="min-height:660px;padding-bottom:75px;position:relative">
                 <PageNoPower></PageNoPower>
               </div>
             </div>
@@ -1033,6 +1036,12 @@ export default {
       this.publishId1 = item1.publisher_id;
       this.inputVal1 = "";
       this.publishList1 = [];
+      let _name = this.text1;
+      if(this.selectList.includes(_name)){
+        this.selectList = this.selectList.filter((value,key)=>{
+          return value != _name;
+        })
+      };
       this.text1 = item1.publisher_name;
       if(this.selectList.includes(item1.publisher_name)){
 
@@ -1048,6 +1057,12 @@ export default {
       this.publishId2 = item2.publisher_id;
       this.inputVal2 = "";
       this.publishList2 = [];
+      let _name = this.text2;
+      if(this.selectList.includes(_name)){
+        this.selectList = this.selectList.filter((value,key)=>{
+          return value != _name;
+        })
+      };
       this.text2 = item2.publisher_name;
       if(this.selectList.includes(item2.publisher_name)){
 
@@ -1063,6 +1078,12 @@ export default {
       this.publishId3 = item3.publisher_id;
       this.inputVal3 = "";
       this.publishList3 = [];
+      let _name = this.text3;
+      if(this.selectList.includes(_name)){
+        this.selectList = this.selectList.filter((value,key)=>{
+          return value != _name;
+        })
+      };
       this.text3 = item3.publisher_name;
       if(this.selectList.includes(item3.publisher_name)){
 

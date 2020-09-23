@@ -47,7 +47,7 @@
             </div>
             <!-- 竞社监控列表 -->
             <div class="model-container" v-if="tabKey == '1'">
-              <div class="model-bg">
+              <div class="model-bg" style="min-height:453px;">
                 <div class="section-title">竞社监控列表</div>
                 <div class="container">
                   <div class="content common" style="text-align:center;">
@@ -100,7 +100,7 @@
             </div>
             <!-- 竞品监控列表 -->
             <div class="model-container" v-if="tabKey == '2'">
-              <div class="model-bg">
+              <div class="model-bg" style="min-height:453px;">
                 <div class="section-title">竞社监控列表</div>
                 <div class="goods-container">
                   <div class="content common" style="text-align:center;">
@@ -183,11 +183,12 @@
                             </div>
                           </td>
                           <td style="text-align:center;">
-                            <span
-                              class="click-font author"
-                              @click="$refs.head.noOpen()"
-                              :title="item.authors[0].name"
-                            >{{item.authors[0].name}}</span>
+                            <div class="click-font author" @click="$refs.head.noOpen()">
+                              <div
+                                class="author-name"
+                                :title="item.authors[0].name"
+                              >{{item.authors[0].name}}</div>
+                            </div>
                           </td>
                           <td
                             style="text-align:center;"
@@ -213,7 +214,7 @@
           </div>
           <div class="main-container" v-else>
             <div class="model-container">
-              <div class="model-bg" style="min-height:650px;padding-bottom:75px;position:relative">
+              <div class="model-bg" style="min-height:660px;padding-bottom:75px;position:relative">
                 <PageNoPower></PageNoPower>
               </div>
             </div>
@@ -230,7 +231,7 @@ import {
   PUBLISHER_COMPETE_INIT,
   PUBLISHER_COMPETE_GETS,
   PUBLISHER_COMPETE_ADD,
-  PUBLISHER_COMPETE_DELETE
+  PUBLISHER_COMPETE_DELETE,
 } from "../../apis/compete.js";
 import { TOP_SEARCH } from "../../apis/publish.js";
 import { PUBLISHER_GETS } from "../../apis/common.js";
@@ -247,7 +248,7 @@ export default {
       dataSource1: [],
       publishList: [],
       goodsList: [],
-      searchLoading: false
+      searchLoading: false,
     };
   },
   mounted() {
@@ -261,7 +262,7 @@ export default {
     async getInit() {
       let data = {
         publisher_id: this.$refs.head.publishInfo.publisher_id,
-        organization_id: this.$refs.head.publishInfo.organization_id
+        organization_id: this.$refs.head.publishInfo.organization_id,
       };
       let res = await PUBLISHER_COMPETE_INIT(data);
       if (res.code == 0) {
@@ -281,7 +282,7 @@ export default {
       let data = {
         publisher_id: this.$refs.head.publishInfo.publisher_id,
         organization_id: this.$refs.head.publishInfo.organization_id,
-        type: Number(this.tabKey)
+        type: Number(this.tabKey),
       };
       let res = await PUBLISHER_COMPETE_GETS(data);
       if (res.code == 0) {
@@ -309,7 +310,7 @@ export default {
         publisher_id: this.$refs.head.publishInfo.publisher_id,
         organization_id: this.$refs.head.publishInfo.organization_id,
         type: Number(this.tabKey),
-        target_id: id
+        target_id: id,
       };
       let res = await PUBLISHER_COMPETE_ADD(data);
       if (res.code == 0) {
@@ -332,7 +333,7 @@ export default {
     async deleteMonitor(id) {
       let data = {
         compete_id: id,
-        organization_id: this.$refs.head.publishInfo.organization_id
+        organization_id: this.$refs.head.publishInfo.organization_id,
       };
       let res = await PUBLISHER_COMPETE_DELETE(data);
       if (res.code == 0) {
@@ -348,7 +349,7 @@ export default {
       let data = {
         publisher_name: val,
         page: 1,
-        page_size: 1000
+        page_size: 1000,
       };
       let res = await PUBLISHER_GETS(data);
       if (res.code == 0) {
@@ -364,7 +365,7 @@ export default {
         // publisher_id: this.$refs.head.publishInfo.publisher_id,
         search: _value,
         page: 1,
-        page_size: 100
+        page_size: 100,
       };
       let res = await TOP_SEARCH(data);
       if (res.code == 0) {
@@ -408,7 +409,7 @@ export default {
           onOk() {
             _this.addMonitor(_id);
           },
-          onCancel() {}
+          onCancel() {},
         });
       } else {
         this.$refs.head.globalTip(1, "监控对象已达到数量上限", 0);
@@ -441,7 +442,7 @@ export default {
           onOk() {
             _this.addMonitor(_id);
           },
-          onCancel() {}
+          onCancel() {},
         });
       } else {
         this.$refs.head.globalTip(1, "监控对象已达到数量上限", 0);
@@ -455,7 +456,7 @@ export default {
       this.tabKey = "1";
       this.getInit();
       this.getData();
-    }
-  }
+    },
+  },
 };
 </script>

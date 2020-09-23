@@ -48,6 +48,7 @@
       }
     }
     & .name{
+      position: relative;
       & input{
         &::placeholder{
           text-align: center;
@@ -55,6 +56,11 @@
       }
       & .icon{
         font-size: $fontSize + 10;
+        position: absolute;
+        left: 235px;
+        top: 50%;
+        margin-top:-12px;
+        z-index: 999;
       }
     }
     & .input{

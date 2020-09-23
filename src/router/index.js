@@ -19,6 +19,10 @@ import competeSet from '@/pages/compete/set'
 import industryMarket from '@/pages/industry/market'
 import industryAuthors from '@/pages/industry/authors'
 import industryAuthorDetail from '@/pages/industry/authordetail'
+// 应用
+import applicationEvent from '@/pages/application/event'
+import eventDetail from '@/pages/application/detail'
+import saleForcast from '@/pages/application/saleforcast'
 // 登录注册
 import register from '@/pages/login/register'
 import loginIndex from '@/pages/login/index'
@@ -34,6 +38,7 @@ import paramPublish from '@/pages/admin/param/publish'
 import paramCategroy from '@/pages/admin/param/categroy'
 import paramGoods from '@/pages/admin/param/goods'
 import adminGoodsList from '@/pages/admin/goodslist'
+import adminEvent from '@/pages/admin/event'
 // 账号管理
 import userInfo from '@/pages/user/information'
 // 机构管理
@@ -174,6 +179,31 @@ export default new Router({
         requireAuth: true // 需要登录才能进入的页面可以增加一个meta属性
       }
     },
+    // 应用
+    {
+      path: '/application/event',
+      name: 'applicationevent',
+      component: applicationEvent,
+      meta: {
+        requireAuth: true // 需要登录才能进入的页面可以增加一个meta属性
+      }
+    },
+    {
+      path: '/application/detail',
+      name: 'eventdetail',
+      component: eventDetail,
+      meta: {
+        requireAuth: true // 需要登录才能进入的页面可以增加一个meta属性
+      }
+    },
+    {
+      path: '/application/saleforcast',
+      name: 'saleforcast',
+      component: saleForcast,
+      meta: {
+        requireAuth: true // 需要登录才能进入的页面可以增加一个meta属性
+      }
+    },
     // 登录注册
     {
       path: '/login/register',
@@ -235,6 +265,14 @@ export default new Router({
       path: '/admin/goodslist',
       name: 'admingoodslist',
       component: adminGoodsList,
+      meta: {
+        requireAuth: true // 需要登录才能进入的页面可以增加一个meta属性
+      }
+    },
+    {
+      path: '/admin/event',
+      name: 'adminevent',
+      component: adminEvent,
       meta: {
         requireAuth: true // 需要登录才能进入的页面可以增加一个meta属性
       }

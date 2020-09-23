@@ -30,6 +30,9 @@ export const TOP_GOODS_READER_BASE = query => req('post', '/top/goods/reader/bas
 // 核心类目
 export const MYCATE_INDEX = query => req('post', '/mycate/index', query);
 
+// 新品追踪
+export const TRACE_NEWGOODS = query => req('post', '/trace/newgoods', query);
+
 // 读者画像
 export const READER_BASE = query => req('post', '/reader/base', query);
 

@@ -56,7 +56,7 @@
             </div>
             <!-- 作品列表 -->
             <div class="model-container" v-if="tabKey == '1'">
-              <div class="model-bg">
+              <div class="model-bg" style="min-height:377px;">
                 <div class="section-title">作品列表</div>
                 <div class="table">
                   <table style="table-layout:fixed;">
@@ -133,7 +133,7 @@
             </div>
             <!-- 详细信息 -->
             <div class="model-container" v-if="tabKey == '2'">
-              <div class="model-bg">
+              <div class="model-bg" style="min-height:377px;">
                 <div class="section-title">作者介绍</div>
                 <div style="padding:15px;">
                   {{authorInfo.description}}
@@ -143,7 +143,7 @@
           </div>
           <div class="main-container" v-else>
             <div class="model-container">
-              <div class="model-bg" style="min-height:650px;padding-bottom:75px;position:relative">
+              <div class="model-bg" style="min-height:660px;padding-bottom:75px;position:relative">
                 <PageNoPower></PageNoPower>
               </div>
             </div>

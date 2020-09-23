@@ -9,7 +9,7 @@
         <div class="float-left">
           <div class="main-container">
             <div class="model-container">
-              <div class="model-bg">
+              <div class="model-bg" style="min-height:660px;">
                 <div class="section-title">个人信息</div>
                 <div class="container">
                   <div class="option">

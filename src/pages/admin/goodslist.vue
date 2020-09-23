@@ -12,7 +12,7 @@
               <div class="model-bg total-user">全平台总计 {{goodsCount}} 个品种</div>
             </div>-->
             <div class="model-container">
-              <div class="model-bg" style="min-height:650px;padding-bottom:75px;">
+              <div class="model-bg" style="min-height:660px;padding-bottom:75px;">
                 <div class="section-title">
                   品种列表
                   <span class="desc">共{{goodsCount}}个品种</span>
@@ -78,7 +78,9 @@
                           </div>
                         </td>
                         <td style="text-align:center;">
-                          <span class="click-font author" :title="item.author">{{item.author}}</span>
+                          <div class="click-font author" >
+                            <div class="author-name" :title="item.author">{{item.author}}</div>
+                          </div>
                         </td>
                         <td style="text-align:center;">{{item.isbn}}</td>
                         <td style="text-align:center;">{{item.publisher_short}}</td>
@@ -115,7 +117,7 @@
             </div>
           </div>
           <div class="main-container" v-else>
-            <div class="model-bg" style="min-height:650px;padding-bottom:75px;position:relative">
+            <div class="model-bg" style="min-height:660px;padding-bottom:75px;position:relative">
               <PageNoPower></PageNoPower>
             </div>
           </div>
@@ -150,8 +152,8 @@ export default {
         create_time: "", // 创建时间
         count: 1, // 加入机构数量
         organization_id: 0, // 机构id
-        organization_name: "" // 机构名字
-      }
+        organization_name: "", // 机构名字
+      },
     };
   },
   mounted() {
@@ -186,8 +188,8 @@ export default {
       this.$router.push({
         name: "detail",
         query: {
-          goods_id: item.goods_id
-        }
+          goods_id: item.goods_id,
+        },
       });
     },
     // 获取列表数据
@@ -195,7 +197,7 @@ export default {
       let data = {
         page: this.page,
         page_size: this.page_size,
-        search: this.inputVal
+        search: this.inputVal,
       };
       let res = await TOP_SEARCH(data);
       if (res.code == 0) {
@@ -207,7 +209,7 @@ export default {
         this.total = 0;
         this.$refs.head.globalTip(1, res.message, res.code);
       }
-    }
-  }
+    },
+  },
 };
 </script>

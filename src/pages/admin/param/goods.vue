@@ -9,7 +9,7 @@
         <div class="float-left">
           <div class="main-container">
             <div class="model-container" v-if="powerType == 1">
-              <div class="model-bg" style="min-height:600px;padding-bottom:75px;">
+              <div class="model-bg" style="min-height:660px;padding-bottom:75px;">
                 <div class="section-title clearfix">
                   <span class="float-left">品种系数配置</span>
                   <span class="float-right click-font" @click="addParamSet">新增系数配置</span>
@@ -118,7 +118,7 @@
               <div class="model-container">
                 <div
                   class="model-bg"
-                  style="min-height:650px;padding-bottom:75px;position:relative"
+                  style="min-height:660px;padding-bottom:75px;position:relative"
                 >
                   <PageNoPower></PageNoPower>
                 </div>

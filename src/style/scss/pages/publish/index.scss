@@ -77,5 +77,10 @@
         }
       }
     }
+    & .no-data{
+      padding:118px 0;
+      font-size: $fontSize - 2;
+      text-align: center;
+    }
   }
 }

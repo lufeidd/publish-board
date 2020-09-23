@@ -11,7 +11,7 @@
             <div class="model-container">
               <div
                 class="model-bg"
-                style="min-height:650px;padding-bottom:75px;"
+                style="min-height:660px;padding-bottom:75px;"
                 v-if="powerType == 1"
               >
                 <div class="section-title clearfix">
@@ -98,7 +98,7 @@
               </div>
               <div
                 class="model-bg"
-                style="min-height:650px;padding-bottom:75px;position:relative"
+                style="min-height:660px;padding-bottom:75px;position:relative"
                 v-else
               >
                 <PageNoPower></PageNoPower>

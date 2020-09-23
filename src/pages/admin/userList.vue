@@ -12,7 +12,7 @@
               <div class="model-bg total-user">全平台总计 {{adminCount}} 个用户</div>
             </div>-->
             <div class="model-container">
-              <div class="model-bg" style="min-height:650px;padding-bottom:75px;">
+              <div class="model-bg" style="min-height:660px;padding-bottom:75px;">
                 <div class="section-title">
                   用户列表
                   <span class="desc">共{{total}}个用户</span>
@@ -117,7 +117,7 @@
           </div>
           <div class="main-container" v-else>
             <div class="model-container">
-              <div class="model-bg" style="min-height:650px;padding-bottom:75px;position:relative">
+              <div class="model-bg" style="min-height:660px;padding-bottom:75px;position:relative">
                 <PageNoPower></PageNoPower>
               </div>
             </div>

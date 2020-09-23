@@ -157,7 +157,9 @@
             <router-link to="/industry/market">
               <span :class="type == 'industry'?'active':''">行业</span>
             </router-link>
-            <span :class="type == 'application'?'active':''" @click="noOpen">应用</span>
+            <router-link to="/application/event">
+              <span :class="type == 'application'?'active':''">应用</span>
+            </router-link>
           </div>
         </div>
       </div>
@@ -180,7 +182,9 @@
                 <router-link to="/industry/market">
                   <span :class="type == 'industry'?'active':''">行业</span>
                 </router-link>
-                <span @click="noOpen">应用</span>
+                <router-link to="/application/event">
+                  <span :class="type == 'application'?'active':''">应用</span>
+                </router-link>
               </div>
             </div>
             <div class="float-right" style="line-height:46px;">
@@ -262,7 +266,7 @@
 import { PASSPORT_LOGOUT } from "../apis/login.js";
 import { PASSPORT_INIT } from "../apis/common.js";
 export default {
-  props: ["type","show"],
+  props: ["type", "show"],
   data() {
     return {
       fixed: true,

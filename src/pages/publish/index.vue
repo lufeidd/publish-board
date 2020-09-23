@@ -304,7 +304,9 @@
                     <div class="data-font" v-if="onsale_goods_info.now">{{onsale_goods_info.now}}</div>
                     <div class="data-font" v-else>0</div>
                     <div class="clearfix compare" style="width:160px;">
-                      <div class="float-left">上月对比</div>
+                      <div class="float-left" v-if="dateType == 2">上周对比</div>
+                      <div class="float-left" v-if="dateType == 3">上月对比</div>
+                      <div class="float-left" v-if="dateType == 4">上年对比</div>
                       <div
                         class="float-right up-number"
                         v-if="onsale_goods_info.pre_compare > 0"
@@ -405,10 +407,11 @@
                         </div>
                       </td>
                       <td>
-                        <span
+                        <div
                           class="click-font author"
-                          :title="item.goods_author"
-                        >{{item.goods_author}}</span>
+                        >
+                          <div class="author-name" :title="item.goods_author">{{item.goods_author}}</div>
+                        </div>
                       </td>
                       <td>
                         <span class="main-font">{{item.cate_node_2}} ＞ {{item.cate_node_3}}</span>
@@ -446,8 +449,8 @@
                 </router-link>
               </div>
               <div v-if="regionPower">
-                <div class="clearfix model-bg" v-show="barData.length > 0">
-                  <div class="content float-left" style>
+                <div class="clearfix model-bg" v-if="barData.length > 0">
+                  <div class="content float-left">
                     <div id="map" style="height:284px;width:100%;"></div>
                   </div>
                   <div class="content float-left" style="width:500px;margin-left:50px;">
@@ -466,10 +469,8 @@
                     </div>
                   </div>
                 </div>
-                <div class="model-bg" v-show="barData.length == 0">
-                  <div style="padding:20px 0;">
-                    <a-empty />
-                  </div>
+                <div class="model-bg" v-else>
+                  <div class="no-data">基础数据不足，暂无分析</div>
                 </div>
               </div>
               <div
@@ -757,11 +758,11 @@ export default {
         this.barMapData = [];
         this.barData = res.data.splice(0, 10).map((value, key) => {
           this.barMapData.push(value.region_name);
-          value.region_name = key + 1 + "   " + value.region_name;
+          value.region_name = value.region_name;
           return value;
         });
         this.barData = this.barData.reverse();
-        if (this.barData.length > 0) {
+        if (this.barData.length > 4) {
           for (let i = 0; i < this.barData.length; i++) {
             if (this.barMax < this.barData[i].sale_total_rate) {
               this.barMax = this.barData[i].sale_total_rate;
@@ -777,6 +778,8 @@ export default {
             this.initMap();
             console.log(666);
           }, 500);
+        }else{
+          this.$setSlideHeight();
         }
         this.$refs.load.isLoading = false;
       } else {

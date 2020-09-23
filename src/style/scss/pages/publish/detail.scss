@@ -112,7 +112,10 @@
           border: 1px dashed $themeColor80;
           box-sizing: border-box;
           cursor: pointer;
-          @include textOverflow;
+          & .names{
+            @include textOverflow;
+            padding:0 10px;
+          }
           &.active{
             border-style: solid;
           }
@@ -175,6 +178,11 @@
           margin-left: 60px;
         }
       }
+    }
+    & .no-data{
+      padding:118px 0;
+      font-size: $fontSize - 2;
+      text-align: center;
     }
   }
 }

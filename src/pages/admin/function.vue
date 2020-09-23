@@ -81,7 +81,7 @@
                                 <span class="main-font">{{item.title}}</span>
                               </td>
                               <td>
-                                <span class="main-font">{{item.group}}</span>
+                                <div class="main-font" style="line-height:36px;">{{item.group}}</div>
                               </td>
                               <td>{{item.auth_desc}}</td>
                               <td style="text-align:right;">
@@ -112,7 +112,7 @@
               </div>
               <div
                 class="model-bg"
-                style="min-height:650px;padding-bottom:75px;position:relative"
+                style="min-height:660px;padding-bottom:75px;position:relative"
                 v-else
               >
                 <PageNoPower></PageNoPower>

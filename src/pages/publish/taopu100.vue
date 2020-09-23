@@ -217,10 +217,15 @@
                           </div>
                         </td>
                         <td>
-                          <span
+                          <div
                             class="click-font author"
-                            :title="item.goods_author"
-                          >{{item.goods_author}}</span>
+                          >
+                            <div class="author-name">{{item.goods_author}}</div>
+                            <div class="author-list">
+                              <div v-if="item.authors.length > 0"><div class="author-item click" v-for="(aitem,aindex) in item.authors" :key="aindex" @click="toAuthor(aitem,aindex)">{{aitem.name}}</div></div>
+                              <div v-else><div class="author-item">未查询到对应作者信息</div></div>
+                            </div>
+                          </div>
                         </td>
                         <td>{{item.cate_node_2}} ＞ {{item.cate_node_3}}</td>
                         <td style="text-align:right;">
@@ -261,7 +266,7 @@
           <div>
             <div
               class="main-container"
-              style="min-height:650px;position:relative;background-color:#FFF;margin-top:10px;"
+              style="min-height:660px;position:relative;background-color:#FFF;margin-top:10px;"
             >
               <PageNoPower></PageNoPower>
             </div>
@@ -630,6 +635,14 @@ export default {
         name: "detail",
         query: {
           goods_id: item.goods_id
+        }
+      });
+    },
+    toAuthor(aitem,aindex){
+      this.$router.push({
+        name: "authordetail",
+        query: {
+          author_id: aitem.author_id
         }
       });
     },

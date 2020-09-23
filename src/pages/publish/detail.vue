@@ -354,7 +354,7 @@
                       :class="close1?'set-compare active':'set-compare'"
                       @click.stop="show1 = true"
                     >
-                      {{text1}}
+                      <div class="names">{{text1}}</div>
                       <a-icon type="close" v-if="close1" @click.stop="delete1" />
                       <div class="search" v-if="show1">
                         <div style="padding:0 10px;">
@@ -392,7 +392,7 @@
                 <!-- 折线图 -->
                 <div style="padding:15px;">
                   <div id="broken-line2"></div>
-                  <div id="slider"></div>
+                  <!-- <div id="slider"></div> -->
                 </div>
               </div>
               <div class="model-bg" v-else style="height:450px;position:relative;">
@@ -435,15 +435,15 @@
                           <div v-if="ringData1.length > 0">
                             <div id="ring1" style="width:400px;margin-top:20px;"></div>
                           </div>
-                          <div style="width:400px;margin-top:20px;" v-else>
-                            <a-empty />
+                          <div style="width:400px;" v-else>
+                            <div class="no-data">基础数据不足，暂无分析</div>
                           </div>
                           <div style="margin-top:20px;">消费能力</div>
                           <div v-if="ringData2.length > 0">
                             <div id="ring2" style="width:400px;margin-top:20px;"></div>
                           </div>
-                          <div style="width:400px;margin-top:20px;" v-else>
-                            <a-empty />
+                          <div style="width:400px;" v-else>
+                            <div class="no-data">基础数据不足，暂无分析</div>
                           </div>
                         </div>
                         <div class="float-left" style="margin-left:100px;">
@@ -451,15 +451,15 @@
                           <div v-if="columnData1.length > 0">
                             <div id="column1" style="width:400px;margin-left:40px;margin-top:20px;"></div>
                           </div>
-                          <div style="width:400px;margin-top:20px;" v-else>
-                            <a-empty />
+                          <div style="width:400px;" v-else>
+                            <div class="no-data">基础数据不足，暂无分析</div>
                           </div>
                           <div style="margin-top:20px;">兴趣分布</div>
                           <div v-if="columnData2.length > 0">
                             <div id="column2" style="width:400px;margin-left:40px;margin-top:20px;"></div>
                           </div>
-                          <div style="width:400px;margin-top:20px;" v-else>
-                            <a-empty />
+                          <div style="width:400px;" v-else>
+                            <div class="no-data">基础数据不足，暂无分析</div>
                           </div>
                         </div>
                       </div>
@@ -470,7 +470,7 @@
                 <div class="model-container">
                   <div class="model-bg">
                     <div class="section-title">地域</div>
-                    <div class="clearfix" style="padding-bottom:15px;" v-if="barData1.length > 0">
+                    <div class="clearfix" style="padding-bottom:15px;" v-if="barData1.length > 4">
                       <div class="float-left" style="position:relative;margin-top:15px;">
                         <div id="map" style="height:284px;width:520px;"></div>
                       </div>
@@ -479,9 +479,7 @@
                         <div id="bar-chart1"></div>
                       </div>
                     </div>
-                    <div style="padding:62px 0;" v-else>
-                      <a-empty />
-                    </div>
+                    <div class="no-data" v-else>基础数据不足，暂无分析</div>
                   </div>
                 </div>
                 <!-- 偏好 -->
@@ -491,21 +489,17 @@
                     <div class="clearfix" style="padding:10px 15px 15px 15px;">
                       <div class="float-left" style="width:500px;margin-right:50px;">
                         <p>类目偏好</p>
-                        <div v-if="barData2.length > 0">
+                        <div v-if="barData2.length > 4">
                           <div id="bar-chart2"></div>
                         </div>
-                        <div style="width:400px;margin-top:20px;" v-else>
-                          <a-empty />
-                        </div>
+                        <div class="no-data" v-else>基础数据不足，暂无分析</div>
                       </div>
                       <div class="float-left" style="width:500px;">
                         <p>作家偏好</p>
-                        <div v-if="barData3.length > 0">
+                        <div v-if="barData3.length > 4">
                           <div id="bar-chart3"></div>
                         </div>
-                        <div style="width:400px;margin-top:20px;" v-else>
-                          <a-empty />
-                        </div>
+                        <div class="no-data" v-else>基础数据不足，暂无分析</div>
                       </div>
                     </div>
                   </div>
@@ -739,10 +733,10 @@ export default {
       if (res.code == 0) {
         this.goodsDetailPower = true;
         this.goodsInfo = res.data;
-        if(this.$refs.head.publishInfo.publisher_id != res.data.publisher_id){
+        if (this.$refs.head.publishInfo.publisher_id != res.data.publisher_id) {
           this.isOwnPublish = false;
-          this.tabKey = '4';
-        }else{
+          this.tabKey = "4";
+        } else {
           this.isOwnPublish = true;
         }
         this.radarData = this.radarData.map((value, key) => {
@@ -1037,15 +1031,15 @@ export default {
           this.columnData2 = res.data.persona_role;
           this.barData1 = res.data.persona_region.map((value, key) => {
             this.barMapData.push(value.name);
-            value.name = key + 1 + "    " + value.name;
+            value.name = value.name;
             return value;
           });
           this.barData2 = res.data.persona_cate.map((value, key) => {
-            value.name = key + 1 + "    " + value.name;
+            value.name = value.name;
             return value;
           });
           this.barData3 = res.data.persona_author.map((value, key) => {
-            value.name = key + 1 + "    " + value.name;
+            value.name = value.name;
             return value;
           });
           let _this = this;
@@ -1054,13 +1048,14 @@ export default {
             if (_this.columnData1.length > 0) _this.initColumn1();
             if (_this.ringData2.length > 0) _this.initRing2();
             if (_this.columnData2.length > 0) _this.initColumn2();
-            if (_this.barData1.length > 0) _this.initMap();
-            if (_this.barData1.length > 0)
+            if (_this.barData1.length > 4) _this.initMap();
+            if (_this.barData1.length > 4)
               _this.inintBar1(_this.barData1[0].value);
-            if (_this.barData2.length > 0)
+            if (_this.barData2.length > 4)
               _this.inintBar2(_this.barData2[0].value);
-            if (_this.barData3.length > 0)
+            if (_this.barData3.length > 4)
               _this.inintBar3(_this.barData3[0].value);
+            this.$setSlideHeight();
           }, 500);
         }
       } else {
@@ -1286,11 +1281,11 @@ export default {
       this.canRight = false;
     },
     callback(key) {
-      if(this.isOwnPublish){
+      if (this.isOwnPublish) {
         this.tabKey = key;
-      }else{
-        this.tabKey = '4';
-        this.$refs.head.globalTip(1,'暂无权限',0)
+      } else {
+        this.tabKey = "4";
+        this.$refs.head.globalTip(1, "暂无权限", 0);
       }
       var _this = this;
       if (this.tabKey == "1") {

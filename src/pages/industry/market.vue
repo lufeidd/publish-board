@@ -224,7 +224,7 @@
                     </thead>
                     <tbody>
                       <tr v-for="(item,index) in publishRankList" :key="index">
-                        <td style="text-align:center;">{{item.sale_rank}}</td>
+                        <td style="text-align:center;height:61px;">{{item.sale_rank}}</td>
                         <td>
                           <span
                             class="main-font"
@@ -274,7 +274,7 @@
                     <tbody>
                       <tr v-for="(item,index) in regionRankList" :key="index">
                         <td style="text-align:center;">{{item.sale_rank}}</td>
-                        <td>
+                        <td style="height:61px;">
                           <span
                             class="main-font"
                           >{{item.name}}</span>
@@ -339,7 +339,7 @@
           </div>
           <div class="main-container" v-else>
             <div class="model-container">
-              <div class="model-bg" style="min-height:650px;padding-bottom:75px;position:relative">
+              <div class="model-bg" style="min-height:660px;padding-bottom:75px;position:relative">
                 <PageNoPower></PageNoPower>
               </div>
             </div>
@@ -738,6 +738,14 @@ export default {
 
         this.plateChart.i.render();
       }
+    },
+    toDetail(item,index){
+      // this.$router.push({
+      //   name: "detail",
+      //   query: {
+      //     goods_id: item.goods_id
+      //   }
+      // });
     },
     publisherChange(){
       this.$refs.load.isLoading = true;

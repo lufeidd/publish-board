@@ -10,7 +10,7 @@
           <div class="float-left">
             <div class="main-container">
               <div class="model-container">
-                <div class="model-bg" v-if="pagePower == 1">
+                <div class="model-bg" v-if="pagePower == 1" style="min-height:660px;">
                   <div class="section-title clearfix">
                     <span class="float-left">机构信息</span>
                     <span class="float-right click-font" @click="edit" v-if="!isEdit">编辑</span>
@@ -91,7 +91,7 @@
                 </div>
                 <div
                   class="model-bg"
-                  style="min-height:650px;padding-bottom:75px;position:relative"
+                  style="min-height:660px;padding-bottom:75px;position:relative"
                   v-else
                 >
                   <PageNoPower></PageNoPower>
@@ -105,23 +105,26 @@
   </div>
 </template>
 <style scoped lang="scss">
-.container {
-  padding: 15px 10px;
-  & .option {
-    font-size: $fontSize - 2;
-    margin-bottom: 20px;
-    & .lable {
-      display: inline-block;
-      width: 70px;
-      text-align: right;
-    }
+#organizePage {
+  padding-bottom: 20px;
+  & .container {
+    padding: 15px 10px;
+    & .option {
+      font-size: $fontSize - 2;
+      margin-bottom: 20px;
+      & .lable {
+        display: inline-block;
+        width: 70px;
+        text-align: right;
+      }
 
-    & .normal {
-      display: inline-block;
-      position: relative;
-      color: $fontColor1;
-      margin-left: 10px;
-      width: 460px;
+      & .normal {
+        display: inline-block;
+        position: relative;
+        color: $fontColor1;
+        margin-left: 10px;
+        width: 460px;
+      }
     }
   }
 }

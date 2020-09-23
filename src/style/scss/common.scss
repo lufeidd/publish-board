@@ -54,6 +54,26 @@ img{
   object-fit: contain;
   // background-color: #A1A1A1;
 }
+// 底部版权
+.copyright{
+  text-align: center;
+  font-size: $fontSize - 2;
+  background-color: $clf;
+  & .copy-link{
+    padding-top: 45px;
+    & .url{
+      color: $fontColor1;
+      cursor: pointer;
+      &:hover{
+        color: $themeColor80;
+      }
+    }
+  }
+  & .copy-word{
+    padding-bottom: 45px;
+    margin-top: 15px;
+  }
+}
 // 主体内容居中
 .wd-1220 {
   width: 1220px;
@@ -175,6 +195,10 @@ img{
   padding: 2px 5px;
   margin: 0 3px;
   line-height: normal;
+  &.data-tab-click{
+    padding:2px 10px;
+    cursor: pointer;
+  }
 }
 
 .data-tab.data-tab-one {
@@ -194,7 +218,31 @@ img{
   color: $green;
   background-color: $lightGreen;
 }
-
+.data-tab.data-tab-four{
+  color: $clf;
+  background-color: $green;
+  &.active{
+    opacity: 0.5;
+  }
+}
+.data-tab.data-tab-five{
+  color: $clf;
+  background-color: #FF9900;
+  &.active{
+    opacity: 0.5;
+  }
+}
+.data-tab.data-tab-six{
+  color: $clf;
+  background-color: $fontColor2;
+  &.active{
+    opacity: 0.5;
+  }
+}
+.data-tab.data-tab-seven{
+  color: #FF9900;
+  background-color: rgba(255, 153, 0, 0.2);
+}
 // 错误状态
 .wrong-status{
   position: absolute;
@@ -243,7 +291,35 @@ img{
           }
         }
         & .author{
-          @include twoColtextOverflow;
+          position: relative;
+          &:hover{
+            & .author-list{
+              display: block;
+            }
+          }
+          & .author-name{
+            @include twoColtextOverflow;
+          }
+          & .author-list{
+            position: absolute;
+            display: none;
+            box-shadow:0 0 10px rgba(0, 0, 0, .15);
+            background-color: $clf;
+            z-index: 99;
+            & .author-item{
+              padding: 0 15px;
+              // min-width: 240px;
+              white-space: nowrap;
+              color: $fontColor1;
+              line-height: 44px;
+              &.click{
+                cursor: pointer;
+              }
+              &:hover{
+                background-color: $themeColor5;
+              }
+            }
+          }
         }
         & .one-text{
           @include textOverflow;
@@ -502,4 +578,25 @@ img{
 .ant-tabs-ink-bar{
   background-color: $themeColor80 !important;
   bottom: 2px !important;
+}
+// 多项选择
+.ant-select-selection--multiple{
+  & .ant-select-selection__choice{
+    border-radius: 5px !important;
+    padding: 0 10px 0 10px !important;
+    font-size: $fontSize - 2 !important;
+    background-color: $themeColor5 !important;
+    & .ant-select-selection__choice__remove{
+      display: none !important;
+    }
+  }
+}
+.ant-select-dropdown-menu-item-selected{
+  color: $clf !important;
+  background-color: $themeColor80 !important;
+  font-size: $fontSize - 2 !important;
+  font-weight: normal !important;
+}
+.ant-select-dropdown.ant-select-dropdown--multiple .ant-select-dropdown-menu-item-selected .ant-select-selected-icon{
+  color: $clf !important;
 }

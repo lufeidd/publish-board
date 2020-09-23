@@ -12,7 +12,7 @@
               <div class="model-container">
                 <div
                   class="model-bg"
-                  style="min-height:650px;padding-bottom:75px;"
+                  style="min-height:660px;padding-bottom:75px;"
                   v-if="powerType == 1"
                 >
                   <div class="section-title clearfix">
@@ -115,7 +115,7 @@
                       </tbody>
                       <tbody v-else>
                         <tr>
-                          <td colspan="5" style="text-align:center;">
+                          <td colspan="6" style="text-align:center;">
                             <a-empty />
                           </td>
                         </tr>
@@ -136,7 +136,7 @@
                 </div>
                 <div
                   class="model-bg"
-                  style="min-height:650px;padding-bottom:75px;position:relative"
+                  style="min-height:660px;padding-bottom:75px;position:relative"
                   v-else
                 >
                   <PageNoPower></PageNoPower>
@@ -147,7 +147,7 @@
               <div class="model-container">
                 <div
                   class="model-bg"
-                  style="min-height:650px;padding-bottom:75px;position:relative"
+                  style="min-height:660px;padding-bottom:75px;position:relative"
                 >
                   <PageNoPower></PageNoPower>
                 </div>

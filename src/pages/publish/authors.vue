@@ -11,7 +11,7 @@
             <div class="model-container">
               <div class="model-bg">
                 <div class="section-title">
-                  作者库
+                  本社作者
                   <span class="desc">共{{total}}名</span>
                 </div>
                 <div class="table">
@@ -90,7 +90,7 @@
           </div>
           <div class="main-container" v-else>
             <div class="model-container">
-              <div class="model-bg" style="min-height:650px;padding-bottom:75px;position:relative">
+              <div class="model-bg" style="min-height:660px;padding-bottom:75px;position:relative">
                 <PageNoPower></PageNoPower>
               </div>
             </div>

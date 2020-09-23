@@ -9,7 +9,7 @@
         <div class="float-left">
           <div class="main-container">
             <div class="model-container">
-              <div class="model-bg" v-if="powerType == 1">
+              <div class="model-bg" v-if="powerType == 1" style="min-height:660px;">
                 <div class="section-title">参数配置</div>
                 <div class="container">
                   <p class="name">销售点数系数配置</p>
@@ -30,7 +30,7 @@
                 <div class="model-container">
                   <div
                     class="model-bg"
-                    style="min-height:650px;padding-bottom:75px;position:relative"
+                    style="min-height:660px;padding-bottom:75px;position:relative"
                   >
                     <PageNoPower></PageNoPower>
                   </div>

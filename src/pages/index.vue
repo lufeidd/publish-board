@@ -135,8 +135,8 @@
                       <span
                         class="data-tab data-tab-two"
                         v-if="publishSummaryInfo.sale_all.incr_rate > 0"
-                      >{{publishSummaryInfo.sale_all.incr_rate}}%</span>
-                      <span class="data-tab data-tab-three" v-else>0%</span>
+                      >+{{publishSummaryInfo.sale_all.incr_rate}}%</span>
+                      <span class="data-tab data-tab-three" v-else>{{publishSummaryInfo.sale_all.incr_rate?publishSummaryInfo.sale_all.incr_rate+'%':'--'}}</span>
                     </div>
                   </div>
                 </div>
@@ -674,6 +674,7 @@ export default {
             this.publishSummaryInfo.sale_all.incr_rate.replace(/%/, "")
           );
         }
+        console.log(231,this.publishSummaryInfo.sale_all.incr_rate)
       } else {
         if (res.code == 1009) {
           this.dataNewPower = false;

@@ -70,7 +70,7 @@
             </a-affix>
             <!-- 列表 -->
             <div class="model-container">
-              <div class="model-bg" style="padding-bottom:50px;">
+              <div class="model-bg" style="padding-bottom:50px;min-height:604px;">
                 <div class="section-title">监控列表</div>
                 <div class="table">
                   <table style="table-layout:fixed;">
@@ -141,7 +141,7 @@
           </div>
           <div class="main-container" v-else>
             <div class="model-container">
-              <div class="model-bg" style="min-height:650px;padding-bottom:75px;position:relative">
+              <div class="model-bg" style="min-height:660px;padding-bottom:75px;position:relative">
                 <PageNoPower></PageNoPower>
               </div>
             </div>

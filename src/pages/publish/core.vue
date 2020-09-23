@@ -104,7 +104,7 @@
             </a-affix>
             <!-- 类目排名 -->
             <div class="model-container">
-              <div class="model-bg" style="min-height:500px;">
+              <div class="model-bg" style="min-height:603px;">
                 <div class="section-title">类目排名</div>
                 <div class="table">
                   <table style="table-layout:fixed;">
@@ -151,6 +151,7 @@
                             <span>{{item.memo.goods_name}}</span>
                             》排名第{{item.memo.goods_rank}}位
                           </span>
+                          <span v-else>--</span>
                         </td>
                       </tr>
                     </tbody>
@@ -182,7 +183,7 @@
           </div>
           <div class="main-container" v-else>
             <div class="model-container">
-              <div class="model-bg" style="min-height:650px;padding-bottom:75px;position:relative">
+              <div class="model-bg" style="min-height:660px;padding-bottom:75px;position:relative">
                 <PageNoPower></PageNoPower>
               </div>
             </div>

@@ -44,6 +44,35 @@ export const USER_ORGANIZATION_AUTH = query => req('post', '/organization/member
 // 修改用户在机构中的权限
 export const ORGANIZATION_MEMBER_AUTH_EDIT = query => req('post', '/organization/member/auth/edit', query);
 
+// 大事件部分
+export const EVENT_LISTS = query => req('post', '/event/lists', query);
+// 关键字列表
+export const EVENT_KEYWORDS_LISTS = query => req('post', '/event/keywords/lists', query);
+// 新增事件
+export const EVENT_ADD = query => req('post', '/event/add', query);
+// 修改事件
+export const EVENT_UPDATE = query => req('post', '/event/update', query);
+// 删除事件
+export const EVENT_DELETE = query => req('post', '/event/delete', query);
+// 查询某一年全部事件
+export const EVENT_ALL = query => req('post', '/event/all', query);
+// 事件详情
+export const EVENT_DETAIL = query => req('post', '/event/detail', query);
+// 关联品种列表
+export const EVENT_GOODS_LISTS = query => req('post', '/event/goods/lists', query);
+// 添加关联商品
+export const EVENT_GOODS_ADD = query => req('post', '/event/goods/add', query);
+// 删除商品关联
+export const EVENT_GOODS_DELETE = query => req('post', '/event/goods/delete', query);
+// 事件版本列表
+export const EVENT_VERSION_LISTS = query => req('post', '/event/version/lists', query);
+// 版本新增
+export const EVENT_VERSION_ADD = query => req('post', '/event/version/add', query);
+// 编辑版本
+export const EVENT_VERSION_UPDATE = query => req('post', '/event/version/update', query);
+// 删除版本
+export const EVENT_VERSION_DELETE = query => req('post', '/event/version/delete', query);
+
 // 参数配置
 // 系数列表
 export const RATIO_GETS = query => req('post', '/ratio/gets', query);
