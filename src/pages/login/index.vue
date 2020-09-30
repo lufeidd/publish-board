@@ -121,7 +121,7 @@
         <!-- </router-link> -->
       </div>
     </div>
-    <div class="copy-right">———— · 淘普出版数据中心 · 博库数字出版传媒集团 · ————</div>
+    <div class="copy-right">———— · 博道出版数据中心 · 博库数字出版传媒集团 · ————</div>
     <Loading ref="load" :show="0"></Loading>
   </div>
 </template>

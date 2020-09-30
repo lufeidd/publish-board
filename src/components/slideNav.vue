@@ -71,6 +71,15 @@
         <router-link to="/admin/param/index">
           <div :class="sort=='adminParam'?'active tab':'tab'">参数配置</div>
         </router-link>
+        <router-link to="/admin/help">
+          <div :class="sort=='adminHelp'?'active tab':'tab'">帮助中心管理</div>
+        </router-link>
+        <router-link to="/admin/feedback">
+          <div :class="sort=='adminFeedback'?'active tab':'tab'">意见与反馈</div>
+        </router-link>
+        <!-- <router-link to="/admin/dynamic">
+          <div :class="sort=='adminDynamic'?'active tab':'tab'">产品动态</div>
+        </router-link> -->
       </div>
       <div class="slide-content" v-if="type == 'organize'">
         <router-link to="/organize/information">

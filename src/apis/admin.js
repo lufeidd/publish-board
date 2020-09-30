@@ -84,3 +84,14 @@ export const RATIO_ADD = query => req('post', '/ratio/add', query);
 export const RATIO_EDIT = query => req('post', '/ratio/edit', query);
 // 当前系数
 export const RATIO_CURREN = query => req('post', '/ratio/current', query);
+
+
+// 帮助中心管理
+// 帮助列表
+export const HELP_LISTS = query => req('post', '/help/lists', query);
+// 新增帮助
+export const HELP_ADD = query => req('post', '/help/add', query);
+// 修改帮助
+export const HELP_EDIT = query => req('post', '/help/edit', query);
+// 删除帮助
+export const HELP_DELETE = query => req('post', '/help/delete', query);

@@ -51,7 +51,7 @@
         </div>
       </div>
     </div>
-    <div class="copy-right">———— · 淘普出版数据中心 · 博库数字出版传媒集团 · ————</div>
+    <div class="copy-right">———— · 博道出版数据中心 · 博库数字出版传媒集团 · ————</div>
   </div>
 </template>
 <style scoped lang="scss" src="@/style/scss/pages/login.scss"></style>

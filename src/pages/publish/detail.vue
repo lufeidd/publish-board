@@ -516,7 +516,7 @@
             <!-- 详细介绍 -->
             <div v-if="tabKey == '4'">
               <div class="model-container">
-                <div class="model-bg">
+                <div class="model-bg" style="min-height:312px;">
                   <div class="section-title">出版信息</div>
                   <div class="detail-desc">
                     <div class="content">
@@ -1437,6 +1437,7 @@ export default {
           fillOpacity: 0.3
         });
       this.radarChart.render();
+      this.$setSlideHeight();
     },
     initLineData2() {
       this.lineChart2 = new Chart({

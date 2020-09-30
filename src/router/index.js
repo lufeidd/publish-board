@@ -23,6 +23,8 @@ import industryAuthorDetail from '@/pages/industry/authordetail'
 import applicationEvent from '@/pages/application/event'
 import eventDetail from '@/pages/application/detail'
 import saleForcast from '@/pages/application/saleforcast'
+// 帮助中心
+import helpIndex from '@/pages/help/index'
 // 登录注册
 import register from '@/pages/login/register'
 import loginIndex from '@/pages/login/index'
@@ -39,6 +41,9 @@ import paramCategroy from '@/pages/admin/param/categroy'
 import paramGoods from '@/pages/admin/param/goods'
 import adminGoodsList from '@/pages/admin/goodslist'
 import adminEvent from '@/pages/admin/event'
+import adminHelp from '@/pages/admin/help'
+import adminFeedback from '@/pages/admin/feedback'
+import adminDynamic from '@/pages/admin/dynamic'
 // 账号管理
 import userInfo from '@/pages/user/information'
 // 机构管理
@@ -204,6 +209,15 @@ export default new Router({
         requireAuth: true // 需要登录才能进入的页面可以增加一个meta属性
       }
     },
+    // 帮助中心
+    {
+      path: '/help/index',
+      name: 'helpindex',
+      component: helpIndex,
+      meta: {
+        requireAuth: true // 需要登录才能进入的页面可以增加一个meta属性
+      }
+    },
     // 登录注册
     {
       path: '/login/register',
@@ -269,6 +283,7 @@ export default new Router({
         requireAuth: true // 需要登录才能进入的页面可以增加一个meta属性
       }
     },
+    // 平台管理--大事件管理
     {
       path: '/admin/event',
       name: 'adminevent',
@@ -306,6 +321,33 @@ export default new Router({
       path: '/admin/param/goods',
       name: 'paramgoods',
       component: paramGoods,
+      meta: {
+        requireAuth: true // 需要登录才能进入的页面可以增加一个meta属性
+      }
+    },
+    // 平台管理--帮助中心管理
+    {
+      path: '/admin/help',
+      name: 'adminhelp',
+      component: adminHelp,
+      meta: {
+        requireAuth: true // 需要登录才能进入的页面可以增加一个meta属性
+      }
+    },
+    // 平台管理--意见与反馈
+    {
+      path: '/admin/feedback',
+      name: 'adminfeedback',
+      component: adminFeedback,
+      meta: {
+        requireAuth: true // 需要登录才能进入的页面可以增加一个meta属性
+      }
+    },
+    // 平台管理--产品动态
+    {
+      path: '/admin/dynamic',
+      name: 'admindynamic',
+      component: adminDynamic,
       meta: {
         requireAuth: true // 需要登录才能进入的页面可以增加一个meta属性
       }

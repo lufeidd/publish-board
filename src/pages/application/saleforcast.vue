@@ -14,7 +14,7 @@
                   <div class="float-right">
                     <span class="click-font">导入Excel</span>
                   </div>
-                </div> -->
+                </div>-->
                 <div class="search">
                   <p class="title">选择品种</p>
                   <div class="content common" style="position:relative;">
@@ -134,7 +134,13 @@
                           </a-select>
                         </td>
                         <td style="text-align:center;">
-                          <span class="main-font">预估销量{{item.dms*item.day*item.inums}}</span>
+                          <span v-if="item.isLoading">
+                            <a-spin :indicator="indicator" tip="预测中" />
+                          </span>
+                          <span
+                            class="main-font"
+                            v-else
+                          >预估销量{{(item.dms*item.day*item.inums).toFixed(0)}}</span>
                         </td>
                         <td style="text-align:right;">
                           <span class="click-font" @click="adelete(item,index)">删除</span>
@@ -172,15 +178,16 @@ export default {
       showAbout: false,
       goodsList: [],
       dayList: [15, 30, 60, 90, 120],
-      ratioList:[
-        {id:1,name:"双十一",value:1.75},
-        {id:2,name:"电商活动",value:0.75},
-        {id:3,name:"网络热搜",value:0.15},
-        {id:4,name:"获得奖项",value:0.85},
-        {id:5,name:"影视热播",value:0.85},
+      ratioList: [
+        { id: 1, name: "双十一", value: 1.75 },
+        { id: 2, name: "电商活动", value: 0.75 },
+        { id: 3, name: "网络热搜", value: 0.15 },
+        { id: 4, name: "获得奖项", value: 0.85 },
+        { id: 5, name: "影视热播", value: 0.85 },
       ],
-      activeIndex:0,
-    };
+      activeIndex: 0,
+      indicator: <a-icon type="loading" style="font-size: 16px" spin />,
+    }
   },
   mounted() {
     this.$setSlideHeight();
@@ -196,12 +203,17 @@ export default {
       };
       let res = await FORECAST_DMS(data);
       if (res.code == 0) {
-        let _obj = _item;
+        let _obj = _item,
+          _this = this;
         _obj.dms = res.data.goods_dms;
         _obj.day = 30;
         _obj.inums = 1;
         _obj.influence = [];
-        this.goodsList.push(_obj);
+        _obj.isLoading = 0;
+        // setTimeout(()=>{
+        _this.goodsList.push(_obj);
+        // },500)
+        console.log(this.goodsList);
       } else {
         this.$refs.head.globalTip(1, res.message, res.code);
       }
@@ -256,53 +268,74 @@ export default {
         onCancel() {},
       });
     },
-    selectCategory(ditem, dindex,item,index) {
+    selectCategory(ditem, dindex, item, index) {
       // console.log(ditem, dindex,item,index);
-      this.goodsList = this.goodsList.map((value,key)=>{
-        if(index == key){
-          value.day = ditem;
+      let _this = this;
+      this.goodsList = this.goodsList.map((value, key) => {
+        if (index == key) {
+          value.isLoading = 1;
         }
         return value;
-      })
+      });
+      setTimeout(() => {
+        _this.goodsList = _this.goodsList.map((value, key) => {
+          if (index == key) {
+            value.day = ditem;
+            value.isLoading = 0;
+          }
+          return value;
+        });
+      }, 2000);
     },
     handleChange(value) {
       console.log(value);
-      let _arr = value,_nums = 1;
-      if(_arr.length > 0){
-        _arr.map((val,key)=>{
-          this.ratioList.map((opt,index)=>{
-            if(opt.id == val){
-              _nums += opt.value
-            }
-          })
-        })
-      }
-      this.goodsList = this.goodsList.map((val,key)=>{
-        if(key == this.activeIndex){
-          val.influence = value;
-          val.inums = _nums;
+      let _this = this,
+        _arr = value,
+        _nums = 1;
+      this.goodsList = this.goodsList.map((value, key) => {
+        if (this.activeIndex == key) {
+          value.isLoading = 1;
         }
-        return val
-      })
+        return value;
+      });
+      setTimeout(() => {
+        if (_arr.length > 0) {
+          _arr.map((val, key) => {
+            _this.ratioList.map((opt, index) => {
+              if (opt.id == val) {
+                _nums += opt.value;
+              }
+            });
+          });
+        }
+        _this.goodsList = _this.goodsList.map((val, key) => {
+          if (key == _this.activeIndex) {
+            val.influence = value;
+            val.inums = _nums;
+            val.isLoading = 0;
+          }
+          return val;
+        });
+      }, 2000);
       // console.log('相加',_nums)
     },
-    onFocus(item,index){
+    onFocus(item, index) {
       // console.log(item,index)
       this.activeIndex = index;
     },
-    toDetail(item,index){
+    toDetail(item, index) {
       this.$router.push({
         name: "detail",
         query: {
-          goods_id: item.goods_id
-        }
+          goods_id: item.goods_id,
+        },
       });
     },
-    adelete(item,index){
-      this.goodsList = this.goodsList.filter((value,key)=>{
+    adelete(item, index) {
+      this.goodsList = this.goodsList.filter((value, key) => {
         return index != key;
-      })
-    }
+      });
+    },
   },
 };
 </script>

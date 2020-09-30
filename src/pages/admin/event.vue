@@ -163,7 +163,11 @@
                           <span class="main-font">{{item.state == 1?'正常':'删除'}}</span>
                         </td>
                         <td style="text-align:right;">
-                          <span class="click-font" @click="openInfo(item,index)" v-if="item.state == 1">信息</span>
+                          <span
+                            class="click-font"
+                            @click="openInfo(item,index)"
+                            v-if="item.state == 1"
+                          >信息</span>
                           <span
                             class="click-font"
                             style="margin-left:10px;"
@@ -247,7 +251,11 @@
         <div class="option">
           <span class="lable event">*循环日期</span>
           <div class="normal event">
-            <span class="click-font" style="margin-right:5px;" @click="eventInfo.timeType = eventInfo.timeType?0:1">{{eventInfo.timeType?'农历':'公历'}}</span>
+            <span
+              class="click-font"
+              style="margin-right:5px;"
+              @click="eventInfo.timeType = eventInfo.timeType?0:1"
+            >{{eventInfo.timeType?'农历':'公历'}}</span>
             <span>
               <a-date-picker @change="onChange" :allowClear="false" v-model="eventInfo.time" />
             </span>
@@ -294,7 +302,7 @@ import {
   EVENT_KEYWORDS_LISTS,
   EVENT_ADD,
   EVENT_UPDATE,
-  EVENT_DELETE
+  EVENT_DELETE,
 } from "../../apis/admin.js";
 export default {
   data() {
@@ -309,7 +317,7 @@ export default {
         { name: "全部", type: 0 },
         // {name:"公共节日",type:1},
         { name: "公开事件", type: 1 },
-        { name: "内部事件", type: 2 }
+        { name: "内部事件", type: 2 },
       ],
       timeList: [
         { name: "全部", type: 0 },
@@ -324,19 +332,19 @@ export default {
         { name: "9月", type: 9 },
         { name: "10月", type: 10 },
         { name: "11月", type: 11 },
-        { name: "12月", type: 12 }
+        { name: "12月", type: 12 },
       ],
       loopList: [
         { name: "全部", type: 0 },
         { name: "每年循环", type: 1 },
-        { name: "仅有一次", type: 2 }
+        { name: "仅有一次", type: 2 },
       ],
       sortList: [
         { name: "默认", type: 0 },
         { name: "时间正序", type: 1 },
         { name: "时间倒序", type: 2 },
         { name: "关联品种数正序", type: 3 },
-        { name: "关联品种数倒序", type: 4 }
+        { name: "关联品种数倒序", type: 4 },
       ],
       inputVal: "",
       page: 1,
@@ -352,14 +360,14 @@ export default {
         type: 0,
         loop: 0,
         time: "",
-        timeType:0,
+        timeType: 0,
         year: "",
         month: "",
         day: "",
         level: 0,
         keyWords: [],
-        desc: ""
-      }
+        desc: "",
+      },
     };
   },
   mounted() {
@@ -367,8 +375,9 @@ export default {
     if (this.powerType == 1) {
       this.getData();
       this.getKeyWords();
+    } else {
+      this.$setSlideHeight();
     }
-    this.$setSlideHeight();
   },
   updated() {
     this.$setSlideHeight();
@@ -398,7 +407,7 @@ export default {
         data = {
           title: this.inputVal,
           page: this.page,
-          page_size: this.pageSize
+          page_size: this.pageSize,
         };
       } else {
         data = {
@@ -408,7 +417,7 @@ export default {
           type: this.eventType ? this.eventType : "",
           event_month: this.timeType ? this.timeType : "",
           repeat_year: _reapt,
-          sort: _sort
+          sort: _sort,
         };
       }
       let res = await EVENT_LISTS(data);
@@ -447,11 +456,11 @@ export default {
         event_day: this.eventInfo.day,
         event_month: this.eventInfo.month,
         effect_first_year: this.eventInfo.year,
-        date_type: this.eventInfo.timeType?2:1,
+        date_type: this.eventInfo.timeType ? 2 : 1,
         event_level: this.eventInfo.level,
         keywords: this.eventInfo.keyWords.join(","),
         event_desc: this.eventInfo.desc,
-        organization_id: this.$refs.head.publishInfo.organization_id
+        organization_id: this.$refs.head.publishInfo.organization_id,
       };
       let res = await EVENT_ADD(data);
       if (res.code == 0) {
@@ -485,7 +494,7 @@ export default {
         event_level: this.eventInfo.level,
         keywords: this.eventInfo.keyWords.join(","),
         event_desc: this.eventInfo.desc,
-        organization_id: this.$refs.head.publishInfo.organization_id
+        organization_id: this.$refs.head.publishInfo.organization_id,
       };
       let res = await EVENT_UPDATE(data);
       if (res.code == 0) {
@@ -498,7 +507,7 @@ export default {
     },
     async deleteEvent(id) {
       let data = {
-        event_id: id
+        event_id: id,
       };
       let res = await EVENT_DELETE(data);
       if (res.code == 0) {
@@ -526,6 +535,7 @@ export default {
       } else if (type == "sort") {
         this.sortType = index;
       }
+      this.page = 1;
       this.getData();
     },
     onShowSizeChange(page, pageSize) {
@@ -577,7 +587,7 @@ export default {
         return value.id;
       });
       this.eventInfo.desc = item.event_desc;
-      this.eventInfo.timeType = item.date_type == 1?0:1;
+      this.eventInfo.timeType = item.date_type == 1 ? 0 : 1;
       this.addOrganize = true;
     },
     handleCancel() {
@@ -637,17 +647,17 @@ export default {
         onOk() {
           _this.deleteEvent(item.event_id);
         },
-        onCancel() {}
+        onCancel() {},
       });
     },
-    toDetail(item,index){
+    toDetail(item, index) {
       this.$router.push({
         name: "eventdetail",
         query: {
-          event_id: item.event_id
-        }
+          event_id: item.event_id,
+        },
       });
-    }
-  }
+    },
+  },
 };
 </script>

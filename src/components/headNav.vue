@@ -36,10 +36,13 @@
             </div>
             <div class="float-right">
               <span style="margin-right:25px;cursor: pointer;">
-                <svg class="icon" aria-hidden="true" @click="noOpen">
-                  <use xlink:href="#icon-question" />
-                </svg>
+                <router-link to="/help/index">
+                  <svg class="icon" aria-hidden="true">
+                    <use xlink:href="#icon-question" />
+                  </svg>
+                </router-link>
               </span>
+
               <span style="margin-right:25px;cursor: pointer;">
                 <a-badge dot>
                   <svg class="icon" aria-hidden="true" @click="noOpen">
@@ -189,10 +192,13 @@
             </div>
             <div class="float-right" style="line-height:46px;">
               <span style="margin-right:25px;cursor: pointer;">
-                <svg class="icon" aria-hidden="true" @click="noOpen">
-                  <use xlink:href="#icon-question" />
-                </svg>
+                <router-link to="/help/index">
+                  <svg class="icon" aria-hidden="true">
+                    <use xlink:href="#icon-question" />
+                  </svg>
+                </router-link>
               </span>
+
               <span style="margin-right:25px;cursor: pointer;">
                 <a-badge dot>
                   <svg class="icon" aria-hidden="true" @click="noOpen">
@@ -271,7 +277,7 @@ export default {
     return {
       fixed: true,
       accountInfo: {
-        pic: ""
+        pic: "",
       },
       publishInfo: {
         organization_id: 0, // 机构id
@@ -285,7 +291,7 @@ export default {
         user_organization_type: 0, // 机构用户类型, 1 管理员, 2普通用户
         auth_ids: [
           // 当前用户在当前机构用户权限
-        ]
+        ],
       },
       publishList: [
         // { name: "浙江摄影出版社", id: 1 },
@@ -298,7 +304,7 @@ export default {
       inputVal: "",
       value: "",
       dataSource: [],
-      choose: false
+      choose: false,
     };
   },
   mounted() {
@@ -341,7 +347,7 @@ export default {
   watch: {
     value(val) {
       console.log("value", val);
-    }
+    },
   },
   methods: {
     // 功能未开放
@@ -364,13 +370,13 @@ export default {
         case 1:
           this.$message.info({
             content: content,
-            icon: <a-icon type="exclamation-circle" />
+            icon: <a-icon type="exclamation-circle" />,
           });
           break;
         case 2:
           this.$message.info({
             content: content,
-            icon: <a-icon type="bell" />
+            icon: <a-icon type="bell" />,
           });
           break;
       }
@@ -432,7 +438,7 @@ export default {
       if (res.code == 0) {
         localStorage.setItem("loginState", 0);
         this.$router.push({
-          name: "loginindex"
+          name: "loginindex",
         });
       } else {
         this.globalTip(1, res.message, res.code);
@@ -475,7 +481,7 @@ export default {
       } else {
         this.globalTip(1, res.message, res.code);
       }
-    }
-  }
+    },
+  },
 };
 </script>

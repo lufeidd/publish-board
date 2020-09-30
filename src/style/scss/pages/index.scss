@@ -1,22 +1,26 @@
 @charset "UTF-8";
 
-#indexPage{
+#indexPage {
   padding-bottom: 20px;
-  & .data-paper.model-container{
-    & .section-title{
-      & .time{
+
+  & .data-paper.model-container {
+    & .section-title {
+      & .time {
         font-size: $fontSize - 2;
         color: $fontColor2;
         margin-left: 15px;
         font-weight: normal;
       }
     }
-    & .content{
+
+    & .content {
       padding: 15px;
-      & .left{
+
+      & .left {
         display: inline-block;
         margin-right: 60px;
-        & .data-block{
+
+        & .data-block {
           display: inline-block;
           padding: 15px 10px;
           background-color: $themeColor5;
@@ -25,24 +29,29 @@
           margin-right: 10px;
         }
       }
-      & .right{
+
+      & .right {
         display: inline-block;
         vertical-align: top;
         width: 420px;
-        & .main-category{
+
+        & .main-category {
           color: $fontColor2;
           font-size: $fontSize - 2;
-          & .category-content{
+
+          & .category-content {
             // margin-bottom: 10px;
           }
-          & .category-left{
+
+          & .category-left {
             display: inline-block;
             vertical-align: top;
             border-left: 2px solid $fontColor2;
             padding: 0 10px;
-            margin:6px 0;
+            margin: 6px 0;
           }
-          & .category-right{
+
+          & .category-right {
             display: inline-block;
             width: 340px;
             line-height: 30px;
@@ -51,69 +60,181 @@
       }
     }
   }
-  & .quick-enter{
-    width: 810px;
-    margin-right: 10px;
-    & .enter-content{
+
+  & .quick-enter {
+    width: 610px;
+    margin-bottom: 10px;
+
+    & .enter-content {
       padding: 20px 0;
       padding-left: 15px;
-      & .enter-click{
+
+      & .enter-click {
         cursor: pointer;
         display: inline-block;
-        width: 145px;
+        width: 105px;
         text-align: center;
         line-height: 70px;
         color: $themeColor80;
         background-color: $themeColor5;
         margin-right: 10px;
         box-sizing: border-box;
-        &:hover{
-          color:$themeColor60;
+
+        &:last-child {
+          margin-right: 0;
+        }
+
+        &:hover {
+          color: $themeColor60;
         }
       }
     }
   }
-  & .impend-event{
-    width: 400px;
-    & .no-open{
-      height: 110px;
+
+  & .real-data {
+    width: 600px;
+
+    & .real-data-block {
+      width: 260px;
+      padding: 15px 20px;
+      box-sizing: border-box;
+      border: 1px solid #f4f7fd;
+      cursor: pointer;
+      &.active{
+        border-color: $themeColor80;
+      }
+      & .before{
+        font-size: $fontSize - 2;
+        & .num{
+          margin-left: 30px;
+        }
+      }
     }
   }
-  & .sale-rank,& .up-rank,& .new-rank{
+
+  & .impend-event {
+    width: 610px;
+
+    & .no-open {
+      height: 112px;
+    }
+    & .animation{
+      padding:0 15px;
+      height: 112px;
+      overflow: hidden;
+      position: relative;
+      & .animation-container{
+        position: absolute;
+        left: 15px;
+        right: 15px;
+        top: 112px;
+        animation: move 30s linear infinite;
+        -webkit-animation: move 30s linear infinite;
+        -moz-animation: move 30s linear infinite;
+        -ms-animation: move 30s linear infinite;
+        -o-animation: move 30s linear infinite;
+        &:hover{
+          animation-play-state: paused;
+        }
+        @keyframes move{
+          from{
+            top: 110px;
+          }
+          to{
+            top: -300px;
+          }
+        }
+        @-webkit-keyframes move{
+          from{
+            top: 110px;
+          }
+          to{
+            top: -300px;
+          }
+        }
+        @-moz-keyframes move{
+          from{
+            top: 110px;
+          }
+          to{
+            top: -300px;
+          }
+        }
+        @-ms-keyframes move{
+          from{
+            top: 110px;
+          }
+          to{
+            top: -300px;
+          }
+        }
+        @-o-keyframes move{
+          from{
+            top: 110px;
+          }
+          to{
+            top: -300px;
+          }
+        }
+        & .list{
+          margin-bottom: 10px;
+          & .name{
+            color: $fontColor1;
+            font-size: $fontSize - 2;
+          }
+        }
+      }
+    }
+  }
+
+  & .sale-rank,
+  & .up-rank,
+  & .new-rank {
     width: 400px;
   }
-  & .sale-rank,& .up-rank{
+
+  & .sale-rank,
+  & .up-rank {
     margin-right: 10px;
   }
-  & .publish-top{
+
+  & .publish-top {
     width: 605px;
     margin-right: 10px;
-    & .no-open{
+
+    & .no-open {
       height: 290px;
     }
   }
-  & .compete-publish{
+
+  & .compete-publish {
     width: 605px;
-    & .no-open{
+
+    & .no-open {
       height: 290px;
     }
   }
-  & .no-open{
+
+  & .no-open {
     text-align: center;
   }
-  & .last-week{
+
+  & .last-week {
     line-height: 48px;
     padding: 0 15px;
     color: $fontColor1;
     font-size: $fontSize - 2;
   }
-  & .table-data{
+
+  & .table-data {
     height: 350px;
     position: relative;
-    & .compete-container{
+
+    & .compete-container {
       padding: 20px 15px;
       font-size: $fontSize - 2;
-      & .name{
+
+      & .name {
         display: inline-block;
         padding: 0 10px;
         box-sizing: border-box;
@@ -124,22 +245,26 @@
         min-width: 155px;
         margin-right: 20px;
       }
-      & .num{
+
+      & .num {
         color: $fontColor1;
         margin-left: 5px;
         margin-right: 20px;
       }
-      & .point{
+
+      & .point {
         display: inline-block;
         width: 6px;
         height: 6px;
         border-radius: 50%;
         margin-right: 2px;
+
         // vertical-align: middle;
-        &.pub{
+        &.pub {
           background-color: #4576DB;
         }
-        &.comp{
+
+        &.comp {
           background-color: #FF9900;
         }
       }

@@ -1161,6 +1161,7 @@ export default {
       this.cowChart.interaction("element-active");
 
       this.cowChart.render();
+      this.$setSlideHeight();
     },
     initRadarData() {
       var { DataView } = DataSet;
@@ -1240,6 +1241,7 @@ export default {
           fillOpacity: 0.3
         });
       this.radarChart.render();
+      this.$setSlideHeight();
     },
     initLineData() {
       this.changeChart = new Chart({

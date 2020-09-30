@@ -1,6 +1,12 @@
 <template>
   <div id="indexPage">
-    <HeadNav type="index" :show="1" ref="head" @publisherChange="publisherChange()" @initPage="initPage()"></HeadNav>
+    <HeadNav
+      type="index"
+      :show="1"
+      ref="head"
+      @publisherChange="publisherChange()"
+      @initPage="initPage()"
+    ></HeadNav>
     <div class="wd-1220">
       <!-- 数据简报 -->
       <div class="data-paper model-container">
@@ -136,7 +142,10 @@
                         class="data-tab data-tab-two"
                         v-if="publishSummaryInfo.sale_all.incr_rate > 0"
                       >+{{publishSummaryInfo.sale_all.incr_rate}}%</span>
-                      <span class="data-tab data-tab-three" v-else>{{publishSummaryInfo.sale_all.incr_rate?publishSummaryInfo.sale_all.incr_rate+'%':'--'}}</span>
+                      <span
+                        class="data-tab data-tab-three"
+                        v-else
+                      >{{publishSummaryInfo.sale_all.incr_rate?publishSummaryInfo.sale_all.incr_rate+'%':'--'}}</span>
                     </div>
                   </div>
                 </div>
@@ -169,28 +178,81 @@
           </div>
         </div>
       </div>
-      <!-- 快捷入口，临期事件 -->
       <div class="model-container clearfix">
-        <!-- 快捷入口 -->
-        <div class="quick-enter float-left model-bg">
-          <div class="section-title">快捷入口</div>
-          <div class="enter-content">
-            <span class="enter-click" @click="$refs.head.noOpen()">选题参考</span>
-            <span class="enter-click" @click="$refs.head.noOpen()">人群分析</span>
-            <span class="enter-click" @click="$refs.head.noOpen()">竞社分析</span>
-            <span class="enter-click" @click="$refs.head.noOpen()">作者库</span>
-            <span class="enter-click" @click="$refs.head.noOpen()">大事件</span>
+        <!-- 今日实时数据 -->
+        <div class="float-left model-bg" style="height:314px;">
+          <div class="real-data">
+            <div class="section-title clearfix">
+              <div class="float-left">今日实时数据</div>
+              <div class="float-right">
+                <span class="click-font">进入实时监控</span>
+              </div>
+            </div>
+            <div style="padding:15px;" class="clearfix">
+              <div class="real-data-block active float-left">
+                <div>
+                  <a-icon type="line-chart" />
+                  <span class="secondary-font">本社销售点数</span>
+                </div>
+                <div class="data-font">1222</div>
+                <div class="before">
+                  <span>昨日全天</span>
+                  <span class="num">1000000</span>
+                </div>
+              </div>
+              <div class="real-data-block float-left">
+                <div>
+                  <a-icon type="line-chart" />
+                  <span class="secondary-font">大盘销售点数</span>
+                </div>
+                <div class="data-font">1222</div>
+                <div class="before">
+                  <span>昨日全天</span>
+                  <span class="num">1000000</span>
+                </div>
+              </div>
+            </div>
+            <div style="padding:0 15px 15px 15px;">
+              <div id="measure"></div>
+            </div>
           </div>
         </div>
         <!-- 临期事件 -->
-        <div class="impend-event float-left model-bg">
-          <div class="section-title clearfix">
-            <span class="float-left">临期事件</span>
-            <span class="click-font float-right" @click="$refs.head.noOpen()">更多</span>
+        <div class="impend-event float-right">
+          <!-- 快捷入口 -->
+          <div class="quick-enter model-bg">
+            <div class="section-title">快捷入口</div>
+            <div class="enter-content">
+              <span class="enter-click" @click="$refs.head.noOpen()">选题参考</span>
+              <span class="enter-click" @click="$refs.head.noOpen()">人群分析</span>
+              <span class="enter-click" @click="$refs.head.noOpen()">竞社分析</span>
+              <span class="enter-click" @click="$refs.head.noOpen()">作者库</span>
+              <span class="enter-click" @click="$refs.head.noOpen()">大事件</span>
+            </div>
           </div>
-          <!-- 暂未开放 -->
-          <div class="no-open" style="position:relative;">
-            <ModelNoPower type="noOpen"></ModelNoPower>
+          <div class="model-bg">
+            <div class="section-title clearfix">
+              <span class="float-left">临期事件</span>
+              <span class="click-font float-right" @click="$refs.head.noOpen()">更多</span>
+            </div>
+            <div class="animation">
+              <div class="animation-container">
+                <div class="list clearfix" v-for="(aitem,aindex) in 10" :key="aindex">
+                  <div class="float-left">
+                    <span class="name">惊蛰</span>
+                    <span class="data-tab data-tab-seven">假期</span>
+                    <span class="data-tab data-tab-seven">电商</span>
+                  </div>
+                  <div class="float-right">
+                    <span class="name">06-12</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- 暂未开放 -->
+            <!-- <div class="no-open" style="position:relative;">
+              <ModelNoPower type="noOpen"></ModelNoPower>
+            </div>-->
           </div>
         </div>
       </div>
@@ -493,9 +555,10 @@
 import {
   INDEX_PUBLISHERINFO,
   INDEX_RANKS,
-  INDEX_COMPETE
+  INDEX_COMPETE,
 } from "../apis/index.js";
 import { Chart, registerShape } from "@antv/g2";
+import DataSet from "@antv/data-set";
 export default {
   data() {
     return {
@@ -545,13 +608,13 @@ export default {
       publishInfos: {
         sale_rank: 0,
         sale_ratio: 0,
-        sale_total: 0
+        sale_total: 0,
       },
       publishSummaryInfo: {
         main_cate: {
           // 主营类目
           name: "",
-          rank: 0
+          rank: 0,
         },
         best_rank: {
           // 本社最佳
@@ -559,24 +622,24 @@ export default {
           sale_total: 0,
           all_rank: 0,
           cate_name: "",
-          cate_rank: 0
+          cate_rank: 0,
         },
         best_incr: {
           // 涨幅较高
           goods_name: "",
-          incr_rate: ""
+          incr_rate: "",
         },
         sale_all: {
           // 大盘销售
           points: 0,
-          incr_rate: ""
+          incr_rate: "",
         },
         goods_all: {
           // 大盘新品
           new_total: 0,
           sale_new_total: 0,
-          rate: ""
-        }
+          rate: "",
+        },
       },
       // 全品种销售排行
       allGoodsRank: [],
@@ -595,18 +658,42 @@ export default {
       competePower: true,
       ringData1: [
         { type: "本社", value: 0 },
-        { type: "竞社", value: 0 }
+        { type: "竞社", value: 0 },
       ],
       ringData2: [
         { type: "本社", value: 0 },
-        { type: "竞社", value: 0 }
+        { type: "竞社", value: 0 },
       ],
       ringData3: [
         { type: "本社", value: 0 },
-        { type: "竞社", value: 0 }
+        { type: "竞社", value: 0 },
       ],
       ringChange: [null, null, null],
-      ringFirst: true
+      ringFirst: true,
+      measureData: [
+        { time: "00时", 昨日: 502, 今日: 430 },
+        { time: "02时", 昨日: 635, 今日: 600 },
+        { time: "04时", 昨日: 809, 今日: 700 },
+        { time: "06时", 昨日: 1200, 今日: 1000 },
+        { time: "08时", 昨日: 1600, 今日: 1200 },
+        { time: "10时", 昨日: 2000 },
+        { time: "12时", 昨日: 2200 },
+        { time: "14时", 昨日: 2100 },
+        { time: "16时", 昨日: 2500 },
+        { time: "18时", 昨日: 2700 },
+        { time: "20时", 昨日: 3000 },
+        { time: "22时", 昨日: 3100 },
+        { time: "24时", 昨日: 3600 },
+        // { country: "今日", year: "00时", value: 700 },
+        // { country: "今日", year: "02时", value: 1000 },
+        // { country: "今日", year: "04时", value: 1500 },
+        // { country: "今日", year: "06时", value: 3600 },
+        // { country: "今日", year: "08时", value: 4000 },
+        // { country: "今日", year: "10时", value: 4200 },
+        // { country: "今日", year: "12时", value: 4300 },
+      ],
+      measureChart: null,
+      intervalId:null,
     };
   },
   mounted() {
@@ -616,9 +703,13 @@ export default {
     //   this.getRankData();
     //   this.getCompeteData();
     // }, 500);
+    this.initMeasure();
   },
   updated() {
     this.$refs.load.isLoading = false;
+  },
+  destroyed(){
+    this.clear();
   },
   methods: {
     async getData() {
@@ -629,7 +720,7 @@ export default {
           ? this.$beforeDate().replace(/-/g, "")
           : this.$weekDate().weekth,
         date_type: this.show ? 1 : 2,
-        start_date: this.$beforeDate().replace(/-/g, "")
+        start_date: this.$beforeDate().replace(/-/g, ""),
       };
       let res = await INDEX_PUBLISHERINFO(data);
       if (res.code == 0) {
@@ -674,12 +765,12 @@ export default {
             this.publishSummaryInfo.sale_all.incr_rate.replace(/%/, "")
           );
         }
-        console.log(231,this.publishSummaryInfo.sale_all.incr_rate)
+        console.log(231, this.publishSummaryInfo.sale_all.incr_rate);
       } else {
         if (res.code == 1009) {
           this.dataNewPower = false;
         } else {
-          this.$refs.head.globalTip(1, res.message,res.code);
+          this.$refs.head.globalTip(1, res.message, res.code);
         }
       }
     },
@@ -688,7 +779,7 @@ export default {
         organization_id: this.$refs.head.publishInfo.organization_id,
         publisher_id: this.$refs.head.publishInfo.publisher_id,
         period: this.$weekDate().weekth,
-        start_date: this.$weekDate().start.replace(/-/g, "")
+        start_date: this.$weekDate().start.replace(/-/g, ""),
       };
       let res = await INDEX_RANKS(data);
       if (res.code == 0) {
@@ -705,7 +796,7 @@ export default {
         if (res.code == 1009) {
           this.dataRankPower = false;
         } else {
-          this.$refs.head.globalTip(1, res.message,res.code);
+          this.$refs.head.globalTip(1, res.message, res.code);
         }
       }
     },
@@ -716,7 +807,7 @@ export default {
         publisher_id: this.$refs.head.publishInfo.publisher_id,
         period: this.$weekDate().weekth,
         date_type: 2,
-        start_date: this.$weekDate().start.replace(/-/g, "")
+        start_date: this.$weekDate().start.replace(/-/g, ""),
       };
       let res = await INDEX_COMPETE(data);
       if (res.code == 0) {
@@ -754,7 +845,7 @@ export default {
         if (res.code == 1009) {
           this.competePower = false;
         } else {
-          this.$refs.head.globalTip(1, res.message,res.code);
+          this.$refs.head.globalTip(1, res.message, res.code);
         }
       }
     },
@@ -768,17 +859,17 @@ export default {
         container: "container",
         autoFit: true,
         autoHide: false,
-        height: 220
+        height: 220,
       });
       this.changeChart.data(this.data);
       this.changeChart.scale("value", {
         alias: "本社销售：",
-        nice: true
+        nice: true,
       });
       this.changeChart.axis("date", {
         tickLine: null,
         label: {
-          formatter: function(value) {
+          formatter: function (value) {
             // console.log(value)
             if (
               value == _this.data[0].date ||
@@ -799,17 +890,17 @@ export default {
             }
           },
           autoHide: false | true,
-          autoRotate: false
-        }
+          autoRotate: false,
+        },
       });
       this.changeChart.tooltip({
-        showMarkers: false
+        showMarkers: false,
       });
       this.changeChart.interaction("active-region");
       this.changeChart
         .interval()
         .position("date*value")
-        .style("date", val => {
+        .style("date", (val) => {
           let _date1, _date2, _date3, _date4, _date5, _date6, _date7;
           if (_this.show) {
             _date1 = _this.$beforeDate().substring(5);
@@ -860,7 +951,7 @@ export default {
               fillOpacity: 1,
               lineWidth: 0,
               stroke: "#437AE7",
-              fill: "#FF9900"
+              fill: "#FF9900",
             };
           }
         })
@@ -872,8 +963,8 @@ export default {
       this.$router.push({
         name: "detail",
         query: {
-          goods_id: item.goods_id
-        }
+          goods_id: item.goods_id,
+        },
       });
     },
     initRing() {
@@ -906,22 +997,22 @@ export default {
             return container.addShape("path", {
               attrs: {
                 fill: cfg.color,
-                path
-              }
+                path,
+              },
             });
-          }
+          },
         });
 
         this.ringChange[i] = new Chart({
           container: "ring" + (i + 1),
           autoFit: true,
-          height: 180
+          height: 180,
         });
 
         this.ringChange[i].data(_data);
         this.ringChange[i].coordinate("theta", {
           radius: 0.8,
-          innerRadius: 0.95
+          innerRadius: 0.95,
         });
         this.ringChange[i].legend(false);
         this.ringChange[i].tooltip(false);
@@ -934,9 +1025,9 @@ export default {
             style: {
               fontSize: 16,
               fill: "#07193f",
-              textAlign: "center"
+              textAlign: "center",
             },
-            offsetY: -10
+            offsetY: -10,
           })
           .text({
             position: ["50%", "50%"],
@@ -944,15 +1035,15 @@ export default {
             style: {
               fontSize: 12,
               fill: "#7789af",
-              textAlign: "center"
+              textAlign: "center",
             },
-            offsetY: 15
+            offsetY: 15,
           });
         this.ringChange[i]
           .interval()
           .adjust("stack")
           .position("value")
-          .color("type", type => {
+          .color("type", (type) => {
             if (type == "本社") {
               return "#4576DB";
             } else if (type == "竞社") {
@@ -964,10 +1055,59 @@ export default {
         this.ringChange[i].render();
       }
     },
+    initMeasure() {
+      const dv = new DataSet.DataView().source(this.measureData);
+      dv.transform({
+        type: "fold",
+        fields: ["昨日", "今日"], // 展开字段集
+        key: "type", // key字段
+        value: "value", // value字段
+      });
+
+      const chart = new Chart({
+        container: "measure",
+        autoFit: true,
+        height: 120,
+      });
+
+      chart.data(dv.rows);
+      chart.scale("time", {
+        range: [0, 1],
+      });
+      chart.scale("value", {
+        nice: true,
+      });
+      chart.legend(false);
+      chart.tooltip({
+        shared: true,
+        showCrosshairs: true,
+      });
+      chart.area().position("time*value").color("type").shape("smooth");
+      chart.line().position("time*value").color("type").shape("smooth").size(1);
+      chart.render();
+    },
+    // 定时刷新数据函数
+    dataRefreh() {
+      // 计时器正在进行中，退出函数
+      if (this.intervalId != null) {
+        return;
+      }
+      // 计时器为空，操作
+      this.intervalId = setInterval(() => {
+        console.log("刷新" + new Date());
+        // this.initData(); //加载数据函数
+      }, 15000);
+    },
+    // 停止定时器
+    clear() {
+      clearInterval(this.intervalId); //清除计时器
+      this.intervalId = null; //设置为null
+    },
     initPage() {
       this.getData();
       this.getRankData();
       this.getCompeteData();
+      // this.dataRefreh();
     },
     publisherChange() {
       // console.log('hahah')
@@ -975,7 +1115,7 @@ export default {
       this.getData();
       this.getRankData();
       this.getCompeteData();
-    }
-  }
+    },
+  },
 };
 </script>

@@ -37,8 +37,9 @@
                         <span>{{baseInfo.type == 1?'正式':'试用'}}</span>
                       </div>
                     </div>
-                    <div style="padding:0 20px;margin:-10px 0;">
-                      <a-divider />
+                    <div style="padding:0 20px;margin:10px 0;">
+                      <!-- <a-divider /> -->
+                      <div class="line"></div>
                     </div>
                     <div class="option">
                       <span class="lable">地址</span>
@@ -125,6 +126,10 @@
         margin-left: 10px;
         width: 460px;
       }
+    }
+    & .line{
+      height: 1px;
+      background-color: $themeColor5;
     }
   }
 }

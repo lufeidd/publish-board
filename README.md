@@ -13,6 +13,7 @@
 ```
 # 插件
 ``` bash
+ant design vue 组件库
 antv/g2 可视化隐擎
 antv/l7 地理空间数据可视化
 moment 时间插件

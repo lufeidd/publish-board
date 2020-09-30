@@ -89,7 +89,6 @@
                     <a-input
                       placeholder="搜索品种名称、ISBN"
                       @input="inputSearch"
-                      @focus="inputSearch"
                       @click.stop="inputClick"
                       v-model="inputVal"
                     ></a-input>
@@ -125,7 +124,7 @@
             <div v-if="goodsList.length > 0">
               <div class="model-container" v-for="(item,index) in goodsList" :key="index">
                 <div class="model-bg">
-                  <div class="list clearfix">
+                  <div class="goods-list clearfix">
                     <div class="float-left">
                       <div class="goods">
                         <img
@@ -544,6 +543,7 @@ export default {
       this.chooseTrend = 0;
       this.chooseId = 0;
       this.$refs.load.isLoading = true;
+      this.isFirst = true;
       this.getData();
     }
   },

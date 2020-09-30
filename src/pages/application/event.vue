@@ -65,44 +65,46 @@
                       </span>
                     </div>
                     <div class="center">
-                      <div class="model" v-for="(item,index) in showList" :key="index">
-                        <div class="month">{{item.month}}月</div>
-                        <div class="date-content">
-                          <div v-if="item.lists.length > 0">
-                            <div v-for="(litem,lindex) in item.lists" :key="lindex">
-                              <div
-                                class="date two"
-                                v-if="litem.type == 1"
-                                @click="toDetail(litem,lindex)"
-                              >
-                                {{litem.event_month>=10?litem.event_month:'0'+litem.event_month}}-{{litem.event_day>=10?litem.event_day:'0'+litem.event_day}} {{litem.title}}
-                                <span
-                                  class="star"
+                      <div class="move-box">
+                        <div class="model" v-for="(item,index) in showList" :key="index">
+                          <div class="month">{{item.month}}月</div>
+                          <div class="date-content">
+                            <div v-if="item.lists.length > 0">
+                              <div v-for="(litem,lindex) in item.lists" :key="lindex">
+                                <div
+                                  class="date two"
+                                  v-if="litem.type == 1"
+                                  @click="toDetail(litem,lindex)"
                                 >
-                                  <svg class="icon" aria-hidden="true">
-                                    <use xlink:href="#icon-star" />
-                                  </svg>
-                                </span>
-                              </div>
-                              <div
-                                class="date three"
-                                v-if="litem.type == 2"
-                                @click="toDetail(litem,lindex)"
-                              >
-                                {{litem.event_month>=10?litem.event_month:'0'+litem.event_month}}-{{litem.event_day>=10?litem.event_day:'0'+litem.event_day}} {{litem.title}}
-                                <span
-                                  class="star"
-                                  v-for="(i,j) in litem.event_level" :key="j"
+                                  {{litem.event_month>=10?litem.event_month:'0'+litem.event_month}}-{{litem.event_day>=10?litem.event_day:'0'+litem.event_day}} {{litem.title}}
+                                  <span
+                                    class="star"
+                                  >
+                                    <svg class="icon" aria-hidden="true">
+                                      <use xlink:href="#icon-star" />
+                                    </svg>
+                                  </span>
+                                </div>
+                                <div
+                                  class="date three"
+                                  v-if="litem.type == 2"
+                                  @click="toDetail(litem,lindex)"
                                 >
-                                  <svg class="icon" aria-hidden="true">
-                                    <use xlink:href="#icon-star" />
-                                  </svg>
-                                </span>
+                                  {{litem.event_month>=10?litem.event_month:'0'+litem.event_month}}-{{litem.event_day>=10?litem.event_day:'0'+litem.event_day}} {{litem.title}}
+                                  <span
+                                    class="star"
+                                    v-for="(i,j) in litem.event_level"
+                                    :key="j"
+                                  >
+                                    <svg class="icon" aria-hidden="true">
+                                      <use xlink:href="#icon-star" />
+                                    </svg>
+                                  </span>
+                                </div>
                               </div>
                             </div>
-                          </div>
-                          <div v-else class="no-event">暂无事件信息</div>
-                          <!-- <div>
+                            <div v-else class="no-event">暂无事件信息</div>
+                            <!-- <div>
                             <div class="date two">
                               08-01 建军节
                               <span class="star">
@@ -131,7 +133,8 @@
                                 </svg>
                               </span>
                             </div>
-                          </div>-->
+                            </div>-->
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -194,12 +197,12 @@ export default {
       ownNum: 0,
       activeIndex: 1,
       isOpen: 1,
-      isOwn: 1
+      isOwn: 1,
     };
   },
   mounted() {
     this.defaultYear = this.$moment().format("YYYY");
-    let  _num = Number(this.$moment().format("YYYY")) + 2;
+    let _num = Number(this.$moment().format("YYYY")) + 2;
     let _length = _num - 2000;
     for (let i = 0; i < _length + 1; i++) {
       if (i > 0) _num--;
@@ -215,11 +218,10 @@ export default {
     async getData() {
       let data = {
         organization_id: this.$refs.head.publishInfo.organization_id,
-        year: this.defaultYear
+        year: this.defaultYear,
       };
       let res = await EVENT_ALL(data);
       if (res.code == 0) {
-        this.$refs.load.isLoading = false;
         this.pagePower = true;
         this.allList = [];
         this.showList = [];
@@ -227,9 +229,10 @@ export default {
         this.activeIndex = 1;
         this.isOpen = 1;
         this.isOwn = 1;
-        this.showList = res.data.events.slice(0, 3);
+        this.showList = res.data.events;
         this.openNum = res.data.public_count;
         this.ownNum = res.data.private_count;
+        this.$refs.load.isLoading = false;
       } else {
         this.$refs.load.isLoading = false;
         if (res.code == 1009) {
@@ -251,30 +254,21 @@ export default {
     },
     arrChange() {
       this.showList = [];
-      let _arr = [],_all = [];
-      _all = JSON.parse(JSON.stringify(this.allList));
-      if (this.activeIndex == 1) {
-        _arr = _all.slice(0, 3);
-      } else if (this.activeIndex == 2) {
-        _arr = _all.slice(3, 6);
-      } else if (this.activeIndex == 3) {
-        _arr = _all.slice(6, 9);
-      } else if (this.activeIndex == 4) {
-        _arr = _all.slice(9, 12);
-      }
+      let _arr = [];
+      _arr = JSON.parse(JSON.stringify(this.allList));
       // console.log(_arr)
       if (this.isOpen == 0) {
-        _arr.map((value, key)=> {
-          value.lists = value.lists.filter((val, index)=> {
-            return val.type != 1
+        _arr.map((value, key) => {
+          value.lists = value.lists.filter((val, index) => {
+            return val.type != 1;
           });
           return value;
         });
       }
       if (this.isOwn == 0) {
-        _arr.map((value, key)=> {
-          value.lists = value.lists.filter((val, index)=> {
-            return val.type != 2
+        _arr.map((value, key) => {
+          value.lists = value.lists.filter((val, index) => {
+            return val.type != 2;
           });
           return value;
         });
@@ -283,23 +277,65 @@ export default {
       // console.log(123, this.showList,this.allList);
     },
     before() {
+      let _dom = document.getElementsByClassName("move-box");
       if (this.activeIndex > 1) {
         this.activeIndex--;
-        this.arrChange();
+        if (this.activeIndex == 1) {
+          _dom[0].className = "move-box trans0";
+        } else if (this.activeIndex == 2) {
+          _dom[0].className = "move-box trans1";
+        } else if (this.activeIndex == 3) {
+          _dom[0].className = "move-box trans2";
+        } else if (this.activeIndex == 4) {
+          _dom[0].className = "move-box trans3";
+        } else if (this.activeIndex == 5) {
+          _dom[0].className = "move-box trans4";
+        } else if (this.activeIndex == 6) {
+          _dom[0].className = "move-box trans5";
+        } else if (this.activeIndex == 7) {
+          _dom[0].className = "move-box trans6";
+        } else if (this.activeIndex == 8) {
+          _dom[0].className = "move-box trans7";
+        } else if (this.activeIndex == 9) {
+          _dom[0].className = "move-box trans8";
+        } else if (this.activeIndex == 10) {
+          _dom[0].className = "move-box trans9";
+        }
       }
     },
     after() {
-      if (this.activeIndex < 4) {
+      let _dom = document.getElementsByClassName("move-box");
+      if (this.activeIndex < 10) {
         this.activeIndex++;
-        this.arrChange();
+        if (this.activeIndex == 1) {
+          _dom[0].className = "move-box trans0";
+        } else if (this.activeIndex == 2) {
+          _dom[0].className = "move-box trans1";
+        } else if (this.activeIndex == 3) {
+          _dom[0].className = "move-box trans2";
+        } else if (this.activeIndex == 4) {
+          _dom[0].className = "move-box trans3";
+        } else if (this.activeIndex == 5) {
+          _dom[0].className = "move-box trans4";
+        } else if (this.activeIndex == 6) {
+          _dom[0].className = "move-box trans5";
+        } else if (this.activeIndex == 7) {
+          _dom[0].className = "move-box trans6";
+        } else if (this.activeIndex == 8) {
+          _dom[0].className = "move-box trans7";
+        } else if (this.activeIndex == 9) {
+          _dom[0].className = "move-box trans8";
+        } else if (this.activeIndex == 10) {
+          _dom[0].className = "move-box trans9";
+        }
       }
     },
     toDetail(litem, lindex) {
       this.$router.push({
         name: "eventdetail",
         query: {
-          event_id: litem.event_id
-        }
+          event_id: litem.event_id,
+        },
       });
     },
     openClick() {
@@ -310,9 +346,10 @@ export default {
       this.isOwn = this.isOwn ? 0 : 1;
       this.arrChange();
     },
-    publisherChange(){
+    publisherChange() {
+      this.$refs.load.isLoading = true;
       this.getData();
-    }
-  }
+    },
+  },
 };
 </script>

@@ -26,7 +26,7 @@
                   ></span>
                   <div class="goods-desc author">
                     <div class="authors" :title="authorInfo.name">{{authorInfo.name}}</div>
-                    <div class>
+                    <div style="margin-top:5px;">
                       <span>国家</span>
                       <span class="value">{{authorInfo.country}}</span>
                     </div>

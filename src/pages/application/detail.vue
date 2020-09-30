@@ -23,10 +23,11 @@
                       v-if="eventInfo.repeat_year == 0"
                     >{{eventInfo.effect_first_year}}-{{eventInfo.event_month>=10?eventInfo.event_month:'0'+eventInfo.event_month}}-{{eventInfo.event_day>=10?eventInfo.event_day:'0'+eventInfo.event_day}}</span>
                     <span class="desc" v-else>
-                      每
-                      <span v-if="eventInfo.repeat_year == 2">两</span>
-                      <span v-if="eventInfo.repeat_year == 4">四</span>
-                      年循环 公历 {{eventInfo.event_month>=10?eventInfo.event_month:'0'+eventInfo.event_month}}-{{eventInfo.event_day>=10?eventInfo.event_day:'0'+eventInfo.event_day}}
+                      <span v-if="eventInfo.repeat_year == 1">每年循环</span>
+                      <span v-if="eventInfo.repeat_year == 2">每两年循环</span>
+                      <span v-if="eventInfo.repeat_year == 4">每四年循环</span>
+                       <span v-if="eventInfo.date_type == 1">公历</span>
+                       <span v-if="eventInfo.date_type == 2">农历</span> {{eventInfo.event_month>=10?eventInfo.event_month:'0'+eventInfo.event_month}}-{{eventInfo.event_day>=10?eventInfo.event_day:'0'+eventInfo.event_day}}
                     </span>
                   </div>
                   <div class="option">
@@ -48,7 +49,8 @@
                   </div>
                   <div class="option">
                     <span class="name">事件描述</span>
-                    <span class="desc">{{eventInfo.event_desc}}</span>
+                    <span class="desc" v-if="eventInfo.event_desc">{{eventInfo.event_desc}}</span>
+                    <span class="desc" v-else>--</span>
                   </div>
                   <div class="option">
                     <span class="name">创建时间</span>

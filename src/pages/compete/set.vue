@@ -322,7 +322,7 @@ export default {
           this.$refs.head.globalTip(
             1,
             "竞争监控已存在，请勿重复添加",
-            res.code
+            0
           );
         } else {
           this.$refs.head.globalTip(1, res.message, res.code);
@@ -405,7 +405,7 @@ export default {
           content: "确认将{" + value + "}设为竞社监控？",
           okText: "确定",
           cancelText: "取消",
-          okType: "danger",
+          okType: "primary",
           onOk() {
             _this.addMonitor(_id);
           },
@@ -438,7 +438,7 @@ export default {
           content: "确认将{" + value + "}设为竞社监控？",
           okText: "确定",
           cancelText: "取消",
-          okType: "danger",
+          okType: "primary",
           onOk() {
             _this.addMonitor(_id);
           },

@@ -2,6 +2,7 @@
 
 #eventPage {
   padding-bottom: 20px;
+
   & .container {
     padding: 15px;
 
@@ -49,71 +50,203 @@
 
       & .center {
         width: 920px;
-        margin: 0 auto;
-
-        & .model {
-          width: 300px;
-          box-sizing: border-box;
-          display: inline-block;
-          vertical-align: top;
-          margin-right: 10px;
-
-          &:last-child {
-            margin-right: 0;
+        position: relative;
+        left: 65px;
+        right: 65px;
+        overflow-x: hidden;
+        white-space: nowrap;
+        & .move-box {
+          position: relative;
+          &.trans0 {
+            transform:translateX(0);
+            -webkit-transform:translateX(0);
+            -o-transform:translateX(0);
+            -moz-transform:translateX(0);
+            -ms-transform:translateX(0);
+            transition: linear 0.5s;
+            -webkit-transition: linear 0.5s;
+            -o-transition: linear 0.5s;
+            -moz-transition: linear 0.5s;
+            -ms-transition: linear 0.5s;
+          }
+          &.trans1 {
+            transform:translateX(-310px);
+            -webkit-transform:translateX(-310px);
+            -o-transform:translateX(-310px);
+            -moz-transform:translateX(-310px);
+            -ms-transform:translateX(-310px);
+            transition: linear 0.5s;
+            -webkit-transition: linear 0.5s;
+            -o-transition: linear 0.5s;
+            -moz-transition: linear 0.5s;
+            -ms-transition: linear 0.5s;
+          }
+          &.trans2 {
+            transform:translateX(-620px);
+            -webkit-transform:translateX(-620px);
+            -o-transform:translateX(-620px);
+            -moz-transform:translateX(-620px);
+            -ms-transform:translateX(-620px);
+            transition: linear 0.5s;
+            -webkit-transition: linear 0.5s;
+            -o-transition: linear 0.5s;
+            -moz-transition: linear 0.5s;
+            -ms-transition: linear 0.5s;
+          }
+          &.trans3 {
+            transform:translateX(-930px);
+            -webkit-transform:translateX(-930px);
+            -o-transform:translateX(-930px);
+            -moz-transform:translateX(-930px);
+            -ms-transform:translateX(-930px);
+            transition: linear 0.5s;
+            -webkit-transition: linear 0.5s;
+            -o-transition: linear 0.5s;
+            -moz-transition: linear 0.5s;
+            -ms-transition: linear 0.5s;
+          }
+          &.trans4 {
+            transform:translateX(-1240px);
+            -webkit-transform:translateX(-1240px);
+            -o-transform:translateX(-1240px);
+            -moz-transform:translateX(-1240px);
+            -ms-transform:translateX(-1240px);
+            transition: linear 0.5s;
+            -webkit-transition: linear 0.5s;
+            -o-transition: linear 0.5s;
+            -moz-transition: linear 0.5s;
+            -ms-transition: linear 0.5s;
+          }
+          &.trans5 {
+            transform:translateX(-1550px);
+            -webkit-transform:translateX(-1550px);
+            -o-transform:translateX(-1550px);
+            -moz-transform:translateX(-1550px);
+            -ms-transform:translateX(-1550px);
+            transition: linear 0.5s;
+            -webkit-transition: linear 0.5s;
+            -o-transition: linear 0.5s;
+            -moz-transition: linear 0.5s;
+            -ms-transition: linear 0.5s;
+          }
+          &.trans6 {
+            transform:translateX(-1860px);
+            -webkit-transform:translateX(-1860px);
+            -o-transform:translateX(-1860px);
+            -moz-transform:translateX(-1860px);
+            -ms-transform:translateX(-1860px);
+            transition: linear 0.5s;
+            -webkit-transition: linear 0.5s;
+            -o-transition: linear 0.5s;
+            -moz-transition: linear 0.5s;
+            -ms-transition: linear 0.5s;
+          }
+          &.trans7 {
+            transform:translateX(-2170px);
+            -webkit-transform:translateX(-2170px);
+            -o-transform:translateX(-2170px);
+            -moz-transform:translateX(-2170px);
+            -ms-transform:translateX(-2170px);
+            transition: linear 0.5s;
+            -webkit-transition: linear 0.5s;
+            -o-transition: linear 0.5s;
+            -moz-transition: linear 0.5s;
+            -ms-transition: linear 0.5s;
+          }
+          &.trans8 {
+            transform:translateX(-2480px);
+            -webkit-transform:translateX(-2480px);
+            -o-transform:translateX(-2480px);
+            -moz-transform:translateX(-2480px);
+            -ms-transform:translateX(-2480px);
+            transition: linear 0.5s;
+            -webkit-transition: linear 0.5s;
+            -o-transition: linear 0.5s;
+            -moz-transition: linear 0.5s;
+            -ms-transition: linear 0.5s;
+          }
+          &.trans9 {
+            transform:translateX(-2790px);
+            -webkit-transform:translateX(-2790px);
+            -o-transform:translateX(-2790px);
+            -moz-transform:translateX(-2790px);
+            -ms-transform:translateX(-2790px);
+            transition: linear 0.5s;
+            -webkit-transition: linear 0.5s;
+            -o-transition: linear 0.5s;
+            -moz-transition: linear 0.5s;
+            -ms-transition: linear 0.5s;
           }
 
-          & .month {
-            line-height: 40px;
-            color: $themeColor100;
-            margin-left: 5px;
-          }
+          // &
 
-          & .date-content {
-            min-height: 500px;
-            border-top: 1px solid $fontColor2;
-            border-bottom: 1px solid $fontColor2;
-            font-size: $fontSize - 2;
-            position: relative;
-            & .no-event{
-              position: absolute;
-              top: 50%;
-              left: 50%;
-              margin-top: -9px;
-              margin-left: -36px;
-              color: $fontColor1;
+          & .model {
+            width: 300px;
+            box-sizing: border-box;
+            display: inline-block;
+            vertical-align: top;
+            margin-right: 10px;
+
+            &:last-child {
+              margin-right: 0;
             }
-            & .date {
-              box-sizing: border-box;
-              display: inline-block;
-              padding: 0 10px;
-              line-height: 30px;
-              background-color: $themeColor5;
-              margin-top: 10px;
-              cursor: pointer;
 
-              &.one {
-                border-left: 2px solid $themeColor100;
+            & .month {
+              line-height: 40px;
+              color: $themeColor100;
+              margin-left: 5px;
+            }
+
+            & .date-content {
+              min-height: 500px;
+              border-top: 1px solid $fontColor2;
+              border-bottom: 1px solid $fontColor2;
+              font-size: $fontSize - 2;
+              position: relative;
+
+              & .no-event {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                margin-top: -9px;
+                margin-left: -36px;
+                color: $fontColor1;
               }
 
-              &.two {
-                border-left: 2px solid $green;
-              }
+              & .date {
+                box-sizing: border-box;
+                display: inline-block;
+                padding: 0 10px;
+                line-height: 30px;
+                background-color: $themeColor5;
+                margin-top: 10px;
+                cursor: pointer;
 
-              &.three {
-                border-left: 2px solid $fontColor2;
-              }
+                &.one {
+                  border-left: 2px solid $themeColor100;
+                }
 
-              &.overdue {
-                opacity: 0.4;
-              }
+                &.two {
+                  border-left: 2px solid $green;
+                }
 
-              & .star {
-                color: $green;
+                &.three {
+                  border-left: 2px solid $fontColor2;
+                }
+
+                &.overdue {
+                  opacity: 0.4;
+                }
+
+                & .star {
+                  color: $green;
+                }
               }
             }
           }
         }
       }
+
     }
   }
 
@@ -161,6 +294,7 @@
   & .option {
     margin-top: 10px;
     font-size: $fontSize - 2;
+
     & .lable {
       display: inline-block;
       text-align: right;
