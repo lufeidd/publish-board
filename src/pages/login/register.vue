@@ -51,7 +51,7 @@
         </div>
       </div>
     </div>
-    <div class="copy-right">———— · 博道出版数据中心 · 博库数字出版传媒集团 · ————</div>
+    <div class="copy-right" v-if="screenHeight > 700">———— · 博道出版数据中心 · 博库数字出版传媒集团 · ————</div>
   </div>
 </template>
 <style scoped lang="scss" src="@/style/scss/pages/login.scss"></style>
@@ -77,7 +77,8 @@ export default {
       isShort: false,
       sendTime: {
         time: 0
-      }
+      },
+      screenHeight:0,
     };
   },
   mounted() {
@@ -87,6 +88,12 @@ export default {
     } else {
       this.$router.replace({ name: "nullpage" });
     }
+    this.screenHeight = document.body.clientHeight;
+    window.onresize = () => {
+      return (() => {
+        this.screenHeight = document.body.clientHeight;
+      })();
+    };
   },
   methods: {
     send() {
@@ -127,11 +134,14 @@ export default {
     },
     // 注册并登录
     async login() {
+      var tStamp = this.$getTimeStamp();
       let data = {
         mobile: this.mobile,
         invite_code: this.inviteCode,
-        code: this.code
+        code: this.code,
+        timestamp: tStamp
       };
+      data.sign = this.$getSign(data);
       let res = await PASSPORT_REGISTER(data);
       if (res.code == 0) {
         this.$router.replace({
@@ -157,9 +167,12 @@ export default {
     },
     // 解析邀请码
     async translateInvite() {
+      var tStamp = this.$getTimeStamp();
       let data = {
-        invite_code: this.inviteCode
+        invite_code: this.inviteCode,
+        timestamp: tStamp
       };
+      data.sign = this.$getSign(data);
       let res = await USER_INVITE_INFO(data);
       if (res.code == 0) {
         this.invite_name = res.data.invite_name;
@@ -188,9 +201,12 @@ export default {
     },
     // 检测手机是否已经注册
     async checkRegister() {
+      var tStamp = this.$getTimeStamp();
       let data = {
-        mobile: this.mobile
+        mobile: this.mobile,
+        timestamp: tStamp
       };
+      data.sign = this.$getSign(data);
       let res = await USER_CHECK(data);
       if (res.code == 0) {
         if (res.data.is_register) {
@@ -198,10 +214,14 @@ export default {
             content: "该号码已注册，可直接登录",
             icon: <a-icon type="exclamation-circle" />
           });
+          let _this = this;
           setTimeout(() => {
-            this.$router.push({
+            _this.$router.push({
               name: "loginindex",
-              mobile: this.mobile
+              query:{
+                mobile: _this.mobile,
+                inviteCode: _this.inviteCode
+              }
             });
           }, 2000);
         } else {
@@ -225,10 +245,13 @@ export default {
     },
     // 发送验证码
     async sendCode() {
+      var tStamp = this.$getTimeStamp();
       let data = {
         mobile: this.mobile,
-        type: "register"
+        type: "register",
+        timestamp: tStamp
       };
+      data.sign = this.$getSign(data);
       let res = await COMMON_CAPTCHA_SMS(data);
       if (res.code == 0) {
         this.$message.info({

@@ -6,6 +6,7 @@
       ref="head"
       @publisherChange="publisherChange()"
       @initPage="initPage()"
+      @noInitPage="noInitPage()"
     ></HeadNav>
     <div class="wd-1220">
       <!-- 数据简报 -->
@@ -13,24 +14,29 @@
         <div class="model-bg">
           <div class="section-title">
             数据简报
-            <span class="time" v-if="show">昨日 {{$beforeDate()}}</span>
-            <span class="time" v-else>上周 {{$weekDate().start}} ~ {{$weekDate().end}}</span>
+            <span class="time" v-if="show">昨日 {{ $beforeDate() }}</span>
+            <span class="time" v-else
+              >上周 {{ $weekDate().start }} ~ {{ $weekDate().end }}</span
+            >
             <span
               class="click-font"
-              style="margin-left:15px;"
+              style="margin-left: 15px"
               @click="change"
               v-if="dataNewPower"
-            >切换</span>
+              >{{show?'查看上周':'查看昨日'}}</span
+            >
           </div>
           <div class="content" v-if="dataNewPower">
             <div class="left">
-              <div style="margin-bottom:20px;">
+              <div style="margin-bottom: 20px">
                 <div class="data-block">
                   <div>
                     <a-icon type="line-chart" />
                     <span class="secondary-font">本社销售点数</span>
                   </div>
-                  <div class="data-font" v-if="publishInfos.sale_total">{{publishInfos.sale_total}}</div>
+                  <div class="data-font" v-if="publishInfos.sale_total">
+                    {{ publishInfos.sale_total }}
+                  </div>
                   <div class="data-font" v-else>--</div>
                 </div>
                 <div class="data-block">
@@ -38,7 +44,9 @@
                     <a-icon type="line-chart" />
                     <span class="secondary-font">本社行业占比</span>
                   </div>
-                  <div class="data-font" v-if="publishInfos.sale_ratio">{{publishInfos.sale_ratio}}%</div>
+                  <div class="data-font" v-if="publishInfos.sale_ratio">
+                    {{ publishInfos.sale_ratio }}%
+                  </div>
                   <div class="data-font" v-else>--</div>
                 </div>
                 <div class="data-block">
@@ -46,7 +54,9 @@
                     <a-icon type="line-chart" />
                     <span class="secondary-font">本社行业排名</span>
                   </div>
-                  <div class="data-font" v-if="publishInfos.sale_rank">{{publishInfos.sale_rank}}</div>
+                  <div class="data-font" v-if="publishInfos.sale_rank">
+                    {{ publishInfos.sale_rank }}
+                  </div>
                   <div class="data-font" v-else>--</div>
                 </div>
               </div>
@@ -58,162 +68,225 @@
                 <!-- 主营类目 -->
                 <div
                   class="category-content"
-                  v-if="publishSummaryInfo&&publishSummaryInfo.main_cate"
+                  v-if="publishSummaryInfo && publishSummaryInfo.main_cate"
                 >
                   <div class="category-left">主营类目</div>
                   <div class="category-right">
-                    本社主营类目
-                    <span
-                      class="data-tab data-tab-one"
-                    >{{publishSummaryInfo.main_cate.name?publishSummaryInfo.main_cate.name:'--'}}</span>，类目下本社排名第
-                    <span
-                      class="data-tab data-tab-one"
-                    >{{publishSummaryInfo.main_cate.rank?publishSummaryInfo.main_cate.rank:'--'}}</span>名
+                    本社主营类目为
+                    <span class="data-tab data-tab-one">{{
+                      publishSummaryInfo.main_cate.name
+                        ? publishSummaryInfo.main_cate.name
+                        : "--"
+                    }}</span
+                    >，本社在该类目下，排名第
+                    <span class="data-tab data-tab-one">{{
+                      publishSummaryInfo.main_cate.rank
+                        ? publishSummaryInfo.main_cate.rank
+                        : "--"
+                    }}</span
+                    >位
                   </div>
                 </div>
                 <!-- 本社最佳 -->
                 <div
                   class="category-content"
-                  v-if="publishSummaryInfo&&publishSummaryInfo.best_rank"
+                  v-if="publishSummaryInfo && publishSummaryInfo.best_rank"
                 >
                   <div class="category-left">本社最佳</div>
                   <div class="category-right">
                     <div class="category-content">
-                      <span
-                        class="data-tab data-tab-one"
-                      >{{publishSummaryInfo.best_rank.goods_name?publishSummaryInfo.best_rank.goods_name:'--'}}</span>总计销售点数
+                      <span class="data-tab data-tab-one">{{
+                        publishSummaryInfo.best_rank.goods_name
+                          ? publishSummaryInfo.best_rank.goods_name
+                          : "--"
+                      }}</span
+                      >总计销售点数为
                       <!-- </div> -->
                       <!-- <div> -->
-                      <span
-                        class="data-tab data-tab-one"
-                      >{{publishSummaryInfo.best_rank.sale_total?publishSummaryInfo.best_rank.sale_total:'--'}}</span>点进入总榜第
-                      <span
-                        class="data-tab data-tab-one"
-                      >{{publishSummaryInfo.best_rank.all_rank?publishSummaryInfo.best_rank.all_rank:'--'}}</span>名，
-                      <span
-                        class="data-tab data-tab-one"
-                      >{{publishSummaryInfo.best_rank.cate_name?publishSummaryInfo.best_rank.cate_name:'--'}}</span>类目第
-                      <span
-                        class="data-tab data-tab-one"
-                      >{{publishSummaryInfo.best_rank.cate_rank?publishSummaryInfo.best_rank.cate_rank:'--'}}</span>名
+                      <span class="data-tab data-tab-one">{{
+                        publishSummaryInfo.best_rank.sale_total
+                          ? publishSummaryInfo.best_rank.sale_total
+                          : "--"
+                      }}</span
+                      >，在总榜排名第
+                      <span class="data-tab data-tab-one">{{
+                        publishSummaryInfo.best_rank.all_rank
+                          ? publishSummaryInfo.best_rank.all_rank
+                          : "--"
+                      }}</span
+                      >位，在
+                      <span class="data-tab data-tab-one">{{
+                        publishSummaryInfo.best_rank.cate_name
+                          ? publishSummaryInfo.best_rank.cate_name
+                          : "--"
+                      }}</span
+                      >类目排名第
+                      <span class="data-tab data-tab-one">{{
+                        publishSummaryInfo.best_rank.cate_rank
+                          ? publishSummaryInfo.best_rank.cate_rank
+                          : "--"
+                      }}</span
+                      >位
                     </div>
                   </div>
                 </div>
                 <!-- 涨幅较高 -->
                 <div
                   class="category-content"
-                  v-if="publishSummaryInfo&&publishSummaryInfo.best_incr"
+                  v-if="publishSummaryInfo && publishSummaryInfo.best_incr"
                 >
                   <div class="category-left">涨幅较高</div>
                   <div class="category-right">
                     <div class="category-content">
-                      <span
-                        class="data-tab data-tab-one"
-                      >{{publishSummaryInfo.best_incr.goods_name?publishSummaryInfo.best_incr.goods_name:'--'}}</span>销售点数较上个周期
+                      <span class="data-tab data-tab-one">{{
+                        publishSummaryInfo.best_incr.goods_name
+                          ? publishSummaryInfo.best_incr.goods_name
+                          : "--"
+                      }}</span
+                      >总销售点数较上一周期增长
                       <span
                         class="data-tab data-tab-two"
                         v-if="publishSummaryInfo.best_incr.incr_rate > 0"
-                      >+{{publishSummaryInfo.best_incr.incr_rate}}%</span>
-                      <span
-                        v-else
-                        class="data-tab data-tab-three"
-                      >{{publishSummaryInfo.best_incr.incr_rate?publishSummaryInfo.best_incr.incr_rate:'--'}}</span>
+                        >+{{ publishSummaryInfo.best_incr.incr_rate }}%</span
+                      >
+                      <span v-else class="data-tab data-tab-three">{{
+                        publishSummaryInfo.best_incr.incr_rate
+                          ? publishSummaryInfo.best_incr.incr_rate
+                          : "--"
+                      }}</span>
                       <!-- </div> -->
                       <!-- <div> -->
-                      ，增长幅度较大
                     </div>
                   </div>
                 </div>
                 <!-- 大盘销售 -->
                 <div
                   class="category-content"
-                  v-if="publishSummaryInfo&&publishSummaryInfo.sale_all"
+                  v-if="publishSummaryInfo && publishSummaryInfo.sale_all"
                 >
                   <div class="category-left">大盘销售</div>
                   <div class="category-right">
                     <div class="category-content">
-                      全行业整体销售点数
-                      <span
-                        class="data-tab data-tab-one"
-                      >{{publishSummaryInfo.sale_all.points?publishSummaryInfo.sale_all.points:'--'}}</span>较上个周期
+                      本周期内行业销售点数为
+                      <span class="data-tab data-tab-one">{{
+                        publishSummaryInfo.sale_all.points
+                          ? publishSummaryInfo.sale_all.points
+                          : "--"
+                      }}</span
+                      >较上个周期<span v-if="publishSummaryInfo.sale_all.incr_rate > 0">增长</span><span v-if="publishSummaryInfo.sale_all.incr_rate < 0">下降</span>
                       <!-- </div> -->
                       <!-- <div> -->
                       <span
                         class="data-tab data-tab-two"
                         v-if="publishSummaryInfo.sale_all.incr_rate > 0"
-                      >+{{publishSummaryInfo.sale_all.incr_rate}}%</span>
-                      <span
-                        class="data-tab data-tab-three"
-                        v-else
-                      >{{publishSummaryInfo.sale_all.incr_rate?publishSummaryInfo.sale_all.incr_rate+'%':'--'}}</span>
+                        >{{ publishSummaryInfo.sale_all.incr_rate }}%</span
+                      >
+                      <span class="data-tab data-tab-three" v-else-if="publishSummaryInfo.sale_all.incr_rate < 0">{{publishSummaryInfo.sale_all.incr_rate}}%</span>
+                      <span class="data-tab data-tab-three" v-else>--</span>
                     </div>
                   </div>
                 </div>
                 <!-- 大盘新品 -->
                 <div
                   class="category-content"
-                  v-if="publishSummaryInfo&&publishSummaryInfo.goods_all"
+                  v-if="publishSummaryInfo && publishSummaryInfo.goods_all"
                 >
                   <div class="category-left">大盘新品</div>
                   <div class="category-right">
                     <div class="category-content">
-                      全行业总计动销新品
-                      <span
-                        class="data-tab data-tab-one"
-                      >{{publishSummaryInfo.goods_all.new_total?publishSummaryInfo.goods_all.new_total:'--'}}</span>件，销售点数
-                      <span
-                        class="data-tab data-tab-one"
-                      >{{publishSummaryInfo.goods_all.sale_new_total?publishSummaryInfo.goods_all.sale_new_total:'--'}}</span>点，占全行业的
-                      <span
-                        class="data-tab data-tab-one"
-                      >{{publishSummaryInfo.goods_all.rate?publishSummaryInfo.goods_all.rate:'--'}}</span>
+                      本周期内行业动销新品
+                      <span class="data-tab data-tab-one">{{
+                        publishSummaryInfo.goods_all.new_total
+                          ? publishSummaryInfo.goods_all.new_total
+                          : "--"
+                      }}</span
+                      >个，总销售点数为
+                      <span class="data-tab data-tab-one">{{
+                        publishSummaryInfo.goods_all.sale_new_total
+                          ? publishSummaryInfo.goods_all.sale_new_total
+                          : "--"
+                      }}</span
+                      >，占行业销售
+                      <span class="data-tab data-tab-one">{{
+                        publishSummaryInfo.goods_all.rate
+                          ? publishSummaryInfo.goods_all.rate
+                          : "--"
+                      }}</span>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
-          <div class="content" style="height:357px;position:relative;" v-else>
-            <ModelNoPower type="noPower"></ModelNoPower>
+          <div class="content" style="height: 357px; position: relative" v-else>
+            <ModelNoPower
+              type="noPower"
+              :id="dataNewPowerID"
+              :organizeId="$refs.head.publishInfo.organization_id"
+            ></ModelNoPower>
           </div>
         </div>
       </div>
       <div class="model-container clearfix">
         <!-- 今日实时数据 -->
-        <div class="float-left model-bg" style="height:314px;">
+        <div class="float-left model-bg" style="height: 314px">
           <div class="real-data">
             <div class="section-title clearfix">
               <div class="float-left">今日实时数据</div>
               <div class="float-right">
-                <span class="click-font">进入实时监控</span>
+                <span class="click-font" @click="$refs.head.noOpen()"
+                  >进入实时监控</span
+                >
               </div>
             </div>
-            <div style="padding:15px;" class="clearfix">
-              <div class="real-data-block active float-left">
-                <div>
-                  <a-icon type="line-chart" />
-                  <span class="secondary-font">本社销售点数</span>
+            <div v-if="measurePower">
+              <div style="padding: 15px" class="clearfix">
+                <div
+                  class="real-data-block float-left"
+                  :class="{ active: measureType == 0 }"
+                  @click="changeMeasure(0)"
+                >
+                  <div>
+                    <a-icon type="line-chart" />
+                    <span class="secondary-font">本社销售点数</span>
+                  </div>
+                  <div class="data-font">{{ publishData.today }}</div>
+                  <div class="before">
+                    <span>昨日全天</span>
+                    <span class="num">{{ publishData.yesterday }}</span>
+                  </div>
                 </div>
-                <div class="data-font">1222</div>
-                <div class="before">
-                  <span>昨日全天</span>
-                  <span class="num">1000000</span>
+                <div
+                  class="real-data-block float-left"
+                  :class="{ active: measureType == 1 }"
+                  @click="changeMeasure(1)"
+                >
+                  <div>
+                    <a-icon type="line-chart" />
+                    <span class="secondary-font">大盘销售点数</span>
+                  </div>
+                  <div class="data-font">{{ allData.today }}</div>
+                  <div class="before">
+                    <span>昨日全天</span>
+                    <span class="num">{{ allData.yesterday }}</span>
+                  </div>
                 </div>
               </div>
-              <div class="real-data-block float-left">
-                <div>
-                  <a-icon type="line-chart" />
-                  <span class="secondary-font">大盘销售点数</span>
-                </div>
-                <div class="data-font">1222</div>
-                <div class="before">
-                  <span>昨日全天</span>
-                  <span class="num">1000000</span>
-                </div>
+              <div style="padding: 0 15px 15px 15px">
+                <div id="measure" v-show="measureType == 0" style="width:570px;"></div>
+                <div id="measure1" v-show="measureType == 1" style="width:570px;"></div>
               </div>
             </div>
-            <div style="padding:0 15px 15px 15px;">
-              <div id="measure"></div>
+            <div
+              class="content"
+              style="height: 272px; position: relative"
+              v-else
+            >
+              <ModelNoPower
+                type="noPower"
+                :id="measurePowerID"
+                :organizeId="$refs.head.publishInfo.organization_id"
+              ></ModelNoPower>
             </div>
           </div>
         </div>
@@ -223,30 +296,72 @@
           <div class="quick-enter model-bg">
             <div class="section-title">快捷入口</div>
             <div class="enter-content">
-              <span class="enter-click" @click="$refs.head.noOpen()">选题参考</span>
-              <span class="enter-click" @click="$refs.head.noOpen()">人群分析</span>
-              <span class="enter-click" @click="$refs.head.noOpen()">竞社分析</span>
-              <span class="enter-click" @click="$refs.head.noOpen()">作者库</span>
-              <span class="enter-click" @click="$refs.head.noOpen()">大事件</span>
+              <span
+                class="enter-click"
+                @click="$router.push({ name: 'industrymarket' })"
+                >行业大盘</span
+              >
+              <span
+                class="enter-click"
+                @click="$router.push({ name: 'publishreader' })"
+                >读者画像</span
+              >
+              <span
+                class="enter-click"
+                @click="$router.push({ name: 'saleforcast' })"
+                >销售预测</span
+              >
+              <span class="enter-click" @click="$refs.head.noOpen()"
+                >选题参考</span
+              >
+              <span
+                class="enter-click"
+                @click="$router.push({ name: 'publishauthors' })"
+                >作者库</span
+              >
             </div>
           </div>
           <div class="model-bg">
             <div class="section-title clearfix">
               <span class="float-left">临期事件</span>
-              <span class="click-font float-right" @click="$refs.head.noOpen()">更多</span>
+              <router-link to="/application/event"
+                ><span class="click-font float-right">更多</span></router-link
+              >
             </div>
             <div class="animation">
-              <div class="animation-container">
-                <div class="list clearfix" v-for="(aitem,aindex) in 10" :key="aindex">
+              <div class="animation-container" v-if="recentList.length > 0">
+                <div
+                  class="list clearfix"
+                  v-for="(aitem, aindex) in recentList"
+                  :key="aindex"
+                >
                   <div class="float-left">
-                    <span class="name">惊蛰</span>
-                    <span class="data-tab data-tab-seven">假期</span>
-                    <span class="data-tab data-tab-seven">电商</span>
+                    <span class="name">{{ aitem.title }}</span>
+                    <span
+                      class="data-tab data-tab-seven"
+                      v-for="(kitem, kindex) in aitem.keywords"
+                      :key="kindex"
+                      >{{ kitem.value }}</span
+                    >
+                    <!-- <span class="data-tab data-tab-seven">电商</span> -->
                   </div>
                   <div class="float-right">
-                    <span class="name">06-12</span>
+                    <span class="name"
+                      >{{
+                        aitem.event_month >= 10
+                          ? aitem.event_month
+                          : "0" + aitem.event_month
+                      }}-{{
+                        aitem.event_day >= 10
+                          ? aitem.event_day
+                          : "0" + aitem.event_day
+                      }}</span
+                    >
                   </div>
                 </div>
+              </div>
+              <div v-else style="height: 112px; position: relative">
+                <div class="no-data">暂无数据</div>
               </div>
             </div>
             <!-- 暂未开放 -->
@@ -257,19 +372,23 @@
         </div>
       </div>
       <div class="model-container">
-        <div class="model-bg last-week">上周排行数据 {{$weekDate().start}} ~ {{$weekDate().end}}</div>
+        <div class="model-bg last-week">
+          上周排行数据 {{ $weekDate().start }} ~ {{ $weekDate().end }}
+        </div>
       </div>
       <!-- 品种排行 -->
       <div class="model-container clearfix">
         <!-- 全品种销售排行 -->
         <div class="float-left sale-rank model-bg">
           <div class="section-title clearfix">
-            <span class="float-left">全品种销售排行</span>
-            <span class="click-font float-right" @click="$refs.head.noOpen()">更多</span>
+            <span class="float-left">本社品种销售排行</span>
+            <span class="click-font float-right" @click="$refs.head.noOpen()"
+              >更多</span
+            >
           </div>
           <div class="table-data" v-if="dataRankPower">
             <div class="table small" v-if="allGoodsRank.length > 0">
-              <table style="table-layout:fixed;">
+              <table style="table-layout: fixed">
                 <colgroup>
                   <col width="45" />
                   <col width="175" />
@@ -280,13 +399,13 @@
                   <tr>
                     <td>排行</td>
                     <td>品种</td>
-                    <td style="text-align:right;">销售点数</td>
-                    <td style="text-align:right;">较上周期</td>
+                    <td style="text-align: right">销售点数</td>
+                    <td style="text-align: right">较上周期</td>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr v-for="(item,index) in allGoodsRank" :key="index">
-                    <td style="text-align:center;">{{item.sale_rank}}</td>
+                  <tr v-for="(item, index) in allGoodsRank" :key="index">
+                    <td style="text-align: center">{{ item.sale_rank }}</td>
                     <td>
                       <div class="goods-desc">
                         <img
@@ -296,21 +415,28 @@
                           height="40px"
                           v-if="item.cover_pic"
                         />
-                        <span v-else class="no-pic" style="min-width:40px;min-height:40px;"></span>
+                        <span
+                          v-else
+                          class="no-pic"
+                          style="min-width: 40px; min-height: 40px"
+                        ></span>
                         <span
                           class="goods-name click-font"
                           :title="item.goods_name"
-                          @click="toDetail(item,index)"
-                        >{{item.goods_name}}</span>
+                          @click="toDetail(item, index)"
+                          >{{ item.goods_name }}</span
+                        >
                       </div>
                     </td>
-                    <td style="text-align:right;">{{item.sale_total}}</td>
-                    <td style="text-align:right;">
-                      <span
-                        class="percent"
-                        v-if="item.compare_rate > 0"
-                      >+{{item.compare_rate.toFixed(2)}}%</span>
-                      <span class="green" v-else>{{item.compare_rate.toFixed(2)}}%</span>
+                    <td style="text-align: right">{{ item.sale_total }}</td>
+                    <td style="text-align: right">
+                      <span class="percent" v-if="item.compare_rate > 0"
+                        >+{{ item.compare_rate}}%</span
+                      >
+                      <span class="green" v-else-if="item.compare_rate <= 0"
+                        >{{ item.compare_rate}}%</span
+                      >
+                      <span v-else>--</span>
                     </td>
                   </tr>
                 </tbody>
@@ -321,18 +447,24 @@
             </div>
           </div>
           <div class="table-data" v-else>
-            <ModelNoPower type="noPower"></ModelNoPower>
+            <ModelNoPower
+              type="noPower"
+              :id="dataRankPowerID"
+              :organizeId="$refs.head.publishInfo.organization_id"
+            ></ModelNoPower>
           </div>
         </div>
         <!-- 全品种销售涨幅排行 -->
         <div class="float-left up-rank model-bg">
           <div class="section-title clearfix">
-            <span class="float-left">全品种销售涨幅排行</span>
-            <span class="click-font float-right" @click="$refs.head.noOpen()">更多</span>
+            <span class="float-left">本社品种销售涨幅排行</span>
+            <span class="click-font float-right" @click="$refs.head.noOpen()"
+              >更多</span
+            >
           </div>
           <div class="table-data" v-if="dataRankPower">
             <div class="table small" v-if="allUpRank.length > 0">
-              <table style="table-layout:fixed;">
+              <table style="table-layout: fixed">
                 <colgroup>
                   <col width="45" />
                   <col width="175" />
@@ -343,13 +475,13 @@
                   <tr>
                     <td>排行</td>
                     <td>品种</td>
-                    <td style="text-align:right;">销售点数</td>
-                    <td style="text-align:right;">较上周期</td>
+                    <td style="text-align: right">销售点数</td>
+                    <td style="text-align: right">较上周期</td>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr v-for="(item,index) in allUpRank" :key="index">
-                    <td style="text-align:center;">{{item.sale_rank}}</td>
+                  <tr v-for="(item, index) in allUpRank" :key="index">
+                    <td style="text-align: center">{{ item.sale_rank }}</td>
                     <td>
                       <div class="goods-desc">
                         <img
@@ -359,21 +491,28 @@
                           height="40px"
                           v-if="item.cover_pic"
                         />
-                        <span v-else class="no-pic" style="min-width:40px;min-height:40px;"></span>
+                        <span
+                          v-else
+                          class="no-pic"
+                          style="min-width: 40px; min-height: 40px"
+                        ></span>
                         <span
                           class="click-font goods-name"
                           :title="item.goods_name"
-                          @click="toDetail(item,index)"
-                        >{{item.goods_name}}</span>
+                          @click="toDetail(item, index)"
+                          >{{ item.goods_name }}</span
+                        >
                       </div>
                     </td>
-                    <td style="text-align:right;">{{item.sale_total}}</td>
-                    <td style="text-align:right;">
-                      <span
-                        class="percent"
-                        v-if="item.compare_rate > 0"
-                      >+{{item.compare_rate.toFixed(2)}}%</span>
-                      <span class="green" v-else>{{item.compare_rate.toFixed(2)}}%</span>
+                    <td style="text-align: right">{{ item.sale_total }}</td>
+                    <td style="text-align: right">
+                      <span class="percent" v-if="item.compare_rate > 0"
+                        >+{{ item.compare_rate }}%</span
+                      >
+                      <span class="green" v-else-if="item.compare_rate <= 0"
+                        >{{ item.compare_rate }}%</span
+                      >
+                      <span v-else>--</span>
                     </td>
                   </tr>
                 </tbody>
@@ -384,18 +523,24 @@
             </div>
           </div>
           <div class="table-data" v-else>
-            <ModelNoPower type="noPower"></ModelNoPower>
+            <ModelNoPower
+              type="noPower"
+              :id="dataRankPowerID"
+              :organizeId="$refs.head.publishInfo.organization_id"
+            ></ModelNoPower>
           </div>
         </div>
         <!-- 新品销售排行 -->
         <div class="float-left new-rank model-bg">
           <div class="section-title clearfix">
-            <span class="float-left">新品销售排行</span>
-            <span class="click-font float-right" @click="$refs.head.noOpen()">更多</span>
+            <span class="float-left">本社新品销售排行</span>
+            <span class="click-font float-right" @click="$refs.head.noOpen()"
+              >更多</span
+            >
           </div>
           <div class="table-data" v-if="dataRankPower">
             <div class="table small" v-if="newGoodsRank.length > 0">
-              <table style="table-layout:fixed;">
+              <table style="table-layout: fixed">
                 <colgroup>
                   <col width="45" />
                   <col width="175" />
@@ -406,13 +551,13 @@
                   <tr>
                     <td>排行</td>
                     <td>品种</td>
-                    <td style="text-align:right;">销售点数</td>
-                    <td style="text-align:right;">上市天数</td>
+                    <td style="text-align: right">销售点数</td>
+                    <td style="text-align: right">上市天数</td>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr v-for="(item,index) in newGoodsRank" :key="index">
-                    <td style="text-align:center;">{{item.sale_rank}}</td>
+                  <tr v-for="(item, index) in newGoodsRank" :key="index">
+                    <td style="text-align: center">{{ item.sale_rank }}</td>
                     <td>
                       <div class="goods-desc">
                         <img
@@ -422,16 +567,21 @@
                           height="40px"
                           v-if="item.cover_pic"
                         />
-                        <span v-else class="no-pic" style="min-width:40px;min-height:40px;"></span>
+                        <span
+                          v-else
+                          class="no-pic"
+                          style="min-width: 40px; min-height: 40px"
+                        ></span>
                         <span
                           class="goods-name click-font"
                           :title="item.goods_name"
-                          @click="toDetail(item,index)"
-                        >{{item.goods_name}}</span>
+                          @click="toDetail(item, index)"
+                          >{{ item.goods_name }}</span
+                        >
                       </div>
                     </td>
-                    <td style="text-align:right;">{{item.sale_total}}</td>
-                    <td style="text-align:right;">{{item.onsale_days}}</td>
+                    <td style="text-align: right">{{ item.sale_total }}</td>
+                    <td style="text-align: right">{{ item.onsale_days }}</td>
                   </tr>
                 </tbody>
               </table>
@@ -441,7 +591,11 @@
             </div>
           </div>
           <div class="table-data" v-else>
-            <ModelNoPower type="noPower"></ModelNoPower>
+            <ModelNoPower
+              type="noPower"
+              :id="dataRankPowerID"
+              :organizeId="$refs.head.publishInfo.organization_id"
+            ></ModelNoPower>
           </div>
         </div>
       </div>
@@ -450,12 +604,14 @@
         <!--出版社TOP 5-->
         <div class="publish-top float-left model-bg">
           <div class="section-title clearfix">
-            <span class="float-left">出版社TOP 5</span>
-            <span class="click-font float-right" @click="$refs.head.noOpen()">更多</span>
+            <span class="float-left">出版单位TOP 5</span>
+            <span class="click-font float-right" @click="$refs.head.noOpen()"
+              >更多</span
+            >
           </div>
           <div class="table-data" v-if="dataRankPower">
             <div class="table small" v-if="publishTopList.length > 0">
-              <table style="table-layout:fixed;">
+              <table style="table-layout: fixed">
                 <colgroup>
                   <col width="45" />
                   <col width="190" />
@@ -465,32 +621,35 @@
                 </colgroup>
                 <thead>
                   <tr>
-                    <td style="text-align:center;">排行</td>
-                    <td>出版社</td>
-                    <td style="text-align:right;">主营类目</td>
-                    <td style="text-align:right;">销售点数</td>
-                    <td style="text-align:right;">较上周期</td>
+                    <td style="text-align: center">排行</td>
+                    <td>出版单位</td>
+                    <td style="text-align: right">主营类目</td>
+                    <td style="text-align: right">销售点数</td>
+                    <td style="text-align: right">较上周期</td>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr v-for="(item,index) in publishTopList" :key="index">
-                    <td style="text-align:center;">{{item.sale_rank}}</td>
+                  <tr v-for="(item, index) in publishTopList" :key="index">
+                    <td style="text-align: center">{{ item.sale_rank }}</td>
                     <td>
                       <div class="goods">
                         <span
-                          class="click-font goods-title"
-                          style="line-height:40px;width:190px;"
-                        >{{item.name}}</span>
+                          class="goods-title"
+                          style="line-height: 40px; width: 190px"
+                          >{{ item.name }}</span
+                        >
                       </div>
                     </td>
-                    <td style="text-align:right;">{{item.top_cate}}</td>
-                    <td style="text-align:right;">{{item.sale_total}}</td>
-                    <td style="text-align:right;">
-                      <span
-                        class="percent"
-                        v-if="item.compare_rate > 0"
-                      >+{{item.compare_rate.toFixed(2)}}%</span>
-                      <span class="green" v-else>{{item.compare_rate.toFixed(2)}}%</span>
+                    <td style="text-align: right">{{ item.top_cate }}</td>
+                    <td style="text-align: right">{{ item.sale_total }}</td>
+                    <td style="text-align: right">
+                      <span class="percent" v-if="item.compare_rate > 0"
+                        >+{{ item.compare_rate }}%</span
+                      >
+                      <span class="green" v-else-if="item.compare_rate <= 0"
+                        >{{ item.compare_rate }}%</span
+                      >
+                      <span v-else>--</span>
                     </td>
                   </tr>
                 </tbody>
@@ -501,38 +660,51 @@
             </div>
           </div>
           <div class="table-data" v-else>
-            <ModelNoPower type="noPower"></ModelNoPower>
+            <ModelNoPower
+              type="noPower"
+              :id="dataRankPowerID"
+              :organizeId="$refs.head.publishInfo.organization_id"
+            ></ModelNoPower>
           </div>
         </div>
         <!-- 竞社 -->
         <div class="compete-publish float-left model-bg">
           <div class="section-title clearfix">
             <span class="float-left">竞社</span>
-            <span class="click-font float-right" @click="$refs.head.noOpen()">更多</span>
+            <span
+              class="click-font float-right"
+              @click="$router.push({ name: 'publishmonitor' })"
+              >更多</span
+            >
           </div>
           <div class="table-data" v-if="competePower">
-            <div class="compete-container" v-if="Object.keys(competeInfo).length > 0">
+            <div
+              class="compete-container"
+              v-if="Object.keys(competeInfo).length > 0"
+            >
               <div>
-                <span class="name">{{competeInfo.compete_publisher_name}}</span>
+                <span class="name">{{
+                  competeInfo.compete_publisher_name
+                }}</span>
                 <span>上周销售点数</span>
-                <span class="num">{{competeInfo.sale_total}}</span>
+                <span class="num">{{ competeInfo.sale_total }}</span>
                 <span>行业排名</span>
-                <span class="num">{{competeInfo.sale_rank}}</span>
+                <span class="num">{{ competeInfo.sale_rank }}</span>
               </div>
-              <div class="clearfix" style="margin-top:20px;padding:0 5px;">
-                <div class="float-left" style="width:180px;">
+              <div class="clearfix" style="margin-top: 20px; padding: 0 5px">
+                <div class="float-left" style="width: 180px">
                   <div id="ring1"></div>
                 </div>
-                <div class="float-left" style="width:180px;">
+                <div class="float-left" style="width: 180px">
                   <div id="ring2"></div>
                 </div>
-                <div class="float-left" style="width:180px;">
+                <div class="float-left" style="width: 180px">
                   <div id="ring3"></div>
                 </div>
               </div>
-              <div style="text-align:center;margin-top:50px;">
+              <div style="text-align: center; margin-top: 50px">
                 <span class="point pub"></span>
-                <span style="margin-right:15px;">本社</span>
+                <span style="margin-right: 15px">本社</span>
                 <span class="point comp"></span>
                 <span>竞社</span>
               </div>
@@ -542,12 +714,16 @@
             </div>
           </div>
           <div class="table-data" v-else>
-            <ModelNoPower type="noPower"></ModelNoPower>
+            <ModelNoPower
+              type="noPower"
+              :id="competePowerID"
+              :organizeId="$refs.head.publishInfo.organization_id"
+            ></ModelNoPower>
           </div>
         </div>
       </div>
     </div>
-    <Loading ref="load" :show="1"></Loading>
+    <Loading ref="load" :show="1" :isLoading="isLoading"></Loading>
   </div>
 </template>
 <style scoped lang="scss" src="@/style/scss/pages/index.scss"></style>
@@ -556,6 +732,8 @@ import {
   INDEX_PUBLISHERINFO,
   INDEX_RANKS,
   INDEX_COMPETE,
+  INDEX_REALTIME,
+  EVENT_RECENT,
 } from "../apis/index.js";
 import { Chart, registerShape } from "@antv/g2";
 import DataSet from "@antv/data-set";
@@ -656,6 +834,14 @@ export default {
       dataNewPower: true,
       dataRankPower: true,
       competePower: true,
+      measurePower: true,
+      recentPower: false,
+      // 权限ID
+      dataNewPowerID: 0,
+      dataRankPowerID: 0,
+      competePowerID: 0,
+      measurePowerID: 0,
+      recentPowerID: 0,
       ringData1: [
         { type: "本社", value: 0 },
         { type: "竞社", value: 0 },
@@ -671,81 +857,98 @@ export default {
       ringChange: [null, null, null],
       ringFirst: true,
       measureData: [
-        { time: "00时", 昨日: 502, 今日: 430 },
-        { time: "02时", 昨日: 635, 今日: 600 },
-        { time: "04时", 昨日: 809, 今日: 700 },
-        { time: "06时", 昨日: 1200, 今日: 1000 },
-        { time: "08时", 昨日: 1600, 今日: 1200 },
-        { time: "10时", 昨日: 2000 },
-        { time: "12时", 昨日: 2200 },
-        { time: "14时", 昨日: 2100 },
-        { time: "16时", 昨日: 2500 },
-        { time: "18时", 昨日: 2700 },
-        { time: "20时", 昨日: 3000 },
-        { time: "22时", 昨日: 3100 },
-        { time: "24时", 昨日: 3600 },
-        // { country: "今日", year: "00时", value: 700 },
-        // { country: "今日", year: "02时", value: 1000 },
-        // { country: "今日", year: "04时", value: 1500 },
-        // { country: "今日", year: "06时", value: 3600 },
-        // { country: "今日", year: "08时", value: 4000 },
-        // { country: "今日", year: "10时", value: 4200 },
-        // { country: "今日", year: "12时", value: 4300 },
+        // { time: "00时", 昨日: 502, 今日: 430 },
+        // { time: "02时", 昨日: 635, 今日: 600 },
+        // { time: "04时", 昨日: 809, 今日: 700 },
+        // { time: "06时", 昨日: 1200, 今日: 1000 },
+        // { time: "08时", 昨日: 1600, 今日: 1200 },
+        // { time: "10时", 昨日: 2000 },
+        // { time: "12时", 昨日: 2200 },
+        // { time: "14时", 昨日: 2100 },
+        // { time: "16时", 昨日: 2500 },
+        // { time: "18时", 昨日: 2700 },
+        // { time: "20时", 昨日: 3000 },
+        // { time: "22时", 昨日: 3100 },
+        // { time: "24时", 昨日: 3600 },
       ],
       measureChart: null,
-      intervalId:null,
+      measureChart1: null,
+      measureFirst: true,
+      publishMeasure: [],
+      allMeasure: [],
+      publishData: {
+        today: 0,
+        yesterday: 0,
+      },
+      allData: {
+        today: 0,
+        yesterday: 0,
+      },
+      intervalId: null,
+      measureChartDv: null,
+      measureChartDv1: null,
+      measureType: 0,
+      recentList: [],
+      isLoading: true
     };
   },
   mounted() {
-    // console.log('刚进来',this.$refs.head.publishInfo.organization_id)
+    // console.log('刚进来',this.$weekDate().weekth);
     // setTimeout(() => {
     //   this.getData();
     //   this.getRankData();
     //   this.getCompeteData();
     // }, 500);
-    this.initMeasure();
+    // this.initMeasure();
   },
   updated() {
-    this.$refs.load.isLoading = false;
+    this.isLoading = false;
   },
-  destroyed(){
+  destroyed() {
     this.clear();
   },
   methods: {
     async getData() {
+      var tStamp = this.$getTimeStamp();
       let data = {
         organization_id: this.$refs.head.publishInfo.organization_id,
-        publisher_id: this.$refs.head.publishInfo.publisher_id,
+        supplier_id: this.$refs.head.publishInfo.supplier_id,
         period: this.show
           ? this.$beforeDate().replace(/-/g, "")
           : this.$weekDate().weekth,
         date_type: this.show ? 1 : 2,
-        start_date: this.$beforeDate().replace(/-/g, ""),
+        start_date: this.show
+          ? this.$beforeDate().replace(/-/g, "")
+          : this.$weekDate().start.replace(/-/g, ""),
+        timestamp: tStamp,
       };
+      data.sign = this.$getSign(data);
       let res = await INDEX_PUBLISHERINFO(data);
       if (res.code == 0) {
         this.dataNewPower = true;
         let _this = this;
         this.data = res.data.sale_total_list.reverse();
-        if (this.isFirst) {
-          this.initData();
-        } else {
-          this.changeChart.changeData(this.data);
-        }
-        this.isFirst = false;
-        this.publishSummaryInfo = res.data.publisher_summary_info;
-        if (res.data.publisher_info.sale_rank) {
-          this.publishInfos.sale_rank = res.data.publisher_info.sale_rank;
+        setTimeout(() => {
+          if (_this.isFirst) {
+            _this.initData();
+          } else {
+            _this.changeChart.changeData(_this.data);
+          }
+          _this.isFirst = false;
+        }, 500);
+        this.publishSummaryInfo = res.data.supplier_summary_info;
+        if (res.data.supplier_info.sale_rank) {
+          this.publishInfos.sale_rank = res.data.supplier_info.sale_rank;
         } else {
           this.publishInfos.sale_rank = 0;
         }
-        if (res.data.publisher_info.sale_ratio) {
-          this.publishInfos.sale_ratio = res.data.publisher_info.sale_ratio;
+        if (res.data.supplier_info.sale_ratio) {
+          this.publishInfos.sale_ratio = res.data.supplier_info.sale_ratio;
         } else {
           this.publishInfos.sale_ratio = 0;
         }
-        if (res.data.publisher_info.sale_total) {
-          this.publishInfos.sale_total = res.data.publisher_info.sale_total;
+        if (res.data.supplier_info.sale_total) {
+          this.publishInfos.sale_total = res.data.supplier_info.sale_total;
         } else {
           this.publishInfos.sale_total = 0;
         }
@@ -765,22 +968,26 @@ export default {
             this.publishSummaryInfo.sale_all.incr_rate.replace(/%/, "")
           );
         }
-        console.log(231, this.publishSummaryInfo.sale_all.incr_rate);
+        // console.log(231, this.publishSummaryInfo.sale_all.incr_rate);
       } else {
         if (res.code == 1009) {
           this.dataNewPower = false;
+          this.dataNewPowerID = res.data;
         } else {
           this.$refs.head.globalTip(1, res.message, res.code);
         }
       }
     },
     async getRankData() {
+      var tStamp = this.$getTimeStamp();
       let data = {
         organization_id: this.$refs.head.publishInfo.organization_id,
-        publisher_id: this.$refs.head.publishInfo.publisher_id,
+        supplier_id: this.$refs.head.publishInfo.supplier_id,
         period: this.$weekDate().weekth,
         start_date: this.$weekDate().start.replace(/-/g, ""),
+        timestamp: tStamp,
       };
+      data.sign = this.$getSign(data);
       let res = await INDEX_RANKS(data);
       if (res.code == 0) {
         this.dataRankPower = true;
@@ -791,24 +998,28 @@ export default {
         this.allGoodsRank = res.data.rank_all;
         this.allUpRank = res.data.rank_incr;
         this.newGoodsRank = res.data.rank_new;
-        this.publishTopList = res.data.publisher_ranks;
+        this.publishTopList = res.data.supplier_ranks;
       } else {
         if (res.code == 1009) {
           this.dataRankPower = false;
+          this.dataRankPowerID = res.data;
         } else {
           this.$refs.head.globalTip(1, res.message, res.code);
         }
       }
     },
     async getCompeteData() {
+      var tStamp = this.$getTimeStamp();
       let data = {
         organization_id: this.$refs.head.publishInfo.organization_id,
-        // publisher_id: 438,
-        publisher_id: this.$refs.head.publishInfo.publisher_id,
+        // supplier_id: 438,
+        supplier_id: this.$refs.head.publishInfo.supplier_id,
         period: this.$weekDate().weekth,
         date_type: 2,
         start_date: this.$weekDate().start.replace(/-/g, ""),
+        timestamp: tStamp,
       };
+      data.sign = this.$getSign(data);
       let res = await INDEX_COMPETE(data);
       if (res.code == 0) {
         this.competePower = true;
@@ -844,6 +1055,150 @@ export default {
       } else {
         if (res.code == 1009) {
           this.competePower = false;
+          this.competePowerID = res.data;
+        } else {
+          this.$refs.head.globalTip(1, res.message, res.code);
+        }
+      }
+    },
+    // 实时数据获取
+    async getMeasureData() {
+      var tStamp = this.$getTimeStamp();
+      let data = {
+        organization_id: this.$refs.head.publishInfo.organization_id,
+        supplier_id: this.$refs.head.publishInfo.supplier_id,
+        timestamp: tStamp,
+      };
+      data.sign = this.$getSign(data);
+      let res = await INDEX_REALTIME(data);
+      if (res.code == 0) {
+        this.measurePower = true;
+        this.publishData.today = res.data.supplier.today.total;
+        this.publishData.yesterday = res.data.supplier.yesterday.total;
+        this.allData.today = res.data.all.today.total;
+        this.allData.yesterday = res.data.all.yesterday.total;
+        this.publishMeasure = [];
+        this.allMeasure = [];
+        res.data.supplier.yesterday.chart_data.map((value, key) => {
+          let _obj = {};
+          _obj.time = value.time;
+          _obj.昨日 = value.value;
+          this.publishMeasure.push(_obj);
+        });
+        res.data.supplier.today.chart_data.map((value, key) => {
+          this.publishMeasure[key].今日 = value.value;
+        });
+        res.data.all.yesterday.chart_data.map((value, key) => {
+          let _obj = {};
+          _obj.time = value.time;
+          _obj.昨日 = value.value;
+          this.allMeasure.push(_obj);
+        });
+        res.data.all.today.chart_data.map((value, key) => {
+          this.allMeasure[key].今日 = value.value;
+        });
+        // this.measureData = [];
+        // if (this.measureType == 0) {
+        //   this.measureData = this.publishMeasure;
+        // } else {
+        //   this.measureData = this.allMeasure;
+        // }
+        let _this = this;
+        setTimeout(() => {
+          if (_this.measureFirst) {
+            _this.initMeasure();
+            _this.initMeasure1();
+            _this.dataRefreh();
+          } else {
+            _this.measureChartDv = new DataSet.DataView().source(
+              _this.publishMeasure
+            );
+            _this.measureChartDv.transform({
+              type: "fold",
+              fields: ["昨日", "今日"], // 展开字段集
+              key: "type", // key字段
+              value: "value", // value字段
+            });
+            _this.measureChart.changeData(_this.measureChartDv.rows);
+            _this.measureChartDv1 = new DataSet.DataView().source(
+              _this.allMeasure
+            );
+            _this.measureChartDv1.transform({
+              type: "fold",
+              fields: ["昨日", "今日"], // 展开字段集
+              key: "type", // key字段
+              value: "value", // value字段
+            });
+            _this.measureChart1.changeData(_this.measureChartDv1.rows);
+            // console.log(_this.measureChart,_this.measureData);
+          }
+          _this.measureFirst = false;
+        }, 500);
+        // console.log(this.measureData);
+      } else {
+        if (res.code == 1009) {
+          this.measurePower = false;
+          this.measurePowerID = res.data;
+        } else {
+          this.$refs.head.globalTip(1, res.message, res.code);
+        }
+      }
+    },
+    async getRecentData() {
+      var tStamp = this.$getTimeStamp();
+      let data = {
+        organization_id: this.$refs.head.publishInfo.organization_id,
+        timestamp: tStamp,
+      };
+      data.sign = this.$getSign(data);
+      let res = await EVENT_RECENT(data);
+      if (res.code == 0) {
+        this.recentPower = true;
+        this.recentList = [];
+        this.recentList = res.data;
+        let _dom = document.getElementById("animationMove");
+        if (_dom) _dom.remove();
+        if (this.recentList.length > 0) {
+          let _height;
+          if(this.recentList.length > 3) {
+            _height = this.recentList.length * 31 - 80 + "px";
+          }else{
+            _height = this.recentList.length * 31 + "px";
+          }
+          let _second = this.recentList.length * 4 + "s";
+          let _css =
+            ".animation-container{position: absolute;left: 15px;right: 15px;top: 112px;animation: move " +
+            _second +
+            "linear infinite;-webkit-animation: move " +
+            _second +
+            " linear infinite;-moz-animation: move " +
+            _second +
+            " linear infinite;-ms-animation: move " +
+            _second +
+            " linear infinite;-o-animation: move " +
+            _second +
+            " linear infinite;}.animation-container:hover{animation-play-state: paused;-webkit-animation-play-state: paused;-moz-animation-play-state: paused;-ms-animation-play-state: paused;-o-animation-play-state: paused;}@keyframes move{from{top:110px}to{top:-" +
+            _height +
+            ";}}@-webkitkeyframes move{from{top:110px}to{top:-" +
+            _height +
+            ";}}@-moz-keyframes move{from{top:110px}to{top:-" +
+            _height +
+            ";}}@-ms-keyframes move{from{top:110px}to{top:-" +
+            _height +
+            ";}}@-o-keyframes move{from{top:110px}to{top:-" +
+            _height +
+            ";}}";
+          let _style = document.createElement("style");
+          _style.type = "text/css";
+          _style.id = "animationMove";
+          _style.innerHTML = _css;
+          document.getElementsByTagName("head")[0].appendChild(_style);
+        }
+        // console.log(_height)
+      } else {
+        if (res.code == 1009) {
+          this.recentPower = false;
+          this.recentPowerID = res.data;
         } else {
           this.$refs.head.globalTip(1, res.message, res.code);
         }
@@ -852,6 +1207,23 @@ export default {
     change() {
       this.show ? (this.show = false) : (this.show = true);
       this.getData();
+    },
+    changeMeasure(_type) {
+      this.measureType = _type;
+      // this.measureData = [];
+      // if (this.measureType == 0) {
+      //   this.measureData = this.publishMeasure;
+      // } else {
+      //   this.measureData = this.allMeasure;
+      // }
+      // this.measureChartDv = new DataSet.DataView().source(this.measureData);
+      // this.measureChartDv.transform({
+      //   type: "fold",
+      //   fields: ["昨日", "今日"], // 展开字段集
+      //   key: "type", // key字段
+      //   value: "value", // value字段
+      // });
+      // this.measureChart.changeData(this.measureChartDv.rows);
     },
     initData() {
       let _this = this;
@@ -866,6 +1238,7 @@ export default {
         alias: "本社销售：",
         nice: true,
       });
+
       this.changeChart.axis("date", {
         tickLine: null,
         label: {
@@ -1056,35 +1429,191 @@ export default {
       }
     },
     initMeasure() {
-      const dv = new DataSet.DataView().source(this.measureData);
-      dv.transform({
+      this.measureChartDv = new DataSet.DataView().source(this.publishMeasure);
+      this.measureChartDv.transform({
         type: "fold",
         fields: ["昨日", "今日"], // 展开字段集
         key: "type", // key字段
         value: "value", // value字段
       });
 
-      const chart = new Chart({
+      this.measureChart = new Chart({
         container: "measure",
         autoFit: true,
         height: 120,
       });
 
-      chart.data(dv.rows);
-      chart.scale("time", {
+      this.measureChart.data(this.measureChartDv.rows);
+      this.measureChart.scale("time", {
         range: [0, 1],
       });
-      chart.scale("value", {
+      this.measureChart.scale("value", {
         nice: true,
       });
-      chart.legend(false);
-      chart.tooltip({
+      this.measureChart.axis("value", {
+        label:{
+          // style:{
+          //   textBaseline: "bottom",
+          //   textAlign: "left",
+          // }
+        }
+      })
+      this.measureChart.axis("time", {
+        tickLine: null,
+        label: {
+          // style:{
+          //   textAlign: "left",
+          // },
+          formatter: function (value) {
+            // let _time = Number(value.replace(/-/g,""));
+            // console.log(_time)
+            if (value == "00:00") {
+              return "00时";
+            } else if (value == "02:00") {
+              return "02时";
+            } else if (value == "04:00") {
+              return "04时";
+            } else if (value == "06:00") {
+              return "06时";
+            } else if (value == "08:00") {
+              return "08时";
+            } else if (value == "10:00") {
+              return "10时";
+            } else if (value == "12:00") {
+              return "12时";
+            } else if (value == "14:00") {
+              return "14时";
+            } else if (value == "16:00") {
+              return "16时";
+            } else if (value == "18:00") {
+              return "18时";
+            } else if (value == "20:00") {
+              return "20时";
+            } else if (value == "22:00") {
+              return "22时";
+            } else {
+              return "";
+            }
+          },
+          autoHide: false | true,
+          autoRotate: false,
+        },
+      });
+      this.measureChart.legend(false);
+      this.measureChart.tooltip({
         shared: true,
         showCrosshairs: true,
       });
-      chart.area().position("time*value").color("type").shape("smooth");
-      chart.line().position("time*value").color("type").shape("smooth").size(1);
-      chart.render();
+      this.measureChart
+        .area()
+        .position("time*value")
+        .color("type",(type) =>{
+          if(type == '昨日'){
+            return "#D1DDF6";
+          }else if(type == '今日'){
+            return "#5A8BEE"
+          }
+        })
+        .shape("smooth");
+      this.measureChart
+        .line()
+        .position("time*value")
+        .color("type",(type) =>{
+          if(type == '昨日'){
+            return "#D1DDF6";
+          }else if(type == '今日'){
+            return "#5A8BEE"
+          }
+        })
+        .shape("smooth")
+        .size(1);
+      this.measureChart.render();
+    },
+    initMeasure1() {
+      this.measureChartDv1 = new DataSet.DataView().source(this.allMeasure);
+      this.measureChartDv1.transform({
+        type: "fold",
+        fields: ["昨日", "今日"], // 展开字段集
+        key: "type", // key字段
+        value: "value", // value字段
+      });
+
+      this.measureChart1 = new Chart({
+        container: "measure1",
+        autoFit: true,
+        height: 120,
+      });
+
+      this.measureChart1.data(this.measureChartDv1.rows);
+      this.measureChart1.scale("time", {
+        range: [0, 1],
+      });
+      this.measureChart1.scale("value", {
+        nice: true,
+      });
+      this.measureChart1.axis("time", {
+        tickLine: null,
+        label: {
+          formatter: function (value) {
+            // let _time = Number(value.replace(/-/g,""));
+            // console.log(_time)
+            if (value == "00:00") {
+              return "00时";
+            } else if (value == "02:00") {
+              return "02时";
+            } else if (value == "04:00") {
+              return "04时";
+            } else if (value == "06:00") {
+              return "06时";
+            } else if (value == "08:00") {
+              return "08时";
+            } else if (value == "10:00") {
+              return "10时";
+            } else if (value == "12:00") {
+              return "12时";
+            } else if (value == "14:00") {
+              return "14时";
+            } else if (value == "16:00") {
+              return "16时";
+            } else if (value == "18:00") {
+              return "18时";
+            } else if (value == "20:00") {
+              return "20时";
+            } else if (value == "22:00") {
+              return "22时";
+            } else {
+              return "";
+            }
+          },
+          autoHide: false | true,
+          autoRotate: false,
+        },
+      });
+      this.measureChart1.legend(false);
+      this.measureChart1.tooltip({
+        shared: true,
+        showCrosshairs: true,
+      });
+      this.measureChart1
+        .area()
+        .position("time*value")
+        .color("type",(type) =>{
+          if(type == '昨日'){
+            return "#D1DDF6";
+          }
+        })
+        .shape("smooth");
+      this.measureChart1
+        .line()
+        .position("time*value")
+        .color("type",(type) =>{
+          if(type == '昨日'){
+            return "#D1DDF6";
+          }
+        })
+        .shape("smooth")
+        .size(1);
+      this.measureChart1.render();
     },
     // 定时刷新数据函数
     dataRefreh() {
@@ -1094,9 +1623,9 @@ export default {
       }
       // 计时器为空，操作
       this.intervalId = setInterval(() => {
-        console.log("刷新" + new Date());
-        // this.initData(); //加载数据函数
-      }, 15000);
+        // console.log("刷新" + new Date());
+        this.getMeasureData(); //加载数据函数
+      }, 60000);
     },
     // 停止定时器
     clear() {
@@ -1107,14 +1636,30 @@ export default {
       this.getData();
       this.getRankData();
       this.getCompeteData();
+      this.getMeasureData();
+      this.getRecentData();
       // this.dataRefreh();
+    },
+    noInitPage(){
+      this.isLoading = false;
     },
     publisherChange() {
       // console.log('hahah')
-      this.$refs.load.isLoading = true;
+      this.isLoading = true;
+      if (!this.dataNewPower) {
+        this.isFirst = true;
+      }
+      if (!this.competePower) {
+        this.ringFirst = true;
+      }
+      if (!this.measurePower) {
+        this.measureFirst = true;
+      }
       this.getData();
       this.getRankData();
       this.getCompeteData();
+      this.getMeasureData();
+      this.getRecentData();
     },
   },
 };

@@ -7,7 +7,7 @@
           <div class="float-left">
             <SlideNav type="organize" sort="organizeInfo"></SlideNav>
           </div>
-          <div class="float-left">
+          <div class="float-right">
             <div class="main-container">
               <div class="model-container">
                 <div class="model-bg" v-if="pagePower == 1" style="min-height:660px;">
@@ -26,9 +26,9 @@
                       </div>
                     </div>
                     <div class="option">
-                      <span class="lable">*绑定出版社</span>
+                      <span class="lable">*绑定出版单位</span>
                       <div class="normal">
-                        <span>{{baseInfo.publisher_name}}</span>
+                        <span>{{baseInfo.supplier_name}}</span>
                       </div>
                     </div>
                     <div class="option">
@@ -115,7 +115,7 @@
       margin-bottom: 20px;
       & .lable {
         display: inline-block;
-        width: 70px;
+        width: 90px;
         text-align: right;
       }
 
@@ -136,15 +136,15 @@
 </style>
 <script>
 import { ORGANIZATION_GET, ORGANIZATION_EDIT } from "../../apis/admin.js";
-import { PUBLISHER_GET } from "../../apis/common.js";
+import { SUPPLIER_GET } from "../../apis/common.js";
 export default {
   data() {
     return {
       pagePower: 1,
       baseInfo: {
         organization_id: "", // 机构id
-        publisher_id: "", // 出版社id
-        publisher_name: "",
+        supplier_id: "", // 出版社id
+        supplier_name: "",
         organization_name: "", // 机构名字
         // short_name: "", // 短名
         type: 1, // 类型, 1正式,2 试用
@@ -159,8 +159,8 @@ export default {
       },
       editInfo: {
         organization_id: "", // 机构id
-        publisher_id: "", // 出版社id
-        publisher_name: "",
+        supplier_id: "", // 出版社id
+        supplier_name: "",
         organization_name: "", // 机构名字
         // short_name: "", // 短名
         type: 1, // 类型, 1正式,2 试用
@@ -174,25 +174,25 @@ export default {
     };
   },
   mounted() {
-    this.pagePower = this.$refs.head.publishInfo.user_organization_type;
-    if (this.pagePower == 1) {
-      this.getData();
-      this.getPublisher();
-    }
-    this.$setSlideHeight();
+    this.getData();
+    this.getPublisher();
   },
   updated() {
-    this.$setSlideHeight();
+
   },
   methods: {
     async getData() {
+      var tStamp = this.$getTimeStamp();
       let data = {
-        organization_id: this.$refs.head.publishInfo.organization_id
+        organization_id: this.$refs.head.publishInfo.organization_id,
+        timestamp: tStamp
       };
+      data.sign = this.$getSign(data);
       let res = await ORGANIZATION_GET(data);
       if (res.code == 0) {
+        this.pagePower = 1;
         this.baseInfo.organization_id = res.data.organization_id;
-        this.baseInfo.publisher_id = res.data.publisher_id;
+        this.baseInfo.supplier_id = res.data.supplier_id;
         this.baseInfo.organization_name = res.data.organization_name;
         this.baseInfo.type = res.data.type;
         this.baseInfo.address = res.data.address;
@@ -200,33 +200,43 @@ export default {
         this.baseInfo.contact_mobile = res.data.contact_mobile;
         this.baseInfo.contact_email = res.data.contact_email;
       } else {
-        this.$refs.head.globalTip(1, res.message, res.code);
+        if(res.code == 1009){
+          this.pagePower = 0;
+        }else{
+          this.$refs.head.globalTip(1, res.message, res.code);
+        }
       }
     },
     // 绑定出版社获取
     async getPublisher() {
+      var tStamp = this.$getTimeStamp();
       let data = {
-        publisher_id: this.$refs.head.publishInfo.publisher_id
+        supplier_id: this.$refs.head.publishInfo.supplier_id,
+        timestamp: tStamp
       };
-      let res = await PUBLISHER_GET(data);
+      data.sign = this.$getSign(data);
+      let res = await SUPPLIER_GET(data);
       if (res.code == 0) {
-        this.baseInfo.publisher_name = res.data.publisher_name;
-        console.log(this.baseInfo);
+        this.baseInfo.supplier_name = res.data.supplier_name;
+        // console.log(this.baseInfo);
       } else {
         this.$refs.head.globalTip(1, res.message, res.code);
       }
     },
     async save() {
+      var tStamp = this.$getTimeStamp();
       let data = {
-        publisher_id: this.editInfo.publisher_id,
+        supplier_id: this.editInfo.supplier_id,
         organization_name: this.editInfo.organization_name,
         type: this.editInfo.type,
         address: this.editInfo.address,
         contact_name: this.editInfo.contact_name,
         contact_mobile: this.editInfo.contact_mobile,
         contact_email: this.editInfo.contact_email,
-        organization_id: this.editInfo.organization_id
+        organization_id: this.editInfo.organization_id,
+        timestamp: tStamp
       };
+      data.sign = this.$getSign(data);
       let res = await ORGANIZATION_EDIT(data);
       if (res.code == 0) {
         this.$refs.head.globalTip(2, "修改成功", 0);
@@ -254,7 +264,7 @@ export default {
       this.editInfo = this.baseInfo;
     },
     publisherChange() {
-      this.pagePower = this.$refs.head.publishInfo.user_organization_type;
+      // this.pagePower = this.$refs.head.publishInfo.user_organization_type;
       this.getData();
       this.getPublisher();
     }

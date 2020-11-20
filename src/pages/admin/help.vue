@@ -6,7 +6,7 @@
         <div class="float-left">
           <SlideNav type="admin" sort="adminHelp"></SlideNav>
         </div>
-        <div class="float-left">
+        <div class="float-right">
           <div class="main-container" v-if="powerType == 1">
             <div class="model-container">
               <div class="model-bg">
@@ -98,7 +98,7 @@
                         <td>
                           <span class="main-font">{{item.help_id}}</span>
                         </td>
-                        <td>
+                        <td style="height:57px;">
                           <span class="main-font">{{item.title}}</span>
                         </td>
                         <td style="text-align:center;">
@@ -109,8 +109,11 @@
                           <span class="main-font" v-if="item.logo_id == 5">应用</span>
                         </td>
                         <td>
-                          <span v-if="item.content">{{item.content}}</span>
-                          <span v-else>--</span>
+                          <div class="author">
+                            <span class="author-name" v-if="item.content" :title="item.content">{{item.content}}</span>
+                            <span v-else>--</span>
+                          </div>
+                          <!-- <div style="height:36px;overflow:hidden;" v-else>--</div> -->
                         </td>
                         <td>
                           <span class="main-font" v-if="item.status == 1">正常</span>
@@ -192,6 +195,7 @@
         </div>
       </div>
     </a-modal>
+    <Loading ref="load" :show="1" :isLoading="isLoading"></Loading>
   </div>
 </template>
 <style scoped lang="scss" src="@/style/scss/pages/admin/index.scss"></style>
@@ -229,7 +233,8 @@ export default {
         name:"",
         type:0,
         desc:"",
-      }
+      },
+      isLoading:true,
     };
   },
   mounted() {
@@ -237,32 +242,38 @@ export default {
     if (this.powerType == 1) {
       this.getData();
     } else {
-      this.$setSlideHeight();
+      this.isLoading = false;
     }
   },
   updated() {
-    this.$setSlideHeight();
+
   },
   methods: {
     async getData() {
+      var tStamp = this.$getTimeStamp();
       let data = {
         title: this.inputVal,
         type_id: this.tabKey,
         status: 1,
         page: this.page,
         page_size: this.pageSize,
+        timestamp: tStamp
       };
       if (this.type == 1) data.logo_id = this.eventType;
+      data.sign = this.$getSign(data);
       let res = await HELP_LISTS(data);
       if (res.code == 0) {
         this.list = [];
         this.list = res.data.helps;
         this.total = res.data.count;
+        this.isLoading = false;
       } else {
+        this.isLoading = false;
         this.$refs.head.globalTip(1, res.message, res.code);
       }
     },
     async addEvents(){
+      var tStamp = this.$getTimeStamp();
       let data = {
         type_id:this.tabKey,
         logo_id:this.eventInfo.type,
@@ -270,7 +281,9 @@ export default {
         content:this.eventInfo.desc,
         status:1,
         sort:0,
+        timestamp: tStamp
       }
+      data.sign = this.$getSign(data);
       let res = await HELP_ADD(data);
       if(res.code == 0){
         this.$refs.head.globalTip(2, "新增成功", 0);
@@ -281,6 +294,7 @@ export default {
       }
     },
     async editEvent(){
+      var tStamp = this.$getTimeStamp();
       let data = {
         type_id:this.tabKey,
         logo_id:this.eventInfo.type,
@@ -289,7 +303,9 @@ export default {
         status:1,
         sort:0,
         help_id:this.eventInfo.id,
+        timestamp: tStamp
       }
+      data.sign = this.$getSign(data);
       let res = await HELP_EDIT(data);
       if (res.code == 0) {
         this.$refs.head.globalTip(2, "编辑成功", 0);
@@ -300,9 +316,12 @@ export default {
       }
     },
     async deleteEvent(id){
+      var tStamp = this.$getTimeStamp();
       let data = {
-        help_id:id
+        help_id:id,
+        timestamp: tStamp
       }
+      data.sign = this.$getSign(data);
       let res = await HELP_DELETE(data);
       if (res.code == 0) {
         this.$refs.head.globalTip(2, "删除成功", 0);
@@ -321,6 +340,7 @@ export default {
       this.addOrganize = true;
     },
     onSearch() {
+      this.isLoading = true;
       this.page = 1;
       this.getData();
     },
@@ -328,6 +348,7 @@ export default {
       this.type = this.type ? 0 : 1;
     },
     change(item, index) {
+      this.isLoading = true;
       this.eventType = index;
       this.page = 1;
       this.getData();
@@ -377,6 +398,7 @@ export default {
       });
     },
     onShowSizeChange(page, pageSize) {
+      this.isLoading = true;
       this.page = page;
       this.getData();
     },

@@ -2,7 +2,7 @@
   <a-config-provider :locale="zh_CN">
     <div id="app">
       <router-view />
-      <div class="copyright" v-if="!['loginindex','register','improve'].includes($route.name)">
+      <div class="copyright" v-if="!['loginindex','register','improve','editpassword','nullpage','noorganize'].includes($route.name)">
         <div class="copy-link">
           <span class="url" @click="link(1)">火把商户后台</span>
           <span>&nbsp·&nbsp</span>
@@ -46,7 +46,8 @@ export default {
       }else if(type == 3){
         _url = "https://bokuts.tmall.com/";
       }
-      window.location.replace(_url);
+      // window.location.replace(_url);
+      window.open(_url,"_blank");
     }
   }
 };

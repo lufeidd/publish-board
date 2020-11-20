@@ -1,21 +1,24 @@
 <template>
-  <div id="organizePage">
+  <div id="organizePage" @click="bodyClick">
     <HeadNav type="admin" ref="head" :show="1"></HeadNav>
     <div class="wd-1220">
       <div class="clearfix">
         <div class="float-left">
           <SlideNav type="admin" sort="goods"></SlideNav>
         </div>
-        <div class="float-left">
+        <div class="float-right">
           <div class="main-container" v-if="powerType == 1">
             <!-- <div class="model-container">
               <div class="model-bg total-user">全平台总计 {{goodsCount}} 个品种</div>
             </div>-->
             <div class="model-container">
-              <div class="model-bg" style="min-height:660px;padding-bottom:75px;">
+              <div
+                class="model-bg"
+                style="min-height: 660px; padding-bottom: 75px"
+              >
                 <div class="section-title">
                   品种列表
-                  <span class="desc">共{{goodsCount}}个品种</span>
+                  <span class="desc">共{{ goodsCount }}个品种</span>
                 </div>
                 <div class="search">
                   <div class="content common">
@@ -36,7 +39,7 @@
                   </div>
                 </div>
                 <div class="table">
-                  <table style="table-layout:fixed;">
+                  <table style="table-layout: fixed">
                     <colgroup>
                       <col width="100" />
                       <col width="250" />
@@ -50,16 +53,16 @@
                       <tr>
                         <td>品种ID</td>
                         <td>品种信息</td>
-                        <td style="text-align:center;">作者</td>
-                        <td style="text-align:center;">ISBN</td>
-                        <td style="text-align:center;">出版社</td>
-                        <td style="text-align:right;">出版时间</td>
-                        <td style="text-align:right;">操作</td>
+                        <td>作者</td>
+                        <td style="text-align: center">ISBN</td>
+                        <td style="text-align: center">出版社</td>
+                        <td style="text-align: right">出版时间</td>
+                        <td style="text-align: right">操作</td>
                       </tr>
                     </thead>
                     <tbody v-if="userList.length > 0">
-                      <tr v-for="(item,index) in userList" :key="index">
-                        <td>{{item.goods_id}}</td>
+                      <tr v-for="(item, index) in userList" :key="index">
+                        <td>{{ item.goods_id }}</td>
                         <td>
                           <div class="goods-desc">
                             <img
@@ -69,31 +72,66 @@
                               height="40px"
                               v-if="item.cover_pic"
                             />
-                            <span v-else class="no-pic" style="min-width:40px;min-height:40px;"></span>
+                            <span
+                              v-else
+                              class="no-pic"
+                              style="min-width: 40px; min-height: 40px"
+                            ></span>
                             <span
                               class="click-font goods-name"
                               :title="item.title"
-                              @click="toDetail(item,index)"
-                            >{{item.title}}</span>
+                              @click="toDetail(item, index)"
+                              >{{ item.title }}</span
+                            >
                           </div>
                         </td>
-                        <td style="text-align:center;">
-                          <div class="click-font author" >
-                            <div class="author-name" :title="item.author">{{item.author}}</div>
+                        <td>
+                          <div class="click-font author">
+                            <div
+                              class="author-name"
+                              @click.stop="openAuthor(item, index)"
+                            >
+                              {{ item.author }}
+                            </div>
+                            <div class="author-list" v-if="item.active">
+                              <div v-if="item.authors.length > 0">
+                                <div
+                                  class="author-item click"
+                                  v-for="(aitem, aindex) in item.authors"
+                                  :key="aindex"
+                                  @click.stop="toAuthor(aitem, aindex)"
+                                >
+                                  {{ aitem.name }}
+                                </div>
+                              </div>
+                              <div v-else>
+                                <div class="author-item">
+                                  未查询到对应作者信息
+                                </div>
+                              </div>
+                            </div>
                           </div>
                         </td>
-                        <td style="text-align:center;">{{item.isbn}}</td>
-                        <td style="text-align:center;">{{item.publisher_short}}</td>
-                        <td style="text-align:right;">{{item.publish_date}}</td>
-                        <td style="text-align:right;">
-                          <span class="click-font" @click="toDetail(item,index)">详情</span>
+                        <td style="text-align: center">{{ item.isbn }}</td>
+                        <td style="text-align: center">
+                          {{ item.publisher_short }}
+                        </td>
+                        <td style="text-align: right">
+                          {{ item.publish_date }}
+                        </td>
+                        <td style="text-align: right">
+                          <span
+                            class="click-font"
+                            @click="toDetail(item, index)"
+                            >详情</span
+                          >
                         </td>
                       </tr>
                     </tbody>
                     <tbody v-else>
                       <tr>
-                        <td colspan="7" style="text-align:center;">
-                          <div style="margin-top:20px;" v-if="searchLoading">
+                        <td colspan="7" style="text-align: center">
+                          <div style="margin-top: 20px" v-if="searchLoading">
                             <a-spin tip="正在加载中..."></a-spin>
                           </div>
                           <a-empty v-else />
@@ -105,7 +143,7 @@
                 <!-- 分页 -->
                 <div class="page">
                   <a-pagination
-                    :show-total="total => `共 ${total} 条数据`"
+                    :show-total="(total) => `共 ${total} 条数据`"
                     :default-current="1"
                     :total="total"
                     :defaultPageSize="page_size"
@@ -117,13 +155,21 @@
             </div>
           </div>
           <div class="main-container" v-else>
-            <div class="model-bg" style="min-height:660px;padding-bottom:75px;position:relative">
+            <div
+              class="model-bg"
+              style="
+                min-height: 660px;
+                padding-bottom: 75px;
+                position: relative;
+              "
+            >
               <PageNoPower></PageNoPower>
             </div>
           </div>
         </div>
       </div>
     </div>
+    <Loading ref="load" :show="1" :isLoading="isLoading"></Loading>
   </div>
 </template>
 <style scoped lang="scss" src="@/style/scss/pages/admin/index.scss"></style>
@@ -154,6 +200,7 @@ export default {
         organization_id: 0, // 机构id
         organization_name: "", // 机构名字
       },
+      isLoading: false,
     };
   },
   mounted() {
@@ -162,11 +209,8 @@ export default {
     if (this.powerType == 1) {
       // this.getData()
     }
-    this.$setSlideHeight();
   },
-  updated() {
-    this.$setSlideHeight();
-  },
+  updated() {},
   methods: {
     onSearch(value) {
       if (this.inputVal.length > 0) {
@@ -184,26 +228,60 @@ export default {
       this.searchLoading = true;
       this.getData();
     },
-    toDetail(item, index) {
-      this.$router.push({
-        name: "detail",
-        query: {
-          goods_id: item.goods_id,
-        },
+    bodyClick() {
+      this.userList = this.userList.map((value, key) => {
+        value.active = false;
+        return value;
       });
+    },
+    openAuthor(item, index) {
+      this.userList = this.userList.map((value, key) => {
+        if (index == key) {
+          value.active = true;
+        } else {
+          value.active = false;
+        }
+        return value;
+      });
+    },
+    toDetail(item, index) {
+      // console.log(111)
+      let _url =
+        window.location.href.split("#")[0] +
+        "#" +
+        "/publish/detail?goods_id=" +
+        item.goods_id;
+      // console.log(_url)
+      window.open(_url, "_blank");
+    },
+    toAuthor(aitem, aindex) {
+      let _url =
+        window.location.href.split("#")[0] +
+        "#" +
+        "/industry/authordetail?author_id=" +
+        aitem.author_id;
+      // console.log(_url)
+      window.open(_url, "_blank");
     },
     // 获取列表数据
     async getData() {
+      var tStamp = this.$getTimeStamp();
       let data = {
         page: this.page,
         page_size: this.page_size,
         search: this.inputVal,
+        timestamp: tStamp,
       };
+      data.sign = this.$getSign(data);
       let res = await TOP_SEARCH(data);
       if (res.code == 0) {
-        this.userList = res.data.lists;
+        this.userList = [];
         this.total = res.data.count;
         this.searchLoading = false;
+        res.data.lists.map((value, key) => {
+          value.active = false;
+          this.userList.push(value);
+        });
       } else {
         this.searchLoading = false;
         this.total = 0;

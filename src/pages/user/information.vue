@@ -6,7 +6,7 @@
         <div class="float-left">
           <SlideNav type="user" sort="userInfo"></SlideNav>
         </div>
-        <div class="float-left">
+        <div class="float-right">
           <div class="main-container">
             <div class="model-container">
               <div class="model-bg" style="min-height:660px;">
@@ -27,41 +27,37 @@
                         alt
                         width="80px"
                         height="80px"
-                        v-if="userInfo.pic == 2"
+                        v-else-if="userInfo.pic == 2"
                       />
                       <img
                         src="../../assets/user3.png"
                         alt
                         width="80px"
                         height="80px"
-                        v-if="userInfo.pic == 3"
+                        v-else-if="userInfo.pic == 3"
                       />
                       <img
                         src="../../assets/user4.png"
                         alt
                         width="80px"
                         height="80px"
-                        v-if="userInfo.pic == 4"
+                        v-else-if="userInfo.pic == 4"
                       />
                       <img
                         src="../../assets/user5.png"
                         alt
                         width="80px"
                         height="80px"
-                        v-if="userInfo.pic == 5"
+                        v-else-if="userInfo.pic == 5"
                       />
                       <img
                         src="../../assets/user6.png"
                         alt
                         width="80px"
                         height="80px"
-                        v-if="userInfo.pic == 6"
+                        v-else-if="userInfo.pic == 6"
                       />
-                      <span
-                        class="no-pic"
-                        style="width:80px;height:80px;border-radius:50%"
-                        v-if="userInfo.pic == 0"
-                      ></span>
+                      <span v-else class="no-pic" style="min-width:80px;min-height:80px;border-radius:50%;"></span>
                       <span class="change" @click="changePic">
                         <a-icon type="swap" />
                       </span>
@@ -81,6 +77,12 @@
                   <div class="option">
                     <span class="lable">手机号</span>
                     <div class="normal">{{userInfo.mobile}}</div>
+                  </div>
+                  <div class="option">
+                    <span class="lable">密码</span>
+                    <div class="normal">
+                      <router-link tag="a" target="_blank" :to="{name:'editpassword',query:{type:'edit'}}"><span class="click-font">修改密码</span></router-link>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -118,17 +120,22 @@ export default {
     this.getData();
   },
   updated() {
-    this.$setSlideHeight();
+
   },
   methods: {
     async getData() {
+      var tStamp = this.$getTimeStamp();
       let data = {
-        user_id: this.$refs.head.accountInfo.user_id
+        user_id: this.$refs.head.accountInfo.user_id,
+        timestamp: tStamp
       };
+      data.sign = this.$getSign(data);
       let res = await ORGANIZATION_MEMBER_INFO(data);
       if (res.code == 0) {
         this.userInfo = res.data;
-        if (res.data.pic) this.pic = res.data.pic;
+        if (res.data.pic) {
+          this.pic = res.data.pic;
+        }
         this.account = res.data.account;
       } else {
         this.$refs.head.globalTip(1, res.message, res.code);
@@ -152,10 +159,17 @@ export default {
         });
       }
     },
+    // toEdit(){
+    //   this.$router.push({name:"editpassword"})
+    // },
     async edit(account, pic) {
-      let data = {};
+      var tStamp = this.$getTimeStamp();
+      let data = {
+        timestamp: tStamp
+      };
       if (account) data.account = account;
       if (pic) data.pic = pic;
+      data.sign = this.$getSign(data);
       let res = await USER_EDIT(data);
       if (res.code == 0) {
         if (pic) {

@@ -6,7 +6,7 @@
         <div class="float-left">
           <SlideNav type="admin" sort="adminParam"></SlideNav>
         </div>
-        <div class="float-left">
+        <div class="float-right">
           <div class="main-container">
             <div class="model-container">
               <div class="model-bg" v-if="powerType == 1" style="min-height:660px;">
@@ -53,7 +53,7 @@ export default {
   },
   mounted() {
     this.powerType = this.$refs.head.accountInfo.type;
-    this.$setSlideHeight();
+
   }
 };
 </script>

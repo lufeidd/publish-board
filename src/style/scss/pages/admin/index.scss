@@ -131,11 +131,20 @@
     & .url{
       display: inline-block;
       width: 400px;
-      padding: 15px 0;
+      padding: 15px 40px;
       background-color: $themeColor5;
       font-size: $fontSize;
       margin-top: 15px;
       margin-bottom: 10px;
+      position: relative;
+      & .reflash{
+        position: absolute;
+        right: 15px;
+        top: 50%;
+        margin-top: -7px;
+        cursor: pointer;
+        color: $themeColor80;
+      }
     }
     & .copy{
       display: inline-block;

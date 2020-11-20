@@ -1,5 +1,5 @@
 <template>
-  <div id="taopuPage" @click="showYear = false;showResult = false;">
+  <div id="taopuPage" @click="bodyClick">
     <HeadNav type="publish" :show="1" ref="head" @publisherChange="publisherChange()"></HeadNav>
     <div class="wd-1220">
       <div class="clearfix">
@@ -63,7 +63,7 @@
                     class="content"
                     v-for="(item,index) in historyList"
                     :key="index"
-                    @click="toDetail(item,index)"
+                    @click.stop="toDetail(item,index)"
                   >
                     <div>
                       <img
@@ -115,57 +115,7 @@
                     </a-dropdown>
                   </div>
                   <div class="float-right">
-                    <div class="time-choose">
-                      <span class="time-text">统计时间 {{dateText}}</span>
-                      <span class="time-picker">
-                        <span :class="dateType == 2?'picker active':'picker'">周</span>
-                        <a-week-picker
-                          class="week"
-                          placeholder="Select Week"
-                          :allowClear="false"
-                          @change="weekChange"
-                          :disabledDate="disabledEndDate"
-                          :value="chooseWeek"
-                        />
-                      </span>
-                      <span class="time-picker">
-                        <span :class="dateType == 3?'picker active':'picker'">月</span>
-                        <a-month-picker
-                          class="week"
-                          :allowClear="false"
-                          @change="monthChange"
-                          placeholder="Select month"
-                          :value="chooseMonth"
-                          :disabledDate="disabledEndDate"
-                        />
-                      </span>
-                      <span class="time-picker">
-                        <span :class="dateType == 4?'picker active':'picker'">年</span>
-                        <span @click.stop="showYear = true;showResult = false;">
-                          <a-date-picker
-                            class="week"
-                            :allowClear="false"
-                            mode="year"
-                            format="YYYY"
-                            :open="showYear"
-                            @panelChange="yearChange($event)"
-                            :value="chooseYear"
-                            :disabledDate="disabledEndDate"
-                            inputReadOnly
-                          />
-                        </span>
-                      </span>
-                      <span class="time-picker">
-                        <span :class="canSub?'picker':'picker disabled'" @click="subLeft">
-                          <a-icon type="left" />
-                        </span>
-                      </span>
-                      <span class="time-picker">
-                        <span :class="canAdd?'picker':'picker disabled'" @click="addRight">
-                          <a-icon type="right" />
-                        </span>
-                      </span>
-                    </div>
+                    <TimeChoose ref="time" @changeTime="changeTime" @closeDom="closeDom"></TimeChoose>
                   </div>
                 </div>
               </div>
@@ -174,7 +124,7 @@
             <div class="model-container sale-rank">
               <div class="section-title model-bg">品种销售排行</div>
               <div v-if="goodsPower">
-                <div class="table model-bg" v-if="goodsList.length > 0">
+                <div class="table model-bg" v-if="goodsList.length > 0" style="min-height:393px;">
                   <table style="table-layout:fixed;">
                     <colgroup>
                       <col width="50" />
@@ -212,7 +162,7 @@
                             <span
                               class="click-font goods-name"
                               :title="item.goods_name"
-                              @click="toDetail(item,index)"
+                              @click.stop="toDetail(item,index)"
                             >{{item.goods_name}}</span>
                           </div>
                         </td>
@@ -220,9 +170,9 @@
                           <div
                             class="click-font author"
                           >
-                            <div class="author-name">{{item.goods_author}}</div>
-                            <div class="author-list">
-                              <div v-if="item.authors.length > 0"><div class="author-item click" v-for="(aitem,aindex) in item.authors" :key="aindex" @click="toAuthor(aitem,aindex)">{{aitem.name}}</div></div>
+                            <div class="author-name" @click.stop="openAuthor(item,index)">{{item.goods_author}}</div>
+                            <div class="author-list" v-if="item.active">
+                              <div v-if="item.authors.length > 0"><div class="author-item click" v-for="(aitem,aindex) in item.authors" :key="aindex" @click.stop="toAuthor(aitem,aindex)">{{aitem.name}}</div></div>
                               <div v-else><div class="author-item">未查询到对应作者信息</div></div>
                             </div>
                           </div>
@@ -255,7 +205,7 @@
                     </tfoot>
                   </table>
                 </div>
-                <div class="model-bg" v-else style="padding:20px">
+                <div class="model-bg" v-else style="padding:130px 20px;min-height:393px;">
                   <a-empty />
                 </div>
               </div>
@@ -274,20 +224,18 @@
         </div>
       </div>
     </div>
-    <Loading ref="load" :show="1"></Loading>
+    <Loading ref="load" :show="1" :isLoading="isLoading"></Loading>
   </div>
 </template>
 <style scoped lang="scss" src="@/style/scss/pages/publish/taopu100.scss"></style>
 <script>
 import { TOP_GOODSRANK, TOP_HISTORY, TOP_SEARCH } from "../../apis/publish.js";
-import { COMMON_CATEGORY } from "../../apis/common.js";
+import { COMMON_PUBLISHERCATEGORY } from "../../apis/common.js";
 export default {
   data() {
     return {
       goodsPower: true,
       goodsList: [],
-      cycle: "",
-      dateType: 2,
       page: 1,
       pageSize: 20,
       total: 0,
@@ -297,69 +245,67 @@ export default {
         name: "所有类目",
         id: 0
       },
-      showYear: false,
-      chooseWeek: null,
-      chooseMonth: null,
-      chooseYear: null,
-      dateText: "",
-      canSub: true,
-      canAdd: false,
       inputVal: "",
       dataSource: [],
       showResult: false,
       searchLoading: false,
-      showAbout: false
+      showAbout: false,
+      isLoading: true,
     };
   },
   mounted() {
-    console.log(this.$weekDate());
-    this.cycle = this.$weekDate().weekth;
-    this.chooseWeek = this.$weekDate().start;
-    this.chooseMonth = this.$weekDate().start;
-    this.chooseYear = this.$weekDate().start;
-    this.dateText = this.$weekDate().start + "~" + this.$weekDate().end;
+    // console.log('aaa',this.$moment().format("YYYY-MM"));
     this.getData();
     this.getCategory();
     this.history();
   },
   updated() {
-    this.$setSlideHeight();
-    // this.$refs.load.isLoading = false;
+
   },
   methods: {
     // 获取商品排行
     async getData() {
+      var tStamp = this.$getTimeStamp();
       let data = {
         organization_id: this.$refs.head.publishInfo.organization_id,
-        publisher_id: this.$refs.head.publishInfo.publisher_id,
-        period: this.cycle,
-        date_type: this.dateType,
+        supplier_id: this.$refs.head.publishInfo.supplier_id,
+        period: this.$refs.time.cycle,
+        date_type: this.$refs.time.dateType,
         goods_cate: this.chooseCategory.id,
         page: this.page,
-        page_size: this.pageSize
+        page_size: this.pageSize,
+        timestamp: tStamp
       };
+      data.sign = this.$getSign(data);
       let res = await TOP_GOODSRANK(data);
       if (res.code == 0) {
         this.total = res.data.total;
-        this.goodsList = res.data.list;
+        this.goodsList = [];
+        res.data.list.map((value,key)=>{
+          value.active = false;
+          this.goodsList.push(value);
+        });
         this.goodsPower = true;
-        this.$refs.load.isLoading = false;
+        this.isLoading = false;
       } else {
-        this.$refs.load.isLoading = false;
+        this.isLoading = false;
         if (res.code == 1009) {
           this.goodsPower = false;
         } else {
           this.$refs.head.globalTip(1, res.message, res.code);
         }
-        this.$setSlideHeight();
+
       }
     },
     // 获取搜索历史
     async history() {
+      var tStamp = this.$getTimeStamp();
       let data = {
         organization_id: this.$refs.head.publishInfo.organization_id,
-        publisher_id: this.$refs.head.publishInfo.publisher_id
+        supplier_id: this.$refs.head.publishInfo.supplier_id,
+        timestamp: tStamp
       };
+      data.sign = this.$getSign(data);
       let res = await TOP_HISTORY(data);
       if (res.code == 0) {
         this.historyList = res.data;
@@ -373,8 +319,13 @@ export default {
     },
     // 获取分类列表
     async getCategory() {
-      let data = {};
-      let res = await COMMON_CATEGORY(data);
+      var tStamp = this.$getTimeStamp();
+      let data = {
+        supplier_id:this.$refs.head.publishInfo.supplier_id,
+        timestamp: tStamp
+      };
+      data.sign = this.$getSign(data);
+      let res = await COMMON_PUBLISHERCATEGORY(data);
       if (res.code == 0) {
         this.categoryList = res.data;
       } else {
@@ -382,13 +333,16 @@ export default {
       }
     },
     async search(_value) {
+      var tStamp = this.$getTimeStamp();
       let data = {
         organization_id: this.$refs.head.publishInfo.organization_id,
-        publisher_id: this.$refs.head.publishInfo.publisher_id,
+        supplier_id: this.$refs.head.publishInfo.supplier_id,
         search: _value,
         page: 1,
-        page_size: 100
+        page_size: 100,
+        timestamp: tStamp
       };
+      data.sign = this.$getSign(data);
       let res = await TOP_SEARCH(data);
       if (res.code == 0) {
         if (res.data.search == this.inputVal) {
@@ -405,7 +359,6 @@ export default {
     },
     inputClick() {},
     inputSearch() {
-      console.log(111);
       this.dataSource = [];
       if (this.inputVal.length > 0) {
         this.showResult = true;
@@ -417,7 +370,6 @@ export default {
       }
     },
     selected(item1, index1) {
-      console.log(222);
       this.$router.push({
         name: "detail",
         query: {
@@ -428,7 +380,7 @@ export default {
     // 选择分类
     selectCategory(item, index) {
       // console.log(index)
-      this.$refs.load.isLoading = true;
+      this.isLoading = true;
       if (index == -1) {
         this.chooseCategory.name = "所有类目";
         this.chooseCategory.id = 0;
@@ -439,194 +391,39 @@ export default {
       this.page = 1;
       this.getData();
     },
-    weekChange(date, dateString) {
-      this.$refs.load.isLoading = true;
-      // var _day = date._d.getDate();
-      const startDate = date.day(1).format("YYYY-MM-DD"); // 周一日期
-      const endDate = date.day(7).format("YYYY-MM-DD"); // 周日日期
-      console.log(666, date, dateString.replace(/-|周/g, ""));
-      if (
-        startDate <
-        this.$moment("2013-12-30")
-          .startOf("week")
-          .format("YYYY-MM-DD")
-      ) {
-        this.canAdd = true;
-      } else {
-        this.canAdd = false;
-      }
-      this.dateType = 2;
-      this.chooseWeek = startDate;
-      this.dateText = startDate + "~" + endDate;
-      this.cycle = dateString.replace(/-|周/g, "");
+    bodyClick(){
+      this.$refs.time.showYear = false;
+      this.showResult = false;
+      this.goodsList = this.goodsList.map((value,key)=>{
+          value.active = false;
+        return value;
+      })
+    },
+    closeDom(){
+      this.showResult = false;
+      this.goodsList = this.goodsList.map((value,key)=>{
+          value.active = false;
+        return value;
+      })
+    },
+    openAuthor(item,index){
+      this.$refs.time.showYear = false;
+      this.goodsList = this.goodsList.map((value,key)=>{
+        if(index == key){
+          value.active = true;
+        }else{
+          value.active = false;
+        }
+        return value;
+      })
+    },
+    changeTime(){
+      this.isLoading = true;
       this.page = 1;
       this.getData();
-    },
-    monthChange(date, dateString) {
-      // var _day = date._d.getDate();
-      this.$refs.load.isLoading = true;
-      const startDate = date
-        .month(date.month())
-        .startOf("month")
-        .format("YYYY-MM-DD");
-      const endDate = date
-        .month(date.month())
-        .endOf("month")
-        .format("YYYY-MM-DD");
-      console.log(dateString, startDate, endDate);
-      if (
-        startDate <
-        this.$moment("2013-12-30")
-          .startOf("month")
-          .format("YYYY-MM-DD")
-      ) {
-        this.canAdd = true;
-      } else {
-        this.canAdd = false;
-      }
-      this.dateType = 3;
-      this.chooseMonth = startDate;
-      this.dateText = startDate + "~" + endDate;
-      this.cycle = dateString.replace(/-/g, "");
-      this.page = 1;
-      this.getData();
-    },
-    yearChange(e) {
-      this.$refs.load.isLoading = true;
-      if (
-        e._d.getFullYear().toString() >=
-        this.$moment("2013-12-30").format("YYYY")
-      ) {
-        this.chooseYear = this.$moment("2013-12-30").format("YYYY");
-        this.canAdd = false;
-      } else {
-        this.chooseYear = e._d.getFullYear().toString();
-        this.canAdd = true;
-      }
-      this.dateType = 4;
-      this.cycle = this.chooseYear;
-      this.dateText =
-        this.chooseYear + "-01-01 ~ " + this.chooseYear + "-12-31";
-      this.page = 1;
-      this.getData();
-      this.showYear = false;
-    },
-    subLeft() {
-      let _max = "";
-      this.$refs.load.isLoading = true;
-      if (this.dateType == 2) {
-        _max = this.$weekDate().start;
-        if (this.chooseWeek <= _max) {
-          let end = this.$moment(this.chooseWeek)
-            .week(this.$moment(this.chooseWeek).week() - 1)
-            .endOf("week")
-            .format("YYYY-MM-DD");
-          this.chooseWeek = this.$moment(this.chooseWeek)
-            .week(this.$moment(this.chooseWeek).week() - 1)
-            .startOf("week")
-            .format("YYYY-MM-DD");
-          this.cycle = (Number(this.cycle) - 1).toString();
-          this.dateText = this.chooseWeek + "~" + end;
-          this.canAdd = true;
-          this.page = 1;
-          this.getData();
-        }
-      } else if (this.dateType == 3) {
-        _max = this.$moment("2013-12-30")
-          .startOf("month")
-          .format("YYYY-MM-DD");
-        if (this.chooseMonth <= _max) {
-          let end = this.$moment(this.chooseMonth)
-            .month(this.$moment(this.chooseMonth).month() - 1)
-            .endOf("month")
-            .format("YYYY-MM-DD");
-          this.chooseMonth = this.$moment(this.chooseMonth)
-            .month(this.$moment(this.chooseMonth).month() - 1)
-            .startOf("month")
-            .format("YYYY-MM-DD");
-          this.cycle = (Number(this.cycle) - 1).toString();
-          this.dateText = this.chooseMonth + "~" + end;
-          this.canAdd = true;
-          this.page = 1;
-          this.getData();
-        }
-      } else if (this.dateType == 4) {
-        _max = this.$moment("2013-12-30").format("YYYY");
-        // console.log(111, this.chooseYear, _max, this.chooseYear <= _max);
-        if (this.chooseYear <= _max) {
-          this.chooseYear = (Number(this.chooseYear) - 1).toString();
-          this.cycle = (Number(this.cycle) - 1).toString();
-          this.dateText = this.cycle + "-01-01 ~ " + this.cycle + "-12-31";
-          this.canAdd = true;
-          this.page = 1;
-          this.getData();
-        }
-      }
-    },
-    addRight() {
-      if (this.canAdd) {
-        this.$refs.load.isLoading = true;
-        let _max = "";
-        if (this.dateType == 2) {
-          _max = this.$weekDate().start;
-          if (this.chooseWeek < _max) {
-            let end = this.$moment(this.chooseWeek)
-              .week(this.$moment(this.chooseWeek).week() + 1)
-              .endOf("week")
-              .format("YYYY-MM-DD");
-            this.chooseWeek = this.$moment(this.chooseWeek)
-              .week(this.$moment(this.chooseWeek).week() + 1)
-              .startOf("week")
-              .format("YYYY-MM-DD");
-            this.cycle = (Number(this.cycle) + 1).toString();
-            this.dateText = this.chooseWeek + "~" + end;
-            if (this.chooseWeek >= _max) this.canAdd = false;
-            this.page = 1;
-            this.getData();
-          }
-        } else if (this.dateType == 3) {
-          _max = this.$moment("2013-12-30")
-            .startOf("month")
-            .format("YYYY-MM-DD");
-          if (this.chooseMonth < _max) {
-            let end = this.$moment(this.chooseMonth)
-              .month(this.$moment(this.chooseMonth).month() + 1)
-              .endOf("month")
-              .format("YYYY-MM-DD");
-            this.chooseMonth = this.$moment(this.chooseMonth)
-              .month(this.$moment(this.chooseMonth).month() + 1)
-              .startOf("month")
-              .format("YYYY-MM-DD");
-            this.cycle = (Number(this.cycle) + 1).toString();
-            this.dateText = this.chooseMonth + "~" + end;
-            if (this.chooseMonth >= _max) this.canAdd = false;
-            this.page = 1;
-            this.getData();
-          }
-        } else if (this.dateType == 4) {
-          _max = this.$moment("2013-12-30").format("YYYY");
-          if (this.chooseYear < _max) {
-            this.chooseYear = (Number(this.chooseYear) + 1).toString();
-            this.cycle = (Number(this.cycle) + 1).toString();
-            this.dateText = this.cycle + "-01-01 ~ " + this.cycle + "-12-31";
-            if (this.chooseYear >= _max) this.canAdd = false;
-            this.page = 1;
-            this.getData();
-          }
-        }
-      }
-    },
-    disabledEndDate(endValue) {
-      // console.log(endValue);
-      const startValue = new Date("2013-12-30");
-      if (!endValue || !startValue) {
-        return false;
-      }
-      return startValue.valueOf() <= endValue.valueOf();
     },
     onShowSizeChange(current, pageSize) {
-      console.log(current);
-      this.$refs.load.isLoading = true;
+      this.isLoading = true;
       this.page = current;
       this.getData();
     },
@@ -647,18 +444,21 @@ export default {
       });
     },
     publisherChange() {
-      this.$refs.load.isLoading = true;
-      this.cycle = this.$weekDate().weekth;
-      this.chooseWeek = this.$weekDate().start;
-      this.chooseMonth = this.$weekDate().start;
-      this.chooseYear = this.$weekDate().start;
-      this.dateText = this.$weekDate().start + "~" + this.$weekDate().end;
+      this.isLoading = true;
       this.chooseCategory.name = "所有类目";
       this.chooseCategory.id = 0;
-      this.dateType = 2;
-      this.canSub = true;
-      this.canAdd = false;
+      this.$refs.time.cycle = this.$weekDate().weekth;
+      this.$refs.time.oneDay = this.$weekDate().start.replace(/-/g, "");
+      this.$refs.time.chooseWeek = this.$weekDate().start;
+      this.$refs.time.chooseMonth = this.$weekDate().start;
+      this.$refs.time.chooseYear = this.$weekDate().start;
+      this.$refs.time.dateText = this.$weekDate().start + "~" + this.$weekDate().end;
+      this.$refs.time.dateType = 2;
+      this.$refs.time.canAdd = false;
+      this.$refs.time.canSub = true;
+      this.$refs.time.showYear = false;
       this.getData();
+      this.getCategory();
       this.history();
     }
   }

@@ -9,16 +9,18 @@
           alt
           width="100%"
           height="100%"
-          style="border-radius: 10px 0 0 10px;"
+          style="border-radius: 10px 0 0 10px"
         />
       </div>
       <div class="right">
         <p class="title" v-if="inviteCode">
-          {{invite_name}}
+          {{ invite_name }}
           <span class="invite">邀请你加入</span>
-          {{organization_name}}
+          {{ organization_name }}
         </p>
-        <p class="title" v-else>{{codeType == 1?'密码登录':'验证码登录'}}</p>
+        <p class="title" v-else>
+          {{ codeType == 1 ? "密码登录" : "验证码登录" }}
+        </p>
         <div class="mobile">
           <svg class="icon" aria-hidden="true">
             <use xlink:href="#icon-mobile" />
@@ -26,8 +28,15 @@
           <div class="input">
             <input type="text" placeholder="输入手机号" v-model="mobile" />
             <span v-if="codeType == 2">
-              <span class="click-font get-code" v-if="sendTime.time == 0" @click="send">{{desc}}</span>
-              <span class="click-font get-code" v-else>{{sendTime.time}}s后重新发送</span>
+              <span
+                class="click-font get-code"
+                v-if="sendTime.time == 0"
+                @click="send"
+                >{{ desc }}</span
+              >
+              <span class="click-font get-code" v-else
+                >{{ sendTime.time }}s后重新发送</span
+              >
             </span>
           </div>
         </div>
@@ -42,7 +51,7 @@
         </div>
         <div class="code" v-if="codeType == 1">
           <svg class="icon" aria-hidden="true">
-            <use xlink:href="#icon-authentication" />
+            <use xlink:href="#icon-key" />
           </svg>
           <div class="input">
             <input type="password" placeholder="输入密码" v-model="passCode" />
@@ -55,16 +64,27 @@
             size="large"
             block
             @click="test"
-            style="font-size:14px !important;"
-          >登录</a-button>
+            style="font-size: 14px !important"
+            >登录</a-button
+          >
           <div class="word clearfix">
             <span class="float-left" v-if="inviteCode">
               没有账号？
               <span class="click-font" @click="toRegister">去注册</span>
             </span>
             <span class="float-right">
-              <span class="click-font" @click="noOpen">忘记密码</span>
-              <span class="click-font" style="margin-left:10px;" @click="codeChange">{{codeDesc}}</span>
+              <router-link
+                tag="a"
+                target="_blank"
+                :to="{ name: 'editpassword', query: { type: 'forget' } }"
+                ><span class="click-font">忘记密码</span></router-link
+              >
+              <span
+                class="click-font"
+                style="margin-left: 10px"
+                @click="codeChange"
+                >{{ codeDesc }}</span
+              >
             </span>
           </div>
         </div>
@@ -72,56 +92,69 @@
     </div>
     <div class="main-container" v-else>
       <p class="titles">
-        <span class="publish-name">{{invite_name}}</span> 邀请你加入
-        <span class="publish-name">{{organization_name}}</span>
+        <span class="publish-name">{{ invite_name }}</span> 邀请你加入
+        <span class="publish-name">{{ organization_name }}</span>
       </p>
-      <div style="margin-top:40px;">
+      <div style="margin-top: 40px">
         <img
           src="../../assets/login-invite1.png"
           alt
           width="80px"
           height="80px"
-          style="margin-right:5px;"
+          style="margin-right: 5px"
         />
         <img
           src="../../assets/login-invite2.png"
           alt
           width="80px"
           height="80px"
-          style="margin-right:5px;"
+          style="margin-right: 5px"
         />
-        <img src="../../assets/login-invite3.png" alt width="80px" height="80px" />
+        <img
+          src="../../assets/login-invite3.png"
+          alt
+          width="80px"
+          height="80px"
+        />
       </div>
-      <div style="margin-bottom:40px;margin-top:10px;">
+      <div style="margin-bottom: 40px; margin-top: 10px">
         <img
           src="../../assets/login-invite4.png"
           alt
           width="80px"
           height="80px"
-          style="margin-right:5px;"
+          style="margin-right: 5px"
         />
         <img
           src="../../assets/login-invite5.png"
           alt
           width="80px"
           height="80px"
-          style="margin-right:5px;"
+          style="margin-right: 5px"
         />
-        <img src="../../assets/login-invite6.png" alt width="80px" height="80px" />
+        <img
+          src="../../assets/login-invite6.png"
+          alt
+          width="80px"
+          height="80px"
+        />
       </div>
-      <div style="width:330px;display:inline-block;">
+      <div style="width: 330px; display: inline-block">
         <!-- <router-link to="/"> -->
         <a-button
           type="primary"
           size="large"
           block
           @click="join"
-          style="font-size:14px !important;"
-        >加入机构</a-button>
+          style="font-size: 14px !important"
+          >加入机构</a-button
+        >
         <!-- </router-link> -->
       </div>
     </div>
-    <div class="copy-right">———— · 博道出版数据中心 · 博库数字出版传媒集团 · ————</div>
+    <div class="copy-right" v-if="screenHeight > 700">
+      ———— · 博道出版数据中心 · 博库数字出版传媒集团 · ————
+    </div>
     <Loading ref="load" :show="0"></Loading>
   </div>
 </template>
@@ -131,7 +164,7 @@
 import {
   PASSPORT_LOGIN,
   USER_INVITE_INFO,
-  USER_INVITE_CONSUME
+  USER_INVITE_CONSUME,
 } from "../../apis/login.js";
 import { COMMON_CAPTCHA_SMS } from "../../apis/common.js";
 export default {
@@ -146,21 +179,21 @@ export default {
       code: "",
       passCode: "",
       desc: "获取验证码",
-      codeType: 2,
-      codeDesc: "密码登录",
+      codeType: 1,
+      codeDesc: "验证码登录",
       isShort: false,
       isPassword: false,
       sendTime: {
-        time: 0
-      }
+        time: 0,
+      },
+      screenHeight: 0,
     };
   },
   beforeCreate() {
     let _this = this;
-    // console.log(_this);
     if (!_this.$route.query.inviteCode) {
       if (parseInt(localStorage.getItem("loginState")) == 1) {
-        _this.$router.push({ name: "index" });
+        _this.$router.replace({ name: "index" });
       }
     }
   },
@@ -183,6 +216,13 @@ export default {
     //     }
     //   }
     // };
+    this.screenHeight = document.body.clientHeight;
+    window.onresize = () => {
+      return (() => {
+        // this.screenWidth = document.body.clientWidth;
+        this.screenHeight = document.body.clientHeight;
+      })();
+    };
   },
   watch: {
     code(val) {
@@ -190,22 +230,20 @@ export default {
     },
     passCode(val) {
       if (!val) this.isPassword = false;
-    }
+    },
   },
   methods: {
     noOpen() {
-      // this.$message.info({
-      //   content: "该功能还在施工中，暂未开放",
-      //   icon: <a-icon type="exclamation-circle" />
-      // });
-      this.$refs.head.globalTip(1, "该功能还在施工中，暂未开放", 0);
+      this.$router.push({
+        name: "editpassword",
+      });
     },
     toRegister() {
       this.$router.push({
         name: "register",
         query: {
-          inviteCode: this.inviteCode
-        }
+          inviteCode: this.inviteCode,
+        },
       });
     },
     send() {
@@ -234,11 +272,11 @@ export default {
         return;
       }
       let _code = this.codeType == 1 ? this.passCode : this.code;
-      console.log(1010, _code);
+      // console.log(1010, _code);
       if (_code.length == 0) {
         this.$message.info({
           content: this.codeType == 1 ? "请输入密码" : "请输入验证码",
-          icon: <a-icon type="exclamation-circle" />
+          icon: <a-icon type="exclamation-circle" />,
         });
         return;
       }
@@ -246,10 +284,13 @@ export default {
       this.login();
     },
     async sendNumCode() {
+      var tStamp = this.$getTimeStamp();
       let data = {
         mobile: this.mobile,
-        type: "login"
+        type: "login",
+        timestamp: tStamp,
       };
+      data.sign = this.$getSign(data);
       let res = await COMMON_CAPTCHA_SMS(data);
       if (res.code == 0) {
         this.$refs.head.globalTip(2, "发送成功", 0);
@@ -263,20 +304,23 @@ export default {
     },
     // 登录
     async login() {
+      var tStamp = this.$getTimeStamp();
       let data = {
         mobile: this.mobile,
         type: this.codeType,
-        code: this.codeType == 1 ? this.passCode : this.code
+        code: this.codeType == 1 ? this.passCode : this.code,
+        timestamp: tStamp,
       };
+      data.sign = this.$getSign(data);
       let res = await PASSPORT_LOGIN(data);
       if (res.code == 0) {
         localStorage.setItem("headFirst", 0);
+        localStorage.setItem("loginState", 1);
         if (this.inviteCode) {
           location.reload();
         } else {
-          localStorage.setItem("loginState", 1);
-          this.$router.push({
-            name: "index"
+          this.$router.replace({
+            name: "index",
           });
         }
       } else {
@@ -289,24 +333,36 @@ export default {
     },
     // 解析邀请码
     async translateInvite() {
+      var tStamp = this.$getTimeStamp();
       let data = {
-        invite_code: this.inviteCode
+        invite_code: this.inviteCode,
+        timestamp: tStamp,
       };
+      data.sign = this.$getSign(data);
       let res = await USER_INVITE_INFO(data);
       if (res.code == 0) {
         this.invite_name = res.data.invite_name;
         this.organization_name = res.data.organization_name;
         this.showLogin = res.data.is_login;
         this.last_organization_id = res.data.organization_id;
+        // if (this.showLogin && !this.last_organization_id) {
+        //   localStorage.setItem("loginState", 1);
+        //   this.$router.replace({
+        //     name: "index",
+        //   });
+        // }
       } else {
         this.$refs.head.globalTip(1, res.message, res.code);
       }
     },
     // 使用邀请码
     async useInvite() {
+      var tStamp = this.$getTimeStamp();
       let data = {
-        invite_code: this.inviteCode
+        invite_code: this.inviteCode,
+        timestamp: tStamp,
       };
+      data.sign = this.$getSign(data);
       let res = await USER_INVITE_CONSUME(data);
       if (res.code == 0) {
         localStorage.setItem("headFirst", 0);
@@ -316,14 +372,19 @@ export default {
           this.$router.replace({
             name: "index",
             query: {
-              last_organization_id: this.last_organization_id
-            }
+              last_organization_id: this.last_organization_id,
+            },
           });
         }, 2000);
       } else {
         this.$refs.head.globalTip(1, res.message, res.code);
+        localStorage.setItem("headFirst", 0);
+        localStorage.setItem("loginState", 1);
+        this.$router.replace({
+          name: "index",
+        });
       }
-    }
-  }
+    },
+  },
 };
 </script>

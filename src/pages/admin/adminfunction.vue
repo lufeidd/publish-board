@@ -1,28 +1,19 @@
 <template>
   <div id="functionPage">
-    <HeadNav type="organize" ref="head" :show="1" @publisherChange="publisherChange()"></HeadNav>
+    <HeadNav type="admin" ref="head" :show="1"></HeadNav>
     <div class="wd-1220">
       <div class="clearfix">
         <div class="float-left">
-          <SlideNav type="organize" sort="member"></SlideNav>
+          <SlideNav type="admin" sort="adminUser"></SlideNav>
         </div>
         <div class="float-right">
           <div class="main-container">
             <div class="model-container">
               <div class="model-bg" v-if="powerType == 1" style="min-height:660px;">
                 <div class="section-title clearfix">
-                  <div class="float-left">{{user_name}} 权限配置</div>
+                  <div class="float-left">{{user_name}} 平台级权限配置</div>
                   <div class="float-right">
-                    <span
-                      class="click-font"
-                      @click="changePower(1)"
-                      v-if="user_organization_type == 2"
-                    >设为管理员</span>
-                    <!-- <span
-                      class="click-font"
-                      @click="changePower(2)"
-                      v-if="user_organization_type == 2"
-                    >设为普通成员</span>-->
+                    <!-- <span class="click-font">了解全部功能模块</span> -->
                   </div>
                 </div>
                 <!-- 内容 -->
@@ -67,6 +58,10 @@
                         :class="chooseType == 4?'cate-block active':'cate-block'"
                         @click="choose($event)"
                       >应用</div>
+                      <div
+                        :class="chooseType == 5?'cate-block active':'cate-block'"
+                        @click="choose($event)"
+                      >平台</div>
                     </div>
                     <div class="right-table">
                       <div class="table">
@@ -95,9 +90,12 @@
                               </td>
                               <td>{{item.auth_desc}}</td>
                               <td style="text-align:right;">
+                                <!-- <span v-if="item.open_able == false">正式机构可用</span>
+                                <span class="click-font" @click="changeFunction(item,index,'add')" v-if="item.open_able == true && item.status == false">未激活</span>
+                                <span class="click-font" @click="changeFunction(item,index,'')" v-if="item.open_able == true && item.status == true">已激活</span>-->
                                 <span
-                                  class="click-font"
                                   v-if="item.click"
+                                  class="click-font"
                                   @click="changeFunction(item,index)"
                                 >{{item.click_desc}}</span>
                                 <span v-else>{{item.click_desc}}</span>
@@ -135,10 +133,8 @@
 <style scoped lang="scss" src="@/style/scss/pages/admin/function.scss"></style>
 <script>
 import {
-  ORGANIZATION_MEMBER_TYPESET,
-  USER_ORGANIZATION_AUTH,
-  ORGANIZATION_MEMBER_AUTH_EDIT,
-  ORGANIZATION_MEMBER_INFO
+  ADMIN_AUTH_LISTS,
+  ADMIN_AUTH_EDIT
 } from "../../apis/admin.js";
 export default {
   data() {
@@ -147,24 +143,28 @@ export default {
       chooseType: 0,
       user_id: 0,
       user_name: "",
-      organization_id: 0,
       allList: [],
       publishList: [],
       competeList: [],
       industyList: [],
       applicationList: [],
+      adminList:[],
       showList: [],
       inputVal:"",
-      user_organization_type: 1,
       objInfo: {},
       isLoading:true,
     };
   },
   mounted() {
+    this.powerType = this.$refs.head.accountInfo.type;
     this.user_id = this.$route.query.user_id;
     this.user_name = this.$route.query.user_name;
-    this.organization_id = this.$route.query.organization_id;
-    this.getData();
+    if(this.powerType == 1){
+      this.getData();
+    }else{
+      this.isLoading = false;
+    }
+
   },
   updated() {
 
@@ -174,22 +174,20 @@ export default {
     async getData() {
       var tStamp = this.$getTimeStamp();
       let data = {
-        organization_id: this.organization_id,
         user_id: this.user_id,
         timestamp: tStamp
       };
       data.sign = this.$getSign(data);
-      let res = await USER_ORGANIZATION_AUTH(data);
+      let res = await ADMIN_AUTH_LISTS(data);
       if (res.code == 0) {
-        this.powerType = 1;
         // this.objInfo = res.data;
         this.allList = [];
         this.publishList = [];
         this.competeList = [];
         this.industyList = [];
         this.applicationList = [];
-        this.allList = res.data.lists;
-        this.user_organization_type = res.data.user_organization_type;
+        this.adminList = [];
+        this.allList = res.data;
         for (let i = 0; i < this.allList.length; i++) {
           if (this.allList[i].group == "本社") {
             this.publishList.push(this.allList[i]);
@@ -199,6 +197,8 @@ export default {
             this.industyList.push(this.allList[i]);
           } else if (this.allList[i].group == "应用") {
             this.applicationList.push(this.allList[i]);
+          } else if (this.allList[i].group == "平台") {
+            this.adminList.push(this.allList[i]);
           }
         }
         this.changeArr();
@@ -206,67 +206,29 @@ export default {
         // console.log(this.publishList,this.competeList,this.industyList,this.applicationList)
       } else {
         this.isLoading = false;
-        if(res.code == 1009){
-          this.powerType = 0;
-        }else{
-          this.$refs.head.globalTip(1, res.message, res.code);
-        }
+        this.$refs.head.globalTip(1, res.message,res.code);
       }
     },
-    // 获取成员信息
-    async getPowerInfo() {
-      var tStamp = this.$getTimeStamp();
-      let data = {
-        organization_id: this.organization_id,
-        user_id: this.user_id,
-        timestamp: tStamp
-      };
-      data.sign = this.$getSign(data);
-      let res = await ORGANIZATION_MEMBER_INFO(data);
-      if (res.code == 0) {
-        // this.user_organization_type = res.data.user_type;
-      } else {
-        this.$refs.head.globalTip(1, res.message, res.code);
-      }
-    },
-    // 成员权限修改
-    async changePower(type) {
-      var tStamp = this.$getTimeStamp();
-      let data = {
-        organization_id: this.organization_id,
-        user_id: this.user_id,
-        user_organization_type: type,
-        timestamp: tStamp
-      };
-      data.sign = this.$getSign(data);
-      let res = await ORGANIZATION_MEMBER_TYPESET(data);
-      if (res.code == 0) {
-        this.$refs.head.globalTip(2, "设置成功", 0);
-        this.getData();
-      } else {
-        this.$refs.head.globalTip(1, res.message, res.code);
-      }
-    },
-    // 功能配置权限修改
+    // 功能权限修改
     async changeFunction(item, index) {
       var tStamp = this.$getTimeStamp();
       let data = {
-        organization_id: this.organization_id,
         user_id: this.user_id,
         group_id: item.group_id,
-        type: item.status ? "" : "add",
+        type: item.status ? "del" : "add",
         timestamp: tStamp
       };
       data.sign = this.$getSign(data);
-      let res = await ORGANIZATION_MEMBER_AUTH_EDIT(data);
+      let res = await ADMIN_AUTH_EDIT(data);
       if (res.code == 0) {
-        this.$refs.head.globalTip(2, "修改成功", 0);
+        this.$refs.head.globalTip(2, "修改成功",0);
         this.getData();
       } else {
-        this.$refs.head.globalTip(1, res.message, res.code);
+          this.$refs.head.globalTip(1, res.message,res.code);
       }
     },
     onSearch(value) {
+      // console.log(value);
       this.changeArr();
     },
     changeArr(){
@@ -283,6 +245,8 @@ export default {
         _list = this.industyList;
       } else if (this.chooseType == 4) {
         _list = this.applicationList;
+      } else if (this.chooseType == 5) {
+        _list = this.adminList;
       }
       var reg = new RegExp(this.inputVal);
       for (let i = 0; i < _list.length; i++) {
@@ -312,15 +276,11 @@ export default {
       } else if (_value == "应用") {
         this.chooseType = 4;
         // this.showList = this.applicationList;
+      } else if (_value == "平台") {
+        this.chooseType = 5;
+        // this.showList = this.applicationList;
       }
       this.changeArr();
-    },
-    publisherChange() {
-      // this.powerType = this.$refs.head.publishInfo.user_organization_type;
-      this.isLoading = true;
-      this.chooseType = 0;
-      this.inputVal = "";
-      this.getData();
     }
   }
 };

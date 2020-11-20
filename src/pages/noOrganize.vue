@@ -43,14 +43,19 @@ export default {
   methods: {
      // 退出登录
     async loginOut() {
-      let data = {};
+      var tStamp = this.$getTimeStamp();
+      let data = {
+        timestamp: tStamp
+      };
+      data.sign = this.$getSign(data);
       let res = await PASSPORT_LOGOUT(data);
       if (res.code == 0) {
+        localStorage.setItem("loginState", 0);
         this.$router.push({
           name: "loginindex"
         });
       } else {
-        
+
       }
     },
   }

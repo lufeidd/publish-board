@@ -1,5 +1,6 @@
 <template>
   <div id="registerPage">
+    <HeadNav type="login" :show="0" ref="head"></HeadNav>
     <img src="../../assets/login-bg.png" alt width="100%" height="100%" />
     <div class="main-container">
       <p class="titles">
@@ -73,7 +74,7 @@
         <a-button type="primary" size="large" block @click="toIndex" style="font-size:14px !important;">进入数据中心</a-button>
       </div>
     </div>
-    <div class="copy-right">———— · 博道出版数据中心 · 博库数字出版传媒集团 · ————</div>
+    <div class="copy-right" v-if="screenHeight > 700">———— · 博道出版数据中心 · 博库数字出版传媒集团 · ————</div>
   </div>
 </template>
 <style scoped lang="scss" src="@/style/scss/pages/login.scss"></style>
@@ -87,19 +88,29 @@ export default {
       code: null,
       organization_name: null,
       userPic: 1,
+      screenHeight:0
     };
   },
   mounted() {
     this.organization_name = this.$route.query.organization_name;
-
+    this.screenHeight = document.body.clientHeight;
+    window.onresize = () => {
+      return (() => {
+        this.screenHeight = document.body.clientHeight;
+      })();
+    };
   },
   methods: {
     // 完善信息
     async compelete() {
-      let data = {};
+      var tStamp = this.$getTimeStamp();
+      let data = {
+        timestamp: tStamp
+      };
       if (this.name) data.account = this.name;
       if (this.code) data.password = this.code;
       if (this.userPic) data.pic = this.userPic;
+      data.sign = this.$getSign(data);
       let res = await USER_EDIT(data);
       if (res.code == 0) {
         localStorage.setItem('headFirst',0);

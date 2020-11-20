@@ -10,6 +10,8 @@ import axios from 'axios';
 import headNav from './components/index';
 import slideNav from './components/index';
 
+// md5加密
+import md5 from 'js-md5';
 
 // Ant of design 框架引入
 import Antd from 'ant-design-vue';
@@ -28,6 +30,9 @@ import VueClipboard from 'vue-clipboard2'
 import { ConfigProvider } from 'ant-design-vue';//引用
 Vue.component(ConfigProvider.name, ConfigProvider);
 
+// md5加密
+Vue.prototype.$md5 = md5;
+Vue.prototype.$axios = axios;
 // moment插件
 import moment from 'moment';
 moment.locale('zh-cn');

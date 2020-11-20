@@ -1,12 +1,12 @@
 <template>
-  <div id="taopuPage">
+  <div id="taopuPage" @click="showResult = false;">
     <HeadNav type="industry" ref="head" :show="1" @publisherChange="publisherChange()"></HeadNav>
     <div class="wd-1220">
       <div class="clearfix">
         <div class="float-left">
           <SlideNav type="industry" sort="authors"></SlideNav>
         </div>
-        <div class="float-left">
+        <div class="float-right">
           <div class="main-container" v-if="pagePower">
             <div class="model-container">
               <div class="model-bg search">
@@ -99,7 +99,7 @@
             </div>
             <!-- 作者库列表 -->
             <div class="model-container">
-              <div class="model-bg">
+              <div class="model-bg" style="min-height:393px;">
                 <div class="section-title">
                   作者库
                   <span class="desc">共{{total}}名</span>
@@ -124,7 +124,7 @@
                         <td style="text-align:right;">操作</td>
                       </tr>
                     </thead>
-                    <tbody>
+                    <tbody v-if="authorList.length > 0">
                       <tr v-for="(item,index) in authorList" :key="index">
                         <td>
                           <div class="goods-desc">
@@ -138,10 +138,10 @@
                           </div>
                         </td>
                         <td style="text-align:center;">
-                          <span class="click-font">{{item.goods_count}}个品种</span>
+                          <span class="main-font">共{{item.goods_count}}部作品</span>
                         </td>
                         <td style="text-align:center;">
-                          <span class="click-font">{{item.publisher_count}}个出版社</span>
+                          <span class="main-font">涵盖{{item.supplier_count}}家出版机构</span>
                         </td>
                         <td style="text-align:right;">
                           <span class="main-font" v-if="item.birth_date">{{item.birth_date}}</span>
@@ -152,11 +152,18 @@
                           <span class="main-font" v-else>--</span>
                         </td>
                         <td style="text-align:right;">
-                          <span class="click-dark">编辑</span>
+                          <span class="click-font" @click="toEdit(item,index)">编辑</span>
                         </td>
                       </tr>
                     </tbody>
-                    <tfoot>
+                    <tbody v-else>
+                      <tr>
+                        <td colspan="7" style="text-align: center">
+                          <a-empty />
+                        </td>
+                      </tr>
+                    </tbody>
+                    <tfoot v-if="authorList.length > 0">
                       <tr>
                         <td colspan="6" style="text-align:right;">
                           <a-pagination
@@ -185,7 +192,7 @@
         </div>
       </div>
     </div>
-    <Loading ref="load" :show="1"></Loading>
+    <Loading ref="load" :show="1" :isLoading="isLoading"></Loading>
   </div>
 </template>
 <style scoped lang="scss" src="@/style/scss/pages/publish/taopu100.scss"></style>
@@ -208,7 +215,8 @@ export default {
       authorList: [],
       total: 0,
       page: 1,
-      pageSize: 20
+      pageSize: 20,
+      isLoading:true,
     };
   },
   mounted() {
@@ -216,14 +224,17 @@ export default {
     this.getHistory();
   },
   updated() {
-    this.$setSlideHeight();
+
   },
   methods: {
     async search(_value) {
+      var tStamp = this.$getTimeStamp();
       let data = {
         organization_id: this.$refs.head.publishInfo.organization_id,
-        search: _value
+        search: _value,
+        timestamp: tStamp
       };
+      data.sign = this.$getSign(data);
       let res = await INDUSTRY_AUTHOR_SEARCH(data);
       if (res.code == 0) {
         // if (res.data.search == this.inputVal) {
@@ -239,20 +250,23 @@ export default {
       }
     },
     async getData() {
+      var tStamp = this.$getTimeStamp();
       let data = {
         organization_id: this.$refs.head.publishInfo.organization_id,
         page: this.page,
-        page_size: this.pageSize
+        page_size: this.pageSize,
+        timestamp: tStamp
       };
+      data.sign = this.$getSign(data);
       let res = await INDUSTRY_AUTHOR_LISTS(data);
       if (res.code == 0) {
         this.pagePower = true;
         this.authorList = [];
         this.authorList = res.data.list;
         this.total = res.data.count;
-        this.$refs.load.isLoading = false;
+        this.isLoading = false;
       } else {
-        this.$refs.load.isLoading = false;
+        this.isLoading = false;
         if (res.code == 1009) {
           this.pagePower = false;
         } else {
@@ -261,7 +275,11 @@ export default {
       }
     },
     async getHistory() {
-      let data = {};
+      var tStamp = this.$getTimeStamp();
+      let data = {
+        timestamp: tStamp
+      };
+      data.sign = this.$getSign(data);
       let res = await INDUSTRY_AUTHOR_HISTORY(data);
       if (res.code == 0) {
         this.pagePower = true;
@@ -276,7 +294,7 @@ export default {
     },
     inputClick() {},
     inputSearch() {
-      console.log(111);
+      // console.log(111);
       this.dataSource = [];
       if (this.inputVal.length > 0) {
         this.showResult = true;
@@ -288,7 +306,7 @@ export default {
       }
     },
     selected(item1, index1) {
-      console.log(222);
+      // console.log(222);
       this.$router.push({
         name: "authordetail",
         query: {
@@ -297,7 +315,7 @@ export default {
       });
     },
     onShowSizeChange(current, pageSize) {
-      this.$refs.load.isLoading = true;
+      this.isLoading = true;
       this.page = current;
       this.getData();
     },
@@ -308,6 +326,20 @@ export default {
           author_id: item.author_id
         }
       });
+    },
+    toEdit(item,index){
+      this.$router.push({
+        name:"authoredit",
+        query:{
+          author_id: item.author_id
+        }
+      })
+    },
+    publisherChange(){
+      this.isLoading = true;
+      this.page = 1;
+      this.getData();
+      this.getHistory();
     }
   }
 };

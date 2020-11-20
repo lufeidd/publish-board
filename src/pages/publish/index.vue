@@ -1,12 +1,17 @@
 <template>
-  <div id="ownIndexPage" @click="showYear = false">
-    <HeadNav type="publish" ref="head" :show="1" @publisherChange="publisherChange()"></HeadNav>
+  <div id="ownIndexPage" @click="bodyClick">
+    <HeadNav
+      type="publish"
+      ref="head"
+      :show="1"
+      @publisherChange="publisherChange()"
+    ></HeadNav>
     <div class="wd-1220">
       <div class="clearfix">
         <div class="float-left">
           <SlideNav type="publish" sort="index"></SlideNav>
         </div>
-        <div class="float-left">
+        <div class="float-right">
           <div class="main-container">
             <!-- 本社综合概况 -->
             <div class="general-descrip model-container">
@@ -18,29 +23,44 @@
                       <a-icon type="line-chart" />
                       <span class="secondary-font">在售品种数</span>
                     </div>
-                    <div class="data-font" v-if="account.on_sale_num">{{account.on_sale_num}}</div>
+                    <div class="data-font" v-if="account.on_sale_num">
+                      {{ account.on_sale_num }}
+                    </div>
                     <div class="data-font" v-else>0</div>
                   </div>
-                  <div class="data-block" style="margin-top:10px;">
+                  <div class="data-block" style="margin-top: 10px">
                     <div>
                       <a-icon type="line-chart" />
                       <span class="secondary-font">读者基数</span>
                     </div>
-                    <div class="data-font" v-if="account.reader_num">{{account.reader_num}}</div>
+                    <div class="data-font" v-if="account.reader_num">
+                      {{ account.reader_num }}
+                    </div>
                     <div class="data-font" v-else>0</div>
                   </div>
                 </div>
                 <!-- 牛眼图 -->
-                <div class="content" style="width:320px;margin-right:80px;margin-left:50px;">
+                <div
+                  class="content"
+                  style="width: 320px; margin-right: 80px; margin-left: 50px"
+                >
                   <div id="cow-chart"></div>
                 </div>
                 <!-- 雷达图 -->
-                <div class="content" style="width:350px;">
+                <div class="content" style="width: 350px">
                   <div id="radar"></div>
                 </div>
               </div>
-              <div class="model-bg" style="height:260px;position:relative;" v-else>
-                <ModelNoPower type="noPower"></ModelNoPower>
+              <div
+                class="model-bg"
+                style="height: 260px; position: relative"
+                v-else
+              >
+                <ModelNoPower
+                  type="noPower"
+                  :id="generalPowerID"
+                  :organizeId="$refs.head.publishInfo.organization_id"
+                ></ModelNoPower>
               </div>
             </div>
             <!-- 选择品种，日期 -->
@@ -51,82 +71,49 @@
                     <a-dropdown :trigger="['click']" placement="bottomLeft">
                       <a
                         class="ant-dropdown-link"
-                        @click="e => e.preventDefault()"
-                        style="font-size:12px;color:#4576DB;"
+                        @click="(e) => e.preventDefault()"
+                        style="font-size: 12px; color: #4576db"
                       >
-                        {{chooseCategory.name}}
+                        {{ chooseCategory.name }}
                         <a-icon type="down" />
                       </a>
                       <a-menu slot="overlay">
                         <a-menu-item>
                           <a
                             href="javascript:;"
-                            style="padding:5px 15px;color:#515A6E;font-size:12px;"
-                            @click="selectCategory(null,-1)"
-                          >所有类目</a>
+                            style="
+                              padding: 5px 15px;
+                              color: #515a6e;
+                              font-size: 12px;
+                            "
+                            @click="selectCategory(null, -1)"
+                            >所有类目</a
+                          >
                         </a-menu-item>
-                        <a-menu-item v-for="(item,index) in categoryList" :key="index">
+                        <a-menu-item
+                          v-for="(item, index) in categoryList"
+                          :key="index"
+                        >
                           <a
                             href="javascript:;"
-                            style="padding:5px 15px;color:#515A6E;font-size:12px;"
-                            @click="selectCategory(item,index)"
-                          >{{item.name}}</a>
+                            style="
+                              padding: 5px 15px;
+                              color: #515a6e;
+                              font-size: 12px;
+                            "
+                            @click="selectCategory(item, index)"
+                            >{{ item.name }}</a
+                          >
                         </a-menu-item>
                       </a-menu>
                     </a-dropdown>
                   </div>
                   <div class="float-right">
-                    <div class="time-choose">
-                      <span class="time-text">统计时间 {{dateText}}</span>
-                      <span class="time-picker">
-                        <span :class="dateType == 2?'picker active':'picker'">周</span>
-                        <a-week-picker
-                          class="week"
-                          placeholder="Select Week"
-                          :allowClear="false"
-                          @change="weekChange"
-                          :disabledDate="disabledEndDate"
-                          :value="chooseWeek"
-                        />
-                      </span>
-                      <span class="time-picker">
-                        <span :class="dateType == 3?'picker active':'picker'">月</span>
-                        <a-month-picker
-                          class="week"
-                          :allowClear="false"
-                          @change="monthChange"
-                          placeholder="Select month"
-                          :value="chooseMonth"
-                          :disabledDate="disabledEndDate"
-                        />
-                      </span>
-                      <span class="time-picker">
-                        <span :class="dateType == 4?'picker active':'picker'">年</span>
-                        <span @click.stop="showYear = true;showResult = false;">
-                          <a-date-picker
-                            class="week"
-                            :allowClear="false"
-                            mode="year"
-                            format="YYYY"
-                            :open="showYear"
-                            @panelChange="yearChange($event)"
-                            :value="chooseYear"
-                            :disabledDate="disabledEndDate"
-                            inputReadOnly
-                          />
-                        </span>
-                      </span>
-                      <span class="time-picker">
-                        <span :class="canSub?'picker':'picker disabled'" @click="subLeft">
-                          <a-icon type="left" />
-                        </span>
-                      </span>
-                      <span class="time-picker">
-                        <span :class="canAdd?'picker':'picker disabled'" @click="addRight">
-                          <a-icon type="right" />
-                        </span>
-                      </span>
-                    </div>
+                    <TimeChoose
+                      ref="time"
+                      @changeTime="changeTime"
+                      @closeDom="closeDom"
+                    ></TimeChoose>
                   </div>
                 </div>
               </div>
@@ -138,223 +125,343 @@
                 <div class="clearfix">
                   <!-- 销售点数 -->
                   <span
-                    :class="typeText == 'sale_total'?'data-block float-left active':'data-block float-left'"
+                    :class="
+                      typeText == 'sale_total'
+                        ? 'data-block float-left active'
+                        : 'data-block float-left'
+                    "
                     @click="coreTypeChange('sale_total')"
                   >
                     <div>
                       <a-icon type="line-chart" />
                       <span class="secondary-font">销售点数</span>
                     </div>
-                    <div class="data-font" v-if="sale_total_info.now">{{sale_total_info.now}}</div>
+                    <div class="data-font" v-if="sale_total_info.now">
+                      {{ sale_total_info.now }}
+                    </div>
                     <div class="data-font" v-else>0</div>
-                    <div class="clearfix compare" style="width:160px;">
-                      <div class="float-left" v-if="dateType == 2">上周对比</div>
-                      <div class="float-left" v-if="dateType == 3">上月对比</div>
-                      <div class="float-left" v-if="dateType == 4">上年对比</div>
+                    <div class="clearfix compare" style="width: 160px">
+                      <div class="float-left" v-if="dateType == 2">
+                        上周对比
+                      </div>
+                      <div class="float-left" v-if="dateType == 3">
+                        上月对比
+                      </div>
+                      <div class="float-left" v-if="dateType == 4">
+                        上年对比
+                      </div>
                       <div
                         class="float-right up-number"
                         v-if="sale_total_info.pre_compare > 0"
-                      >{{sale_total_info.pre_compare}}% ↑</div>
+                      >
+                        {{ sale_total_info.pre_compare }}% ↑
+                      </div>
                       <div
                         class="float-right down-number"
                         v-if="sale_total_info.pre_compare < 0"
-                      >{{sale_total_info.pre_compare}}% ↓</div>
+                      >
+                        {{ sale_total_info.pre_compare * -1 }}% ↓
+                      </div>
                       <div
                         class="float-right down-number"
                         v-if="sale_total_info.pre_compare == 0"
-                      >{{sale_total_info.pre_compare}}</div>
+                      >
+                        {{ sale_total_info.pre_compare }}
+                      </div>
                       <div
                         class="float-right down-number"
                         v-if="sale_total_info.pre_compare == '--'"
-                      >{{sale_total_info.pre_compare}}</div>
+                      >
+                        {{ sale_total_info.pre_compare }}
+                      </div>
                     </div>
-                    <div class="clearfix compare" style="width:160px;">
+                    <div class="clearfix compare" style="width: 160px">
                       <div class="float-left">上年同期</div>
                       <div
                         class="float-right up-number"
                         v-if="sale_total_info.last_compare > 0"
-                      >{{sale_total_info.last_compare}}% ↑</div>
+                      >
+                        {{ sale_total_info.last_compare }}% ↑
+                      </div>
                       <div
                         class="float-right down-number"
                         v-if="sale_total_info.last_compare < 0"
-                      >{{sale_total_info.last_compare}}% ↓</div>
+                      >
+                        {{ sale_total_info.last_compare * -1 }}% ↓
+                      </div>
                       <div
                         class="float-right down-number"
                         v-if="sale_total_info.last_compare == 0"
-                      >{{sale_total_info.last_compare}}</div>
+                      >
+                        {{ sale_total_info.last_compare }}
+                      </div>
                       <div
                         class="float-right down-number"
                         v-if="sale_total_info.last_compare == '--'"
-                      >{{sale_total_info.last_compare}}</div>
+                      >
+                        {{ sale_total_info.last_compare }}
+                      </div>
                     </div>
                   </span>
                   <!-- 销售排名 -->
                   <span
-                    :class="typeText == 'sale_rank'?'data-block float-left active':'data-block float-left'"
+                    :class="
+                      typeText == 'sale_rank'
+                        ? 'data-block float-left active'
+                        : 'data-block float-left'
+                    "
                     @click="coreTypeChange('sale_rank')"
                   >
                     <div>
                       <a-icon type="line-chart" />
                       <span class="secondary-font">销售排名</span>
                     </div>
-                    <div class="data-font" v-if="sale_rank_info.now">{{sale_rank_info.now}}</div>
+                    <div class="data-font" v-if="sale_rank_info.now">
+                      {{ sale_rank_info.now }}
+                    </div>
                     <div class="data-font" v-else>0</div>
-                    <div class="clearfix compare" style="width:160px;">
-                      <div class="float-left" v-if="dateType == 2">上周对比</div>
-                      <div class="float-left" v-if="dateType == 3">上月对比</div>
-                      <div class="float-left" v-if="dateType == 4">上年对比</div>
+                    <div class="clearfix compare" style="width: 160px">
+                      <div class="float-left" v-if="dateType == 2">
+                        上周对比
+                      </div>
+                      <div class="float-left" v-if="dateType == 3">
+                        上月对比
+                      </div>
+                      <div class="float-left" v-if="dateType == 4">
+                        上年对比
+                      </div>
                       <div
                         class="float-right down-number"
                         v-if="sale_rank_info.pre_compare > 0"
-                      >{{sale_rank_info.pre_compare}} ↓</div>
+                      >
+                        {{ sale_rank_info.pre_compare }} ↓
+                      </div>
                       <div
                         class="float-right up-number"
                         v-if="sale_rank_info.pre_compare < 0"
-                      >{{sale_rank_info.pre_compare*-1}} ↑</div>
+                      >
+                        {{ sale_rank_info.pre_compare * -1 }} ↑
+                      </div>
                       <div
                         class="float-right down-number"
                         v-if="sale_rank_info.pre_compare == 0"
-                      >{{sale_rank_info.pre_compare}}</div>
+                      >
+                        {{ sale_rank_info.pre_compare }}
+                      </div>
                       <div
                         class="float-right down-number"
                         v-if="sale_rank_info.pre_compare == '--'"
-                      >{{sale_rank_info.pre_compare}}</div>
+                      >
+                        {{ sale_rank_info.pre_compare }}
+                      </div>
                     </div>
-                    <div class="clearfix compare" style="width:160px;">
+                    <div class="clearfix compare" style="width: 160px">
                       <div class="float-left">上年同期</div>
                       <div
                         class="float-right down-number"
                         v-if="sale_rank_info.last_compare > 0"
-                      >{{sale_rank_info.last_compare}} ↓</div>
+                      >
+                        {{ sale_rank_info.last_compare }} ↓
+                      </div>
                       <div
                         class="float-right up-number"
                         v-if="sale_rank_info.last_compare < 0"
-                      >{{sale_rank_info.last_compare}} ↑</div>
+                      >
+                        {{ sale_rank_info.last_compare * -1 }} ↑
+                      </div>
                       <div
                         class="float-right down-number"
                         v-if="sale_rank_info.last_compare == 0"
-                      >{{sale_rank_info.last_compare}}</div>
+                      >
+                        {{ sale_rank_info.last_compare }}
+                      </div>
                       <div
                         class="float-right down-number"
                         v-if="sale_rank_info.last_compare == '--'"
-                      >{{sale_rank_info.last_compare}}</div>
+                      >
+                        {{ sale_rank_info.last_compare }}
+                      </div>
                     </div>
                   </span>
                   <!-- 市场占有率 -->
                   <span
-                    :class="typeText == 'sale_ratio'?'data-block float-left active':'data-block float-left'"
+                    :class="
+                      typeText == 'sale_ratio'
+                        ? 'data-block float-left active'
+                        : 'data-block float-left'
+                    "
                     @click="coreTypeChange('sale_ratio')"
                   >
                     <div>
                       <a-icon type="line-chart" />
                       <span class="secondary-font">市场占有率</span>
                     </div>
-                    <div class="data-font" v-if="sale_ratio_info.now">{{sale_ratio_info.now}}%</div>
+                    <div class="data-font" v-if="sale_ratio_info.now">
+                      {{ sale_ratio_info.now }}%
+                    </div>
                     <div class="data-font" v-else>0%</div>
-                    <div class="clearfix compare" style="width:160px;">
-                      <div class="float-left" v-if="dateType == 2">上周对比</div>
-                      <div class="float-left" v-if="dateType == 3">上月对比</div>
-                      <div class="float-left" v-if="dateType == 4">上年对比</div>
+                    <div class="clearfix compare" style="width: 160px">
+                      <div class="float-left" v-if="dateType == 2">
+                        上周对比
+                      </div>
+                      <div class="float-left" v-if="dateType == 3">
+                        上月对比
+                      </div>
+                      <div class="float-left" v-if="dateType == 4">
+                        上年对比
+                      </div>
                       <div
                         class="float-right up-number"
                         v-if="sale_ratio_info.pre_compare > 0"
-                      >{{sale_ratio_info.pre_compare}}% ↑</div>
+                      >
+                        {{ sale_ratio_info.pre_compare }}% ↑
+                      </div>
                       <div
                         class="float-right down-number"
                         v-if="sale_ratio_info.pre_compare < 0"
-                      >{{sale_ratio_info.pre_compare}}% ↓</div>
+                      >
+                        {{ sale_ratio_info.pre_compare * -1 }}% ↓
+                      </div>
                       <div
                         class="float-right down-number"
                         v-if="sale_ratio_info.pre_compare == 0"
-                      >{{sale_ratio_info.pre_compare}}</div>
+                      >
+                        {{ sale_ratio_info.pre_compare }}
+                      </div>
                       <div
                         class="float-right down-number"
                         v-if="sale_ratio_info.pre_compare == '--'"
-                      >{{sale_ratio_info.pre_compare}}</div>
+                      >
+                        {{ sale_ratio_info.pre_compare }}
+                      </div>
                     </div>
-                    <div class="clearfix compare" style="width:160px;">
+                    <div class="clearfix compare" style="width: 160px">
                       <div class="float-left">上年同期</div>
                       <div
                         class="float-right up-number"
                         v-if="sale_ratio_info.last_compare > 0"
-                      >{{sale_ratio_info.last_compare}}% ↑</div>
+                      >
+                        {{ sale_ratio_info.last_compare }}% ↑
+                      </div>
                       <div
                         class="float-right down-number"
                         v-if="sale_ratio_info.last_compare < 0"
-                      >{{sale_ratio_info.last_compare}}% ↓</div>
+                      >
+                        {{ sale_ratio_info.last_compare * -1 }}% ↓
+                      </div>
                       <div
                         class="float-right down-number"
                         v-if="sale_ratio_info.last_compare == 0"
-                      >{{sale_ratio_info.last_compare}}</div>
+                      >
+                        {{ sale_ratio_info.last_compare }}
+                      </div>
                       <div
                         class="float-right down-number"
                         v-if="sale_ratio_info.last_compare == '--'"
-                      >{{sale_ratio_info.last_compare}}</div>
+                      >
+                        {{ sale_ratio_info.last_compare }}
+                      </div>
                     </div>
                   </span>
                   <!-- 动销品种数 -->
                   <span
-                    :class="typeText == 'on_sale_goods'?'data-block float-left active':'data-block float-left'"
+                    :class="
+                      typeText == 'on_sale_goods'
+                        ? 'data-block float-left active'
+                        : 'data-block float-left'
+                    "
                     @click="coreTypeChange('on_sale_goods')"
                   >
                     <div>
                       <a-icon type="line-chart" />
                       <span class="secondary-font">动销品种数</span>
                     </div>
-                    <div class="data-font" v-if="onsale_goods_info.now">{{onsale_goods_info.now}}</div>
+                    <div class="data-font" v-if="onsale_goods_info.now">
+                      {{ onsale_goods_info.now }}
+                    </div>
                     <div class="data-font" v-else>0</div>
-                    <div class="clearfix compare" style="width:160px;">
-                      <div class="float-left" v-if="dateType == 2">上周对比</div>
-                      <div class="float-left" v-if="dateType == 3">上月对比</div>
-                      <div class="float-left" v-if="dateType == 4">上年对比</div>
+                    <div class="clearfix compare" style="width: 160px">
+                      <div class="float-left" v-if="dateType == 2">
+                        上周对比
+                      </div>
+                      <div class="float-left" v-if="dateType == 3">
+                        上月对比
+                      </div>
+                      <div class="float-left" v-if="dateType == 4">
+                        上年对比
+                      </div>
                       <div
                         class="float-right up-number"
                         v-if="onsale_goods_info.pre_compare > 0"
-                      >{{onsale_goods_info.pre_compare}}% ↑</div>
+                      >
+                        {{ onsale_goods_info.pre_compare }}% ↑
+                      </div>
                       <div
                         class="float-right down-number"
                         v-if="onsale_goods_info.pre_compare < 0"
-                      >{{onsale_goods_info.pre_compare}}% ↓</div>
+                      >
+                        {{ onsale_goods_info.pre_compare * -1 }}% ↓
+                      </div>
                       <div
                         class="float-right down-number"
                         v-if="onsale_goods_info.pre_compare == 0"
-                      >{{onsale_goods_info.pre_compare}}</div>
+                      >
+                        {{ onsale_goods_info.pre_compare }}
+                      </div>
                       <div
                         class="float-right down-number"
                         v-if="onsale_goods_info.pre_compare == '--'"
-                      >{{onsale_goods_info.pre_compare}}</div>
+                      >
+                        {{ onsale_goods_info.pre_compare }}
+                      </div>
                     </div>
-                    <div class="clearfix compare" style="width:160px;">
+                    <div class="clearfix compare" style="width: 160px">
                       <div class="float-left">上年同期</div>
                       <div
                         class="float-right up-number"
                         v-if="onsale_goods_info.last_compare > 0"
-                      >{{onsale_goods_info.last_compare}}% ↑</div>
+                      >
+                        {{ onsale_goods_info.last_compare }}% ↑
+                      </div>
                       <div
                         class="float-right down-number"
                         v-if="onsale_goods_info.last_compare < 0"
-                      >{{onsale_goods_info.last_compare}}% ↓</div>
+                      >
+                        {{ onsale_goods_info.last_compare * -1 }}% ↓
+                      </div>
                       <div
                         class="float-right down-number"
                         v-if="onsale_goods_info.last_compare == 0"
-                      >{{onsale_goods_info.last_compare}}</div>
+                      >
+                        {{ onsale_goods_info.last_compare }}
+                      </div>
                       <div
                         class="float-right down-number"
                         v-if="onsale_goods_info.last_compare == '--'"
-                      >{{onsale_goods_info.last_compare}}</div>
+                      >
+                        {{ onsale_goods_info.last_compare }}
+                      </div>
                     </div>
                   </span>
                 </div>
                 <!-- 折线图 -->
-                <div style="margin-top:20px;">
+                <div style="margin-top: 20px">
                   <div id="broken-line" v-if="brokenLineData.length > 0"></div>
-                  <div style="padding:20px 0;" v-else>
+                  <div style="padding: 20px 0" v-else>
                     <a-empty />
                   </div>
                 </div>
               </div>
-              <div class="model-bg" style="height:405px;position:relative;" v-else>
-                <ModelNoPower type="noPower"></ModelNoPower>
+              <div
+                class="model-bg"
+                style="height: 405px; position: relative"
+                v-else
+              >
+                <ModelNoPower
+                  type="noPower"
+                  :id="corePowerID"
+                  :organizeId="$refs.head.publishInfo.organization_id"
+                ></ModelNoPower>
               </div>
             </div>
             <!-- 品种 -->
@@ -362,11 +469,11 @@
               <div class="section-title clearfix model-bg">
                 <div class="float-left">品种</div>
                 <router-link to="/publish/taopu100">
-                  <div class="float-right click-font">进入淘普100</div>
+                  <div class="float-right click-font">进入本社品种</div>
                 </router-link>
               </div>
               <div class="table model-bg" v-if="goodsPower">
-                <table style="table-layout:fixed">
+                <table style="table-layout: fixed">
                   <colgroup>
                     <col width="50" />
                     <col width="300" />
@@ -382,14 +489,14 @@
                       <td>品种</td>
                       <td>作者</td>
                       <td>类目</td>
-                      <td style="text-align:right;">销售点数</td>
-                      <td style="text-align:right;">品种排名（类目）</td>
-                      <td style="text-align:right;">品种排名（全部）</td>
+                      <td style="text-align: right">销售点数</td>
+                      <td style="text-align: right">品种排名（类目）</td>
+                      <td style="text-align: right">品种排名（全部）</td>
                     </tr>
                   </thead>
                   <tbody v-if="goodsRankList.length > 0">
-                    <tr v-for="(item,index) in goodsRankList" :key="index">
-                      <td>{{item.sale_rank}}</td>
+                    <tr v-for="(item, index) in goodsRankList" :key="index">
+                      <td>{{ item.sale_rank }}</td>
                       <td>
                         <div class="goods-desc">
                           <img
@@ -399,31 +506,61 @@
                             height="40px"
                             v-if="item.cover_pic"
                           />
-                          <span v-else class="no-pic" style="min-width:40px;min-height:40px;"></span>
+                          <span
+                            v-else
+                            class="no-pic"
+                            style="min-width: 40px; min-height: 40px"
+                          ></span>
                           <span
                             class="click-font goods-name"
-                            @click="toDetail(item,index)"
-                          >{{item.goods_name}}</span>
+                            @click.stop="toDetail(item, index)"
+                            >{{ item.goods_name }}</span
+                          >
                         </div>
                       </td>
                       <td>
-                        <div
-                          class="click-font author"
+                        <div class="click-font author">
+                          <div
+                            class="author-name"
+                            @click.stop="openAuthor(item, index)"
+                          >
+                            {{ item.goods_author }}
+                          </div>
+                          <div class="author-list" v-if="item.active">
+                            <div v-if="item.authors.length > 0">
+                              <div
+                                class="author-item click"
+                                v-for="(aitem, aindex) in item.authors"
+                                :key="aindex"
+                                @click.stop="toAuthor(aitem, aindex)"
+                              >
+                                {{ aitem.name }}
+                              </div>
+                            </div>
+                            <div v-else>
+                              <div class="author-item">
+                                未查询到对应作者信息
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </td>
+                      <td>
+                        <span class="main-font"
+                          >{{ item.cate_node_2 }} ＞
+                          {{ item.cate_node_3 }}</span
                         >
-                          <div class="author-name" :title="item.goods_author">{{item.goods_author}}</div>
-                        </div>
                       </td>
-                      <td>
-                        <span class="main-font">{{item.cate_node_2}} ＞ {{item.cate_node_3}}</span>
+                      <td style="text-align: right">
+                        <span class="main-font">{{ item.sale_total }}</span>
                       </td>
-                      <td style="text-align:right;">
-                        <span class="main-font">{{item.sale_total}}</span>
+                      <td style="text-align: right">
+                        <span class="main-font">{{
+                          item.in_all_cate_rank
+                        }}</span>
                       </td>
-                      <td style="text-align:right;">
-                        <span class="main-font">{{item.in_all_cate_rank}}</span>
-                      </td>
-                      <td style="text-align:right;">
-                        <span class="main-font">{{item.in_all_rank}}</span>
+                      <td style="text-align: right">
+                        <span class="main-font">{{ item.in_all_rank }}</span>
                       </td>
                     </tr>
                   </tbody>
@@ -436,8 +573,16 @@
                   </tbody>
                 </table>
               </div>
-              <div class="model-bg" style="height:345px;position:relative;" v-else>
-                <ModelNoPower type="noPower"></ModelNoPower>
+              <div
+                class="model-bg"
+                style="height: 345px; position: relative"
+                v-else
+              >
+                <ModelNoPower
+                  type="noPower"
+                  :id="goodsPowerID"
+                  :organizeId="$refs.head.publishInfo.organization_id"
+                ></ModelNoPower>
               </div>
             </div>
             <!-- 地域 -->
@@ -451,9 +596,12 @@
               <div v-if="regionPower">
                 <div class="clearfix model-bg" v-if="barData.length > 0">
                   <div class="content float-left">
-                    <div id="map" style="height:284px;width:100%;"></div>
+                    <div id="map" style="height: 284px; width: 100%"></div>
                   </div>
-                  <div class="content float-left" style="width:500px;margin-left:50px;">
+                  <div
+                    class="content float-left"
+                    style="width: 500px; margin-left: 50px"
+                  >
                     <p class="desc">地域（省）</p>
                     <!-- <div>
                       <span>排名</span>
@@ -463,7 +611,13 @@
                       <!-- <div class="rank-number">
                         <div class="number" v-for="(item,index) in barData" :key="index">{{index + 1}}</div>
                       </div>-->
-                      <div style="width:500px;display:inline-block;vertical-align:top;">
+                      <div
+                        style="
+                          width: 500px;
+                          display: inline-block;
+                          vertical-align: top;
+                        "
+                      >
                         <div id="bar-chart"></div>
                       </div>
                     </div>
@@ -475,17 +629,21 @@
               </div>
               <div
                 class="model-bg"
-                style="height:340px;position:relative;margin-bottom:20px;"
+                style="height: 340px; position: relative"
                 v-else
               >
-                <ModelNoPower type="noPower"></ModelNoPower>
+                <ModelNoPower
+                  type="noPower"
+                  :id="regionPowerID"
+                  :organizeId="$refs.head.publishInfo.organization_id"
+                ></ModelNoPower>
               </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-    <Loading ref="load" :show="1"></Loading>
+    <Loading ref="load" :show="1" :isLoading="isLoading"></Loading>
   </div>
 </template>
 
@@ -502,9 +660,9 @@ import {
   MYVIEW_GOODSRANK,
   MYVIEW_REGIONRANK,
   MYVIEW_KERNELCHART,
-  MYVIEW_KERNELDATA
+  MYVIEW_KERNELDATA,
 } from "../../apis/publish.js";
-import { COMMON_CATEGORY } from "../../apis/common.js";
+import { COMMON_PUBLISHERCATEGORY } from "../../apis/common.js";
 export default {
   data() {
     return {
@@ -512,19 +670,23 @@ export default {
       corePower: true,
       goodsPower: true,
       regionPower: true,
+      generalPowerID: 0,
+      corePowerID: 0,
+      goodsPowerID: 0,
+      regionPowerID: 0,
       cowData: [
         { type: "滞销", sold: 0 },
         { type: "一般", sold: 0 },
         { type: "常销", sold: 0 },
         { type: "畅销", sold: 0 },
-        { type: "新品", sold: 0 }
+        { type: "新品", sold: 0 },
       ],
       radarData: [
         { item: "综合评分", 本社: 0 },
         { item: "销售评分", 本社: 0 },
         { item: "读者评分", 本社: 0 },
         { item: "热点评分", 本社: 0 },
-        { item: "生命周期评分", 本社: 0 }
+        { item: "生命周期评分", 本社: 0 },
       ],
       brokenLineData: [
         // { month: "01月", city: "当期", temperature: 3000 },
@@ -554,25 +716,15 @@ export default {
       ],
       barData: [],
       barMapData: [],
-      showYear: false,
-      chooseWeek: null,
-      chooseMonth: null,
-      chooseYear: null,
-      dateText: "",
-      dateType: 2,
-      cycle: "",
-      oneDay: "",
-      canSub: true,
-      canAdd: false,
       account: {
         on_sale_num: 2888, // 在售品种数
-        reader_num: 28633 // 读者基数
+        reader_num: 28633, // 读者基数
       },
       goodsRankList: [],
       categoryList: [],
       chooseCategory: {
         name: "所有类目",
-        id: 0
+        id: 0,
       },
       typeText: "sale_total",
       isFirst: true,
@@ -590,38 +742,33 @@ export default {
         // 销售点数
         now: 0, // 当前
         pre_compare: 0, // 上月对比
-        last_compare: 0 // 去年同期
+        last_compare: 0, // 去年同期
       },
       sale_rank_info: {
         // 销售排名
         now: 0,
         pre_compare: 0,
-        last_compare: 0
+        last_compare: 0,
       },
       sale_ratio_info: {
         // 行业占比
         now: 0,
         pre_compare: 0,
-        last_compare: 0
+        last_compare: 0,
       },
       onsale_goods_info: {
         // 动销品种数
         now: 0,
         pre_compare: 0,
-        last_compare: 0
-      }
+        last_compare: 0,
+      },
+      dateType: 0,
+      isLoading: true,
     };
   },
-  updated() {
-    this.$setSlideHeight();
-  },
+  updated() {},
   mounted() {
-    this.cycle = this.$weekDate().weekth;
-    this.oneDay = this.$weekDate().start.replace(/-/g, "");
-    this.chooseWeek = this.$weekDate().start;
-    this.chooseMonth = this.$weekDate().start;
-    this.chooseYear = this.$weekDate().start;
-    this.dateText = this.$weekDate().start + "~" + this.$weekDate().end;
+    this.dateType = this.$refs.time.dateType;
     this.getData();
     this.getGoods();
     this.getRegion();
@@ -631,10 +778,13 @@ export default {
   },
   methods: {
     async getData() {
+      var tStamp = this.$getTimeStamp();
       let data = {
         organization_id: this.$refs.head.publishInfo.organization_id,
-        publisher_id: this.$refs.head.publishInfo.publisher_id
+        supplier_id: this.$refs.head.publishInfo.supplier_id,
+        timestamp: tStamp,
       };
+      data.sign = this.$getSign(data);
       let res = await MYVIEW_PUBLISHERINFO(data);
       if (res.code == 0) {
         this.generalPower = true;
@@ -708,7 +858,7 @@ export default {
               type: "fold",
               fields: ["本社"], // 展开字段集
               key: "user", // key字段
-              value: "score" // value字段
+              value: "score", // value字段
             });
             this.radarChart.changeData(this.radardv.rows);
           }, 500);
@@ -717,6 +867,7 @@ export default {
       } else {
         if (res.code == 1009) {
           this.generalPower = false;
+          this.generalPowerID = res.data;
         } else {
           this.$refs.head.globalTip(1, res.message, res.code);
         }
@@ -724,20 +875,29 @@ export default {
     },
     // 品种排行
     async getGoods() {
+      var tStamp = this.$getTimeStamp();
       let data = {
         organization_id: this.$refs.head.publishInfo.organization_id,
-        publisher_id: this.$refs.head.publishInfo.publisher_id,
-        period: this.cycle,
-        date_type: this.dateType,
-        goods_cate: this.chooseCategory.id
+        supplier_id: this.$refs.head.publishInfo.supplier_id,
+        period: this.$refs.time.cycle,
+        date_type: this.$refs.time.dateType,
+        goods_cate: this.chooseCategory.id,
+        timestamp: tStamp,
       };
+      data.sign = this.$getSign(data);
       let res = await MYVIEW_GOODSRANK(data);
       if (res.code == 0) {
-        this.goodsRankList = res.data;
+        this.goodsRankList = [];
+        res.data.map((value, key) => {
+          value.active = false;
+          this.goodsRankList.push(value);
+        });
+        // console.log(this.goodsRankList)
         this.goodsPower = true;
       } else {
         if (res.code == 1009) {
           this.goodsPower = false;
+          this.goodsPowerID = res.data;
         } else {
           this.$refs.head.globalTip(1, res.message, res.code);
         }
@@ -745,24 +905,28 @@ export default {
     },
     // 地域排行
     async getRegion() {
+      var tStamp = this.$getTimeStamp();
       let data = {
         organization_id: this.$refs.head.publishInfo.organization_id,
-        publisher_id: this.$refs.head.publishInfo.publisher_id,
-        period: this.cycle,
-        date_type: this.dateType,
-        goods_cate: this.chooseCategory.id
+        supplier_id: this.$refs.head.publishInfo.supplier_id,
+        period: this.$refs.time.cycle,
+        date_type: this.$refs.time.dateType,
+        goods_cate: this.chooseCategory.id,
+        timestamp: tStamp,
       };
+      data.sign = this.$getSign(data);
       let res = await MYVIEW_REGIONRANK(data);
       if (res.code == 0) {
         this.regionPower = true;
         this.barMapData = [];
+        this.barData = [];
         this.barData = res.data.splice(0, 10).map((value, key) => {
           this.barMapData.push(value.region_name);
           value.region_name = value.region_name;
           return value;
         });
         this.barData = this.barData.reverse();
-        if (this.barData.length > 4) {
+        if (this.barData.length > 0) {
           for (let i = 0; i < this.barData.length; i++) {
             if (this.barMax < this.barData[i].sale_total_rate) {
               this.barMax = this.barData[i].sale_total_rate;
@@ -772,20 +936,21 @@ export default {
             if (this.barFirst) {
               this.initBar();
             } else {
-              this.barChart.changeData(this.barData);
+              this.barChart.destroy();
+              this.initBar();
             }
             this.barFirst = false;
             this.initMap();
-            console.log(666);
+            // console.log(666);
           }, 500);
-        }else{
-          this.$setSlideHeight();
+        } else {
         }
-        this.$refs.load.isLoading = false;
+        this.isLoading = false;
       } else {
-        this.$refs.load.isLoading = false;
+        this.isLoading = false;
         if (res.code == 1009) {
           this.regionPower = false;
+          this.regionPowerID = res.data;
         } else {
           this.$refs.head.globalTip(1, res.message, res.code);
         }
@@ -793,8 +958,13 @@ export default {
     },
     // 获取分类列表
     async getCategory() {
-      let data = {};
-      let res = await COMMON_CATEGORY(data);
+      var tStamp = this.$getTimeStamp();
+      let data = {
+        supplier_id: this.$refs.head.publishInfo.supplier_id,
+        timestamp: tStamp,
+      };
+      data.sign = this.$getSign(data);
+      let res = await COMMON_PUBLISHERCATEGORY(data);
       if (res.code == 0) {
         this.categoryList = res.data;
       } else {
@@ -803,14 +973,17 @@ export default {
     },
     // 获取核心数据
     async getCore() {
+      var tStamp = this.$getTimeStamp();
       let data = {
         organization_id: this.$refs.head.publishInfo.organization_id,
-        publisher_id: this.$refs.head.publishInfo.publisher_id,
-        date_type: this.dateType,
-        start_date: this.oneDay,
+        supplier_id: this.$refs.head.publishInfo.supplier_id,
+        date_type: this.$refs.time.dateType,
+        start_date: this.$refs.time.oneDay,
         goods_cate: this.chooseCategory.id,
-        period: this.cycle
+        period: this.$refs.time.cycle,
+        timestamp: tStamp,
       };
+      data.sign = this.$getSign(data);
       let res = await MYVIEW_KERNELDATA(data);
       if (res.code == 0) {
         this.corePower = true;
@@ -821,6 +994,7 @@ export default {
       } else {
         if (res.code == 1009) {
           this.corePower = false;
+          this.corePowerID = res.data;
         } else {
           this.$refs.head.globalTip(1, res.message, res.code);
         }
@@ -828,15 +1002,18 @@ export default {
     },
     // 获取核心数据图形
     async getCoreData() {
+      var tStamp = this.$getTimeStamp();
       let data = {
         organization_id: this.$refs.head.publishInfo.organization_id,
-        publisher_id: this.$refs.head.publishInfo.publisher_id,
-        date_type: this.dateType,
+        supplier_id: this.$refs.head.publishInfo.supplier_id,
+        date_type: this.$refs.time.dateType,
         type: this.typeText,
-        start_date: this.oneDay,
+        start_date: this.$refs.time.oneDay,
         goods_cate: this.chooseCategory.id,
-        period: this.cycle
+        period: this.$refs.time.cycle,
+        timestamp: tStamp,
       };
+      data.sign = this.$getSign(data);
       let res = await MYVIEW_KERNELCHART(data);
       if (res.code == 0) {
         this.corePower = true;
@@ -848,6 +1025,7 @@ export default {
           _obj.month = value.date.toString();
           _obj.city = "当期";
           _obj.temperature = value.value;
+          if(value.week_range){_obj.range = value.week_range};
           _arr1.unshift(_obj);
         });
         res.data.last_data.map((value, key) => {
@@ -855,6 +1033,7 @@ export default {
           _obj.month = value.date.toString();
           _obj.city = "上年同期";
           _obj.temperature = value.value;
+          if(value.week_range){_obj.range = value.week_range};
           _arr2.unshift(_obj);
         });
         // console.log(_arr);
@@ -862,226 +1041,62 @@ export default {
           if (_arr1.length > key) this.brokenLineData.push(_arr1[key]);
           if (_arr2.length > key) this.brokenLineData.push(_arr2[key]);
         });
-        console.log(this.brokenLineData);
+        // console.log(this.brokenLineData);
         if (this.brokenLineData.length > 0) {
           if (this.isFirst) {
             setTimeout(() => {
               this.initLineData();
-              console.log("选");
             }, 500);
           } else {
             setTimeout(() => {
               this.changeChart.changeData(this.brokenLineData);
-              console.log("不选");
             }, 500);
           }
-          this.$setSlideHeight();
+
           this.isFirst = false;
         }
-        this.$refs.load.isLoading = false;
+        this.isLoading = false;
       } else {
-        this.$refs.load.isLoading = false;
+        this.isLoading = false;
         if (res.code == 1009) {
           this.corePower = false;
+          this.corePowerID = res.data;
         } else {
           this.$refs.head.globalTip(1, res.message, res.code);
         }
       }
     },
-    weekChange(date, dateString) {
-      this.$refs.load.isLoading = true;
-      // var _day = date._d.getDate();
-      const startDate = date.day(1).format("YYYY-MM-DD"); // 周一日期
-      const endDate = date.day(7).format("YYYY-MM-DD"); // 周日日期
-      if (
-        startDate <
-        this.$moment("2013-12-30")
-          .startOf("week")
-          .format("YYYY-MM-DD")
-      ) {
-        this.canAdd = true;
-      } else {
-        this.canAdd = false;
-      }
-      this.dateType = 2;
-      this.chooseWeek = startDate;
-      this.dateText = startDate + "~" + endDate;
-      this.cycle = dateString.replace(/-|周/g, "");
-      this.oneDay = startDate.replace(/-/g, "");
+    bodyClick() {
+      this.$refs.time.showYear = false;
+      this.goodsRankList = this.goodsRankList.map((value, key) => {
+        value.active = false;
+        return value;
+      });
+    },
+    closeDom() {
+      this.goodsRankList = this.goodsRankList.map((value, key) => {
+        value.active = false;
+        return value;
+      });
+    },
+    openAuthor(item, index) {
+      this.$refs.time.showYear = false;
+      this.goodsRankList = this.goodsRankList.map((value, key) => {
+        if (index == key) {
+          value.active = true;
+        } else {
+          value.active = false;
+        }
+        return value;
+      });
+    },
+    changeTime() {
+      this.isLoading = true;
+      this.dateType = this.$refs.time.dateType;
       this.getGoods();
       this.getRegion();
       this.getCore();
       this.getCoreData();
-      console.log(666, dateString, startDate, endDate);
-    },
-    monthChange(date, dateString) {
-      this.$refs.load.isLoading = true;
-      const startDate = date
-        .month(date.month())
-        .startOf("month")
-        .format("YYYY-MM-DD");
-      const endDate = date
-        .month(date.month())
-        .endOf("month")
-        .format("YYYY-MM-DD");
-      console.log(date, dateString, startDate, endDate);
-      if (
-        startDate <
-        this.$moment("2013-12-30")
-          .startOf("month")
-          .format("YYYY-MM-DD")
-      ) {
-        this.canAdd = true;
-      } else {
-        this.canAdd = false;
-      }
-      this.dateType = 3;
-      this.chooseMonth = startDate;
-      this.dateText = startDate + "~" + endDate;
-      this.cycle = dateString.replace(/-/g, "");
-      this.oneDay = startDate.replace(/-/g, "");
-      this.getGoods();
-      this.getRegion();
-      this.getCore();
-      this.getCoreData();
-      // console.log(startDate, endDate);
-    },
-    yearChange(e) {
-      this.$refs.load.isLoading = true;
-      if (
-        e._d.getFullYear().toString() >=
-        this.$moment("2013-12-30").format("YYYY")
-      ) {
-        this.chooseYear = this.$moment("2013-12-30").format("YYYY");
-        this.canAdd = false;
-      } else {
-        this.chooseYear = e._d.getFullYear().toString();
-        this.canAdd = true;
-      }
-      this.dateType = 4;
-      this.cycle = this.chooseYear;
-      this.oneDay = this.$moment(this.chooseYear)
-        .format("YYYY-MM-DD")
-        .replace(/-/g, "");
-      this.dateText =
-        this.chooseYear + "-01-01 ~ " + this.chooseYear + "-12-31";
-      this.showYear = false;
-      this.getGoods();
-      this.getRegion();
-      this.getCore();
-      this.getCoreData();
-      console.log(this.oneDay);
-    },
-    subLeft() {
-      this.$refs.load.isLoading = true;
-      let _max = "";
-      if (this.dateType == 2) {
-        _max = this.$weekDate("2013-12-30").start;
-        if (this.chooseWeek <= _max) {
-          let end = this.$moment(this.chooseWeek)
-            .week(this.$moment(this.chooseWeek).week() - 1)
-            .endOf("week")
-            .format("YYYY-MM-DD");
-          this.chooseWeek = this.$moment(this.chooseWeek)
-            .week(this.$moment(this.chooseWeek).week() - 1)
-            .startOf("week")
-            .format("YYYY-MM-DD");
-          this.cycle = (Number(this.cycle) - 1).toString();
-          this.oneDay = this.chooseWeek.replace(/-/g, "");
-          this.dateText = this.chooseWeek + "~" + end;
-          this.canAdd = true;
-        }
-      } else if (this.dateType == 3) {
-        _max = this.$moment("2013-12-30")
-          .startOf("month")
-          .format("YYYY-MM-DD");
-        if (this.chooseMonth <= _max) {
-          let end = this.$moment(this.chooseMonth)
-            .month(this.$moment(this.chooseMonth).month() - 1)
-            .endOf("month")
-            .format("YYYY-MM-DD");
-          this.chooseMonth = this.$moment(this.chooseMonth)
-            .month(this.$moment(this.chooseMonth).month() - 1)
-            .startOf("month")
-            .format("YYYY-MM-DD");
-          this.cycle = (Number(this.cycle) - 1).toString();
-          this.oneDay = this.chooseMonth.replace(/-/g, "");
-          this.dateText = this.chooseMonth + "~" + end;
-          this.canAdd = true;
-        }
-      } else if (this.dateType == 4) {
-        _max = this.$moment("2013-12-30").format("YYYY");
-        // console.log(111, this.chooseYear, _max, this.chooseYear <= _max);
-        if (this.chooseYear <= _max) {
-          this.chooseYear = (Number(this.chooseYear) - 1).toString();
-          this.cycle = (Number(this.cycle) - 1).toString();
-          this.dateText = this.cycle + "-01-01 ~ " + this.cycle + "-12-31";
-          this.oneDay = this.$moment(this.chooseYear)
-            .format("YYYY-MM-DD")
-            .replace(/-/g, "");
-          this.canAdd = true;
-        }
-      }
-      this.getGoods();
-      this.getRegion();
-      this.getCore();
-      this.getCoreData();
-    },
-    addRight() {
-      if (this.canAdd) {
-        this.$refs.load.isLoading = true;
-        let _max = "";
-        if (this.dateType == 2) {
-          _max = this.$weekDate().start;
-          if (this.chooseWeek < _max) {
-            let end = this.$moment(this.chooseWeek)
-              .week(this.$moment(this.chooseWeek).week() + 1)
-              .endOf("week")
-              .format("YYYY-MM-DD");
-            this.chooseWeek = this.$moment(this.chooseWeek)
-              .week(this.$moment(this.chooseWeek).week() + 1)
-              .startOf("week")
-              .format("YYYY-MM-DD");
-            this.cycle = (Number(this.cycle) + 1).toString();
-            this.oneDay = this.chooseWeek.replace(/-/g, "");
-            this.dateText = this.chooseWeek + "~" + end;
-            if (this.chooseWeek >= _max) this.canAdd = false;
-          }
-        } else if (this.dateType == 3) {
-          _max = this.$moment("2013-12-30")
-            .startOf("month")
-            .format("YYYY-MM-DD");
-          if (this.chooseMonth < _max) {
-            let end = this.$moment(this.chooseMonth)
-              .month(this.$moment(this.chooseMonth).month() + 1)
-              .endOf("month")
-              .format("YYYY-MM-DD");
-            this.chooseMonth = this.$moment(this.chooseMonth)
-              .month(this.$moment(this.chooseMonth).month() + 1)
-              .startOf("month")
-              .format("YYYY-MM-DD");
-            this.cycle = (Number(this.cycle) + 1).toString();
-            this.oneDay = this.chooseMonth.replace(/-/g, "");
-            this.dateText = this.chooseMonth + "~" + end;
-            if (this.chooseMonth >= _max) this.canAdd = false;
-          }
-        } else if (this.dateType == 4) {
-          _max = this.$moment("2013-12-30").format("YYYY");
-          if (this.chooseYear < _max) {
-            this.chooseYear = (Number(this.chooseYear) + 1).toString();
-            this.cycle = (Number(this.cycle) + 1).toString();
-            this.oneDay = this.$moment(this.chooseYear)
-              .format("YYYY-MM-DD")
-              .replace(/-/g, "");
-            this.dateText = this.cycle + "-01-01 ~ " + this.cycle + "-12-31";
-            if (this.chooseYear >= _max) this.canAdd = false;
-          }
-        }
-        this.getGoods();
-        this.getRegion();
-        this.getCore();
-        this.getCoreData();
-      }
     },
     initData() {
       // 可以通过调整这个数值控制分割空白处的间距，0-1 之间的数值
@@ -1100,41 +1115,41 @@ export default {
           return container.addShape("path", {
             attrs: {
               fill: cfg.color,
-              path
-            }
+              path,
+            },
           });
-        }
+        },
       });
 
       this.cowChart = new Chart({
         container: "cow-chart", // 指定图表容器 ID
         autoFit: true,
         height: 240,
-        padding: [0, 0, 10, 0]
+        padding: [0, 0, 10, 0],
       });
 
       this.cowChart.data(this.cowData);
       this.cowChart.scale("sold", {
-        formatter: val => {
+        formatter: (val) => {
           // val = val * 100 + "%";
           return val;
-        }
+        },
       });
       this.cowChart.coordinate("theta", {
         radius: 0.75,
-        innerRadius: 0.6
+        innerRadius: 0.6,
       });
       this.cowChart.tooltip({
         showTitle: false,
         showMarkers: false,
         itemTpl:
-          '<li class="g2-tooltip-list-item"><span style="background-color:{color};" class="g2-tooltip-marker"></span>{name}: {value}</li>'
+          '<li class="g2-tooltip-list-item"><span style="background-color:{color};" class="g2-tooltip-marker"></span>{name}: {value}%</li>',
       });
       this.cowChart
         .interval()
         .adjust("stack")
         .position("sold")
-        .color("type", type => {
+        .color("type", (type) => {
           if (type == "滞销") {
             return "#D3DFF5";
           } else if (type == "一般") {
@@ -1151,17 +1166,16 @@ export default {
           // sold = sold * 100 + "%";
           return {
             name: type,
-            value: sold
+            value: sold,
           };
         })
         .shape("slice-shape");
       this.cowChart.legend({
-        position: "right"
+        position: "right",
       });
       this.cowChart.interaction("element-active");
 
       this.cowChart.render();
-      this.$setSlideHeight();
     },
     initRadarData() {
       var { DataView } = DataSet;
@@ -1170,13 +1184,13 @@ export default {
         type: "fold",
         fields: ["本社"], // 展开字段集
         key: "user", // key字段
-        value: "score" // value字段
+        value: "score", // value字段
       });
       this.radarChart = new Chart({
         container: "radar",
         forceFit: false,
         autoFit: true,
-        height: 240
+        height: 240,
       });
       this.radarChart.legend(false);
       this.radarChart.data(this.radardv.rows);
@@ -1184,10 +1198,10 @@ export default {
         min: 0,
         // max: this.radarMax + 2,
         max: 10,
-        show: false
+        show: false,
       });
       this.radarChart.coordinate("polar", {
-        radius: 0.8
+        radius: 0.8,
       });
       // chart.axis(false);
       this.radarChart.axis("score", {
@@ -1198,11 +1212,11 @@ export default {
           line: {
             type: "circle",
             style: {
-              lineDash: null
-            }
+              lineDash: null,
+            },
           },
-          alternateColor: "rgba(0, 0, 0, 0)"
-        }
+          alternateColor: "rgba(0, 0, 0, 0)",
+        },
       });
       this.radarChart.tooltip({
         shared: true, // 合并数据项
@@ -1215,10 +1229,10 @@ export default {
             // crosshairs 线样式
             style: {
               stroke: "#565656",
-              lineDash: [4]
-            }
-          }
-        }
+              lineDash: [4],
+            },
+          },
+        },
       });
       this.radarChart
         .point()
@@ -1229,7 +1243,7 @@ export default {
         .style({
           stroke: "#fff",
           lineWidth: 1,
-          fillOpacity: 1
+          fillOpacity: 1,
         });
       this.radarChart
         .line()
@@ -1238,58 +1252,115 @@ export default {
         .size(2)
         .style({
           fill: "#5B8DF0",
-          fillOpacity: 0.3
+          fillOpacity: 0.3,
         });
       this.radarChart.render();
-      this.$setSlideHeight();
     },
     initLineData() {
+      let _this = this;
       this.changeChart = new Chart({
         container: "broken-line",
-        autoFit: true,
-        height: 240
+        autoFit: false,
+        width: 1050,
+        height: 240,
       });
 
       this.changeChart.data(this.brokenLineData);
       this.changeChart.scale({
         month: {
-          range: [0, 1]
+          range: [0, 1],
         },
         temperature: {
           nice: true,
-          min: 0
-        }
+          min: 0,
+        },
       });
       this.changeChart.tooltip({
         showCrosshairs: true,
-        shared: true
+        shared: true,
+      });
+      this.changeChart.axis("month", {
+        tickLine: null,
+        // line: {
+        //   style: {
+        //     width: 1050,
+        //   },
+        // },
+        // label:{
+        //   style:{
+        //     width:10
+        //   }
+        // }
       });
       this.changeChart.axis("temperature", {
+        tickLine: null,
+        line: null,
+        // grid: {
+        //   line: {
+        //     type:'line',
+        //     style: {
+        //       width:1050
+        //     },
+        //   },
+        // },
         label: {
-          formatter: val => {
-            return val;
-          }
-        }
+          // offset: 0,
+          // style: {
+          //   textBaseline: "bottom",
+          //   textAlign: "left",
+          // },
+          formatter: (val) => {
+            if (this.typeText == "sale_ratio") {
+              return val + "%";
+            } else {
+              return val;
+            }
+          },
+        },
       });
       this.changeChart.legend(false);
       this.changeChart
         .line()
         .position("month*temperature")
-        .color("city")
+        .color("city", (city) => {
+          if (city == "上年同期") {
+            return "#D1DDF6";
+          } else if (city == "当期") {
+            return "#5A8BEE";
+          }
+        })
         .shape("circle")
-        .style({ lineWidth: 2 });
+        .style({ lineWidth: 2 })
+        .tooltip("month*temperature*city*range", function (month, temperature, city,range) {
+          // tooltip的第一个参数写上需要显示的字段'item1*item2*...'；第二个参数为一个函数，该函数的参数为需要显示的字段。
+          let _title
+          if(_this.$refs.time.dateType == 2){
+            _title = month + '（' + range + '）';
+          }else{
+            _title = month;
+          }
+          return {
+            title:_title,
+            name: city,
+            value: temperature, // 这里也可以通过调用其他自定义函数的方式，去对数据进行更深层次的变换。但要注意this的指向问题！
+          };
+        });
 
       this.changeChart
         .point()
         .position("month*temperature")
-        .color("city")
+        .color("city", (city) => {
+          if (city == "上年同期") {
+            return "#D1DDF6";
+          } else if (city == "当期") {
+            return "#5A8BEE";
+          }
+        })
         .shape("circle");
 
       this.changeChart.render();
-      this.$setSlideHeight();
     },
     initMap() {
-      this.$setSlideHeight();
       let _this = this;
       const scene = new Scene({
         id: "map",
@@ -1301,15 +1372,15 @@ export default {
           style: "blank",
           zoom: 3,
           minZoom: 1,
-          maxZoom: 10
-        })
+          maxZoom: 10,
+        }),
       });
       scene.setMapStatus({
         dragEnable: false, //是否允许地图拖拽
         keyboardEnable: false, // 是否允许形键盘事件
         doubleClickZoom: false, // 双击放大
         zoomEnable: false, // 滚动缩放
-        rotateEnable: false // 旋转
+        rotateEnable: false, // 旋转
       });
       const attachMapContainer = document.createElement("div");
       attachMapContainer.id = "attach";
@@ -1331,14 +1402,14 @@ export default {
           coastlineWidth: 0,
           chinaNationalStroke: "#D1DDF5",
           label: {
-            enable: false
+            enable: false,
           },
           fill: {
             color: {
               field: "NAME_CHN",
               values:
                 ("name",
-                function(value) {
+                function (value) {
                   // console.log(value)
                   let _arr = _this.barMapData;
                   if (value.indexOf(_arr[0]) > -1) {
@@ -1356,16 +1427,16 @@ export default {
                   } else {
                     return "#D1DDF5";
                   }
-                })
+                }),
             },
-            activeColor: "#4777D8"
+            activeColor: "#4777D8",
           },
           popup: {
             enable: true,
-            Html: props => {
+            Html: (props) => {
               return `<span>${props.NAME_CHN}</span>`;
-            }
-          }
+            },
+          },
         });
       });
 
@@ -1380,17 +1451,17 @@ export default {
           zoom: 1.93,
           minZoom: 0,
           maxZoom: 3,
-          interactive: false
-        })
+          interactive: false,
+        }),
       });
       scene2.on("loaded", () => {
         new CountryLayer(scene2, {
           data: [],
           label: {
-            enable: false
+            enable: false,
           },
           popup: {
-            enable: true
+            enable: true,
           },
           autoFit: false,
           depth: 1,
@@ -1403,30 +1474,29 @@ export default {
                 "#fdae6b",
                 "#fd8d3c",
                 "#e6550d",
-                "#a63603"
-              ]
-            }
-          }
+                "#a63603",
+              ],
+            },
+          },
         });
       });
-      this.$setSlideHeight();
     },
     initBar(_max) {
-      this.$setSlideHeight();
-      let _this = this;
+      let _this = this,
+        _height = this.barData.length * 25.4;
       this.barChart = new Chart({
         container: "bar-chart",
         autoFit: true,
-        height: 254
+        height: _height,
       });
       this.barChart.data(this.barData);
       this.barChart.scale({
         sale_total_rate: {
           // max: this.barMax + 100,
-          max: 110,
+          max: 150,
           min: 0,
-          alias: " "
-        }
+          alias: " ",
+        },
       });
       this.barChart.axis("region_name", {
         title: null,
@@ -1435,17 +1505,24 @@ export default {
         line: null,
         label: {
           textStyle: {
-            textAlign: "left"
-          }
-        }
+            textAlign: "left",
+          },
+        },
       });
 
       this.barChart.axis("sale_total_rate", {
         label: null,
         line: null,
         tickLine: null,
-        grid: null,
-        title: null
+        grid: {
+          line: {
+            style: {
+              fillOpacity: 0,
+              strokeOpacity: 0,
+            },
+          },
+        },
+        title: null,
       });
       this.barChart.legend(false);
       this.barChart.coordinate().transpose();
@@ -1457,30 +1534,21 @@ export default {
         .label("sale_total_rate", {
           style: {
             fill: "#7789af",
-            autoHide: false | true
+            autoHide: false | true,
           },
-          offset: 10,
-          content: originData => {
+          // offset: 10,
+          content: (originData) => {
             return originData.sale_total_rate + "%";
           },
-          remove: false
+          remove: false,
         });
       // chart.interaction("element-active");
       this.barChart.render();
-      this.$setSlideHeight();
-    },
-    disabledEndDate(endValue) {
-      // console.log(endValue);
-      const startValue = new Date("2013-12-30");
-      if (!endValue || !startValue) {
-        return false;
-      }
-      return startValue.valueOf() <= endValue.valueOf();
     },
     // 选择分类
     selectCategory(item, index) {
       // console.log(index)
-      this.$refs.load.isLoading = true;
+      this.isLoading = true;
       if (index == -1) {
         this.chooseCategory.name = "所有类目";
         this.chooseCategory.id = 0;
@@ -1501,31 +1569,50 @@ export default {
       this.$router.push({
         name: "detail",
         query: {
-          goods_id: item.goods_id
-        }
+          goods_id: item.goods_id,
+        },
+      });
+    },
+    toAuthor(aitem, aindex) {
+      this.$router.push({
+        name: "authordetail",
+        query: {
+          author_id: aitem.author_id,
+        },
       });
     },
     publisherChange() {
-      this.$refs.load.isLoading = true;
-      this.cycle = this.$weekDate().weekth;
-      this.oneDay = this.$weekDate().start.replace(/-/g, "");
-      this.chooseWeek = this.$weekDate().start;
-      this.chooseMonth = this.$weekDate().start;
-      this.chooseYear = this.$weekDate().start;
-      this.dateText = this.$weekDate().start + "~" + this.$weekDate().end;
-      this.dateType = 2;
+      this.isLoading = true;
       this.typeText = "sale_total";
       this.chooseCategory.name = "所有类目";
       this.chooseCategory.id = 0;
-      this.canAdd = false;
-      this.canSub = true;
+      this.$refs.time.cycle = this.$weekDate().weekth;
+      this.$refs.time.oneDay = this.$weekDate().start.replace(/-/g, "");
+      this.$refs.time.chooseWeek = this.$weekDate().start;
+      this.$refs.time.chooseMonth = this.$weekDate().start;
+      this.$refs.time.chooseYear = this.$weekDate().start;
+      this.$refs.time.dateText =
+        this.$weekDate().start + "~" + this.$weekDate().end;
+      this.$refs.time.dateType = 2;
+      this.$refs.time.canAdd = false;
+      this.$refs.time.canSub = true;
+      this.$refs.time.showYear = false;
+      if (!this.corePower) {
+        this.isFirst = true;
+      }
+      if (!this.generalPower) {
+        this.radarFirst = true;
+      }
+      if (!this.regionPower) {
+        this.barFirst = true;
+      }
       this.getData();
       this.getGoods();
       this.getRegion();
       this.getCategory();
       this.getCore();
       this.getCoreData();
-    }
-  }
+    },
+  },
 };
 </script>

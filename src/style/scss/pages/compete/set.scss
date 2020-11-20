@@ -57,6 +57,49 @@
   .goods-container{
     padding-top: 40px;
     padding-bottom: 40px;
+    & .search-result {
+      position: absolute;
+      width: 100%;
+      left: 0;
+      top: 42px;
+      height: 245px;
+      overflow-y: auto;
+      border-radius: 5px;
+      background-color: $clf;
+      box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.078);
+      line-height: normal;
+      padding: 5px 0;
+      z-index: 9;
+
+      & .list {
+        margin-top: 5px;
+
+        & .result-content {
+          line-height: 32px;
+          text-align: left;
+          color: $fontColor1;
+          padding: 5px 15px;
+          cursor: pointer;
+
+          &:hover {
+            background-color: $themeColor5;
+          }
+
+          & .result-title {
+            display: inline-block;
+            width: 90%;
+            vertical-align: middle;
+            @include textOverflow;
+          }
+        }
+      }
+      & .no-result{
+        font-size: $fontSize - 2;
+        color: $fontColor1;
+        text-align: center;
+        margin: 100px 0;
+      }
+    }
   }
   .compete{
     padding:15px;
@@ -116,6 +159,10 @@
           & .no-choose{
             color: $fontColor1;
             margin: 100px 0;
+          }
+          & .no-set{
+            color: $fontColor2;
+            margin: 90px 0;
           }
         }
       }

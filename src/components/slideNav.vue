@@ -1,8 +1,9 @@
 <template>
   <div id="slideNav">
-    <div
+    <!-- <div
       :class="['index','taopu','core','region','publishmonitor','goodsmonitor','market'].includes(sort)?'top-container other':'top-container'"
-    >
+    > -->
+    <div class="top-container">
       <div class="slide-desc" v-if="type == 'publish'">
         <img src="../assets/publish.png" alt width="50px" height="50px" />
         <div class="text">本社数据</div>
@@ -31,29 +32,19 @@
         <img src="../assets/application.png" alt width="50px" height="50px" />
         <div class="text">应用功能</div>
       </div>
+      <div class="slide-desc" v-if="type == 'inquire'">
+        <img src="../assets/application.png" alt width="50px" height="50px" />
+        <div class="text">分析查询</div>
+      </div>
       <div class="slide-content" v-if="type == 'publish'">
-        <router-link to="/publish/index">
-          <div :class="sort=='index'?'active tab':'tab'">本社看板</div>
-        </router-link>
-        <router-link to="/publish/taopu100">
-          <div :class="['taopu','detail'].includes(sort)?'active tab':'tab'">淘普100</div>
-        </router-link>
-        <router-link to="/publish/core">
-          <div :class="sort=='core'?'active tab':'tab'">核心类目</div>
-        </router-link>
-        <router-link to="/publish/newproduct">
-          <div :class="sort=='newproduct'?'active tab':'tab'">新品追踪</div>
-        </router-link>
-        <div class="tab" @click="noOpen">异常监控</div>
-        <router-link to="/publish/reader">
-          <div :class="sort=='reader'?'active tab':'tab'">读者画像</div>
-        </router-link>
-        <router-link to="/publish/region">
-          <div :class="sort=='region'?'active tab':'tab'">地域分布</div>
-        </router-link>
-        <router-link to="/publish/authors">
-          <div :class="sort=='authors'?'active tab':'tab'">本社作者</div>
-        </router-link>
+          <div :class="sort=='index'?'active tab':'tab'" @click.stop="$router.push({ name: 'publishindex' })">本社看板</div>
+          <div :class="['taopu','detail'].includes(sort)?'active tab':'tab'" @click.stop="$router.push({ name: 'taopu100' })">本社品种</div>
+          <div :class="sort=='core'?'active tab':'tab'" @click.stop="$router.push({ name: 'core' })">核心类目</div>
+          <div :class="sort=='newproduct'?'active tab':'tab'" @click.stop="$router.push({ name: 'newproduct' })">新品追踪</div>
+          <div :class="sort=='reader'?'active tab':'tab'" @click.stop="$router.push({ name: 'publishreader' })">读者画像</div>
+          <div :class="sort=='region'?'active tab':'tab'" @click.stop="$router.push({ name: 'region' })">地域分布</div>
+          <div :class="sort=='authors'?'active tab':'tab'" @click.stop="$router.push({ name: 'publishauthors' })">本社作者</div>
+          <div class="tab disabled">异常监控</div>
       </div>
       <div class="slide-content" v-if="type == 'admin'">
         <router-link to="/admin/index">
@@ -68,9 +59,9 @@
         <router-link to="/admin/event">
           <div :class="sort=='event'?'active tab':'tab'">大事件管理</div>
         </router-link>
-        <router-link to="/admin/param/index">
+        <!-- <router-link to="/admin/param/index">
           <div :class="sort=='adminParam'?'active tab':'tab'">参数配置</div>
-        </router-link>
+        </router-link> -->
         <router-link to="/admin/help">
           <div :class="sort=='adminHelp'?'active tab':'tab'">帮助中心管理</div>
         </router-link>
@@ -90,31 +81,28 @@
         </router-link>
       </div>
       <div class="slide-content" v-if="type == 'compete'">
-        <router-link to="/compete/publishmonitor">
-          <div :class="sort=='publishmonitor'?'active tab':'tab'">竞社监控</div>
-        </router-link>
-        <router-link to="/compete/goodsmonitor">
-          <div :class="sort=='goodsmonitor'?'active tab':'tab'">竞品监控</div>
-        </router-link>
-        <router-link to="/compete/set">
-          <div :class="sort=='competeset'?'active tab':'tab'">竞争配置</div>
-        </router-link>
+          <div :class="sort=='publishmonitor'?'active tab':'tab'" @click.stop="$router.push({ name: 'publishmonitor' })">竞社监控</div>
+          <div :class="sort=='goodsmonitor'?'active tab':'tab'" @click.stop="$router.push({ name: 'goodsmonitor' })">竞品监控</div>
+          <div :class="sort=='competeset'?'active tab':'tab'" @click.stop="$router.push({ name: 'competeset' })">竞争配置</div>
       </div>
       <div class="slide-content" v-if="type == 'user'">
         <router-link to="/user/information">
           <div :class="sort=='userInfo'?'active tab':'tab'">个人信息</div>
         </router-link>
-        <!-- <router-link to="/admin/user">
-          <div :class="sort=='adminUser'?'active tab':'tab'">账号安全</div>
-        </router-link>-->
+        <router-link to="/user/notice">
+          <div :class="sort=='userNotice'?'active tab':'tab'">消息通知</div>
+        </router-link>
+        <router-link to="/user/suggesstion">
+          <div :class="sort=='userSuggesstion'?'active tab':'tab'">意见与反馈</div>
+        </router-link>
       </div>
       <div class="slide-content" v-if="type == 'industry'">
-        <router-link to="/industry/market">
-          <div :class="sort=='market'?'active tab':'tab'">行业大盘</div>
-        </router-link>
-        <router-link to="/industry/authors">
-          <div :class="sort=='authors'?'active tab':'tab'">作者库</div>
-        </router-link>
+          <div :class="sort=='market'?'active tab':'tab'" @click.stop="$router.push({ name: 'industrymarket' })">行业大盘</div>
+          <div :class="sort=='authors'?'active tab':'tab'" @click.stop="$router.push({ name: 'industryauthors' })">作者库</div>
+      </div>
+      <div class="slide-content" v-if="type == 'inquire'">
+        <div :class="sort=='search'?'active tab':'tab'" @click.stop="$router.push({ name: 'inquiresearch' })">出版单位查询</div>
+        <div :class="sort=='rank'?'active tab':'tab'" @click.stop="$router.push({ name: 'inquirerank' })">大盘排行</div>
       </div>
       <div class="slide-content" v-if="type == 'application'">
         <router-link to="/application/event">
@@ -132,15 +120,19 @@
   width: 130px;
   margin-right: 10px;
   box-sizing: border-box;
-  margin-top: 10px;
+  // margin-top: 10px;
+  position: absolute;
+  top: 10px;
+  bottom: 0;
+  background-color: $clf;
   & img {
     background-color: transparent;
   }
   & .top-container {
-    background-color: $clf;
+    // background-color: $clf;
     height: 100%;
     &.other {
-      height: calc(100% - 10px);
+      // height: calc(100% - 10px);
     }
     & .slide-desc {
       width: 100%;
@@ -169,6 +161,10 @@
         &:hover {
           color: $themeColor80;
         }
+        &.disabled{
+          color: $fontColor2;
+          cursor: no-drop;
+        }
       }
     }
   }
@@ -181,7 +177,7 @@ export default {
     return {};
   },
   mounted() {
-    console.log(this.sort == ("taopu" || "detail") ? "true" : "false");
+    // console.log(this.sort == ("taopu" || "detail") ? "true" : "false");
   },
   methods: {
     noOpen() {

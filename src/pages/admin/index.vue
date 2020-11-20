@@ -7,7 +7,7 @@
           <div class="float-left">
             <SlideNav type="admin" sort="adminIndex"></SlideNav>
           </div>
-          <div class="float-left">
+          <div class="float-right">
             <div class="main-container" v-if="powerType == 1">
               <div class="model-container">
                 <div
@@ -102,8 +102,11 @@
                               class="click-font"
                               style="margin-left:10px;"
                               @click="showReadModal(item,index)"
-                              v-if="item.state == 1"
                             >信息</span>
+                            <span class="click-font"
+                              style="margin-left:10px;" @click="deleteOrganize(item,index,2)" v-if="item.state == 0">
+                              删除
+                            </span>
                             <span
                               class="click-font"
                               style="margin-left:10px;"
@@ -160,7 +163,7 @@
       <a-modal v-model="addOrganize" width="600px" title="新建机构" on-ok="handleOk">
         <template slot="footer">
           <a-button key="back" @click="handleCancel">取消</a-button>
-          <a-button key="submit" type="primary" :loading="loading" @click="handleOk">确定</a-button>
+          <a-button key="submit" type="primary" @click="handleOk">确定</a-button>
         </template>
         <div class="popup">
           <div class="option">
@@ -170,26 +173,26 @@
             </div>
           </div>
           <div class="option">
-            <span class="lable">*绑定出版社</span>
+            <span class="lable">*绑定出版单位</span>
             <div class="normal">
-              <!-- <a-input placeholder="搜索出版社名称" v-model="addOrganizeInfo.publisher_id" /> -->
+              <!-- <a-input placeholder="搜索出版社名称" v-model="addOrganizeInfo.supplier_id" /> -->
               <a-auto-complete
                 option-label-prop="value"
                 style="width: 460px"
-                placeholder="搜索出版社名称"
+                placeholder="搜索出版单位名称"
                 @search="onAddSearch"
-                @change="selected"
-                v-model="addOrganizeInfo.publisher_name"
+                @select="selected"
+                v-model="addOrganizeInfo.supplier_name"
               >
                 <template slot="dataSource">
                   <a-select-option
                     v-for="(opt,index) in dataSource"
                     :key="index"
-                    :value="opt.publisher_name"
-                    :id="opt.publisher_id"
+                    :value="opt.supplier_name"
+                    :id="opt.supplier_id"
                   >
                     <div class="result">
-                      <span>{{opt.publisher_name}}</span>
+                      <span>{{opt.supplier_name}}</span>
                     </div>
                   </a-select-option>
                 </template>
@@ -253,19 +256,22 @@
           <div class="option">
             <span class="lable">*机构名称</span>
             <div class="normal">
-              <a-input placeholder="输入机构名称" v-model="organizeInfo.organization_name" />
+              <a-input placeholder="输入机构名称" v-if="organizeInfo.state == 1" v-model="organizeInfo.organization_name" />
+              <a-input placeholder="输入机构名称" v-else readonly v-model="organizeInfo.organization_name" />
             </div>
           </div>
           <div class="option">
-            <span class="lable">*绑定出版社</span>
-            <div class="normal">{{organizeInfo.publisher_name}}</div>
+            <span class="lable">*绑定出版单位</span>
+            <div class="normal">{{organizeInfo.supplier_name}}</div>
           </div>
           <div class="option">
             <span class="lable">*机构类型</span>
             <div class="normal">
               <a-radio-group name="radioGroup" v-model="organizeInfo.type" size="small">
-                <a-radio :value="1">正式</a-radio>
-                <a-radio :value="2">试用</a-radio>
+                <a-radio :value="1" v-if="organizeInfo.state == 1">正式</a-radio>
+                <a-radio :value="1" v-else disabled>正式</a-radio>
+                <a-radio :value="2" v-if="organizeInfo.state == 1">试用</a-radio>
+                <a-radio :value="2" v-else disabled>试用</a-radio>
               </a-radio-group>
             </div>
           </div>
@@ -295,6 +301,7 @@
         </div>
       </a-modal>
     </div>
+    <Loading ref="load" :show="1" :isLoading="isLoading"></Loading>
   </div>
 </template>
 <style scoped lang="scss" src="@/style/scss/pages/admin/index.scss"></style>
@@ -307,7 +314,7 @@ import {
   ORGANIZATION_LOGOFF,
   ORGANIZATION_LOGON
 } from "../../apis/admin.js";
-import { PUBLISHER_GET, PUBLISHER_GETS } from "../../apis/common.js";
+import { SUPPLIER_GET, SUPPLIER_GETS } from "../../apis/common.js";
 export default {
   data() {
     return {
@@ -324,7 +331,7 @@ export default {
       dataSource: [],
       addOrganizeInfo: {
         name: "",
-        publisher_id: 0,
+        supplier_id: 0,
         type: 0,
         address: "",
         contact_name: "",
@@ -333,8 +340,8 @@ export default {
       },
       organizeInfo: {
         organization_id: 0, // 机构id
-        publisher_id: 0, // 出版社id
-        publisher_name: "", //出版社名称
+        supplier_id: 0, // 出版社id
+        supplier_name: "", //出版社名称
         organization_name: "", // 机构名
         short_name: "", // 机构简称
         type: 2, // 类型 1正常, 2试用
@@ -350,48 +357,58 @@ export default {
           // 权限
           ""
         ]
-      }
+      },
+      isLoading:true,
     };
   },
   mounted() {
     this.powerType = this.$refs.head.accountInfo.type;
     if (this.powerType == 1) {
       this.getData();
+    }else{
+      this.isLoading = false;
     }
-    this.$setSlideHeight();
   },
   updated() {
-    this.$setSlideHeight();
+
   },
   methods: {
     // 机构列表
     async getData() {
+      var tStamp = this.$getTimeStamp();
       let data = {
         organization_name: this.searchVal,
         page: this.page,
         page_size: this.page_size,
-        organization_state: 1
+        organization_state: 1,
+        timestamp: tStamp
       };
+      data.sign = this.$getSign(data);
       let res = await ORGANIZATION_GETS(data);
       if (res.code == 0) {
         this.organizeList = [];
         this.organizeList = res.data.lists;
         this.totalSize = res.data.total;
+        this.isLoading = false;
       } else {
+        this.isLoading = false;
         this.$refs.head.globalTip(1, res.message, res.code);
       }
     },
     // 新增机构
     async add() {
+      var tStamp = this.$getTimeStamp();
       let data = {
-        publisher_id: this.addOrganizeInfo.publisher_id,
+        supplier_id: this.addOrganizeInfo.supplier_id,
         organization_name: this.addOrganizeInfo.name,
         type: this.addOrganizeInfo.type,
         address: this.addOrganizeInfo.address,
         contact_name: this.addOrganizeInfo.contact_name,
         contact_mobile: this.addOrganizeInfo.contact_mobile,
-        contact_email: this.addOrganizeInfo.contact_email
+        contact_email: this.addOrganizeInfo.contact_email,
+        timestamp: tStamp
       };
+      data.sign = this.$getSign(data);
       let res = await ORGANIZATION_ADD(data);
       if (res.code == 0) {
         this.addOrganize = false;
@@ -410,15 +427,18 @@ export default {
     },
     // 编辑机构
     async editOrganize() {
+      var tStamp = this.$getTimeStamp();
       let data = {
-        publisher_id: this.organizeInfo.publisher_id,
+        supplier_id: this.organizeInfo.supplier_id,
         organization_name: this.organizeInfo.organization_name,
         type: this.organizeInfo.type,
         address: this.organizeInfo.address,
         contact_name: this.organizeInfo.contact_name,
         contact_mobile: this.organizeInfo.contact_mobile,
-        organization_id: this.organizeInfo.organization_id
+        organization_id: this.organizeInfo.organization_id,
+        timestamp: tStamp
       };
+      data.sign = this.$getSign(data);
       let res = await ORGANIZATION_EDIT(data);
       if (res.code == 0) {
         this.readOrganize = false;
@@ -436,9 +456,12 @@ export default {
     },
     // 删除机构
     async delete(index, id) {
+      var tStamp = this.$getTimeStamp();
       let data = {
-        organization_id: id
+        organization_id: id,
+        timestamp: tStamp
       };
+      data.sign = this.$getSign(data);
       let res = await ORGANIZATION_DELETE(data);
       if (res.code == 0) {
         this.readOrganize = false;
@@ -453,9 +476,12 @@ export default {
     },
     // 注销机构
     async deleteLogo(index, id) {
+      var tStamp = this.$getTimeStamp();
       let data = {
-        organization_id: id
+        organization_id: id,
+        timestamp: tStamp
       };
+      data.sign = this.$getSign(data);
       let res = await ORGANIZATION_LOGOFF(data);
       if (res.code == 0) {
         this.readOrganize = false;
@@ -470,12 +496,15 @@ export default {
     },
     // 绑定出版社获取
     async getPublisher() {
+      var tStamp = this.$getTimeStamp();
       let data = {
-        publisher_id: this.organizeInfo.publisher_id
+        supplier_id: this.organizeInfo.supplier_id,
+        timestamp: tStamp
       };
-      let res = await PUBLISHER_GET(data);
+      data.sign = this.$getSign(data);
+      let res = await SUPPLIER_GET(data);
       if (res.code == 0) {
-        this.organizeInfo.publisher_name = res.data.publisher_name;
+        this.organizeInfo.supplier_name = res.data.supplier_name;
         this.readOrganize = true;
       } else {
         this.$refs.head.globalTip(1, res.message, res.code);
@@ -483,12 +512,16 @@ export default {
     },
     // 出版社列表获取
     async getPublishList(val) {
+      var tStamp = this.$getTimeStamp();
       let data = {
-        publisher_name: val,
         page: 1,
-        page_size: 1000
+        page_size: 100,
+        timestamp: tStamp,
+        supplier_name: val,
       };
-      let res = await PUBLISHER_GETS(data);
+      // if(val) data.supplier_name = val;
+      data.sign = this.$getSign(data);
+      let res = await SUPPLIER_GETS(data);
       if (res.code == 0) {
         this.dataSource = res.data.list;
       } else {
@@ -497,9 +530,12 @@ export default {
     },
     // 恢复机构
     async organizeLogon(id) {
+      var tStamp = this.$getTimeStamp();
       let data = {
-        organization_id: id
+        organization_id: id,
+        timestamp: tStamp
       };
+      data.sign = this.$getSign(data);
       let res = await ORGANIZATION_LOGON(data);
       if (res.code == 0) {
         this.$refs.head.globalTip(2, "恢复成功", 0);
@@ -509,18 +545,20 @@ export default {
       }
     },
     onShowSizeChange(page, pageSize) {
+      this.isLoading = true;
       this.page = page;
       this.getData();
     },
     onSearch(value) {
+      this.isLoading = true;
       this.page = 1;
       this.searchVal = value;
       this.getData();
     },
     showModal() {
       this.addOrganizeInfo.name = "";
-      this.addOrganizeInfo.publisher_id = 0;
-      this.addOrganizeInfo.publisher_name = "";
+      this.addOrganizeInfo.supplier_id = 0;
+      this.addOrganizeInfo.supplier_name = "";
       this.addOrganizeInfo.type = 2;
       this.addOrganizeInfo.address = "";
       this.addOrganizeInfo.contact_name = "";
@@ -532,10 +570,11 @@ export default {
       let _obj = item;
       // this.organizeInfo = _obj;
       this.organizeIndex = index;
-      this.organizeInfo.publisher_id = _obj.publisher_id;
+      this.organizeInfo.supplier_id = _obj.supplier_id;
       this.getPublisher();
       this.organizeInfo.organization_name = _obj.organization_name;
       this.organizeInfo.type = _obj.type;
+      this.organizeInfo.state = _obj.state;
       this.organizeInfo.address = _obj.address;
       this.organizeInfo.contact_name = _obj.contact_name;
       this.organizeInfo.contact_mobile = _obj.contact_mobile;
@@ -550,8 +589,8 @@ export default {
         this.$refs.head.globalTip(1, "请填写机构名称", 0);
         return;
       }
-      if (this.addOrganizeInfo.publisher_id == 0) {
-        this.$refs.head.globalTip(1, "请选择绑定出版社", 0);
+      if (this.addOrganizeInfo.supplier_id == 0) {
+        this.$refs.head.globalTip(1, "请选择要绑定的出版单位", 0);
         return;
       }
       if (this.addOrganizeInfo.type == 0) {
@@ -561,7 +600,11 @@ export default {
       this.add();
     },
     readhandleOk(e) {
-      this.editOrganize();
+      if(this.organizeInfo.state == 1){
+        this.editOrganize();
+      }else{
+        this.readOrganize = false;
+      }
     },
     handleCancel(e) {
       this.addOrganize = false;
@@ -628,19 +671,21 @@ export default {
       });
     },
     onAddSearch(value) {
-      // console.log("search", value);
+      // console.log("search", typeof(value));
       let _value = value.toString();
-      this.addOrganizeInfo.publisher_id = 0;
+      this.dataSource = [];
+      this.addOrganizeInfo.supplier_id = 0;
       this.getPublishList(_value);
     },
     // 选中出版社
     selected(value) {
       // console.log(value);
+      // let _value = value.toString();
       this.dataSource.map((val, key) => {
-        if (val.publisher_name == value)
-          this.addOrganizeInfo.publisher_id = val.publisher_id;
+        if (val.supplier_name == value)
+          this.addOrganizeInfo.supplier_id = val.supplier_id;
       });
-      console.log(this.addOrganizeInfo);
+      // console.log(this.addOrganizeInfo);
     }
   }
 };

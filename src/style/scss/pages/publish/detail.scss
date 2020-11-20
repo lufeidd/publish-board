@@ -19,7 +19,7 @@
           color: $fontColor1;
           min-height: 48px;
         }
-        & .money,& .author,& .publish,& .cate{
+        & .money,& .author,& .publish,& .publish-time,& .cate{
           margin-top: 5px;
         }
         & .isbn{
@@ -27,9 +27,14 @@
         }
         & .value{
           color: $fontColor1;
-          margin-left: 30px;
+          margin-left: 42px;
         }
         & .publish{
+          & .value{
+            margin-left: 30px;
+          }
+        }
+        & .publish-time{
           & .value{
             margin-left: 18px;
           }
@@ -50,15 +55,17 @@
           //   text-overflow: ellipsis;
           // }
         }
-        &.author{
+        & .author{
+          width: 350px;
+          @include textOverflow;
           & .value{
-            margin-left:20px;
+            margin-left:41px;
           }
         }
       }
       & .radarMap{
         display: inline-block;
-        margin-left: 100px;
+        margin-left: 80px;
         vertical-align: middle;
       }
       & .tabs{
@@ -97,7 +104,7 @@
         padding: 10px 15px;
         & .data-block{
           display: inline-block;
-          width: 220px;
+          width: 230px;
           padding:10px 15px;
           background-color: $themeColor5;
           margin-right: 10px;

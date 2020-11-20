@@ -4,14 +4,13 @@ import Vue from 'vue';
 
 // 创建axios的一个实例
 var obj = {};
-
 // run dev
-obj.baseURL = window.location.protocol + "//" + window.location.hostname + ":" + window.location.port + '/apis';
+// obj.baseURL = window.location.protocol + "//" + window.location.hostname + ":" + window.location.port + '/apis';
 
 // run build
-// obj.baseURL =  window.location.protocol + "//" + window.location.hostname + '/apis';
+obj.baseURL =  window.location.protocol + "//" + window.location.hostname + '/apis';
 // console.log(123, window.location.protocol, window.location.hostname)
-obj.timeout = 15000;
+obj.timeout = 20000;
 
 // 一、请求拦截器 忽略
 var instance = axios.create(obj);
@@ -21,7 +20,7 @@ instance.interceptors.request.use(function (config) {
   return config;
 }, function (error) {
   // 对请求错误做些什么
-  console.log('request error');
+  // console.log('request error');
   return Promise.reject(error);
 });
 // axios.defaults.withCredentials = true;
@@ -44,8 +43,9 @@ instance.interceptors.response.use(function (response) {
   // 网络响应超时，调整到超时页面
   var replaceUrl = window.location.href.split('#')[0] + '#/404';
 
-  console.log('网络请求超时:', replaceUrl);
+  // console.log('网络请求超时:', replaceUrl);
   window.location.href = replaceUrl;
+  // this.$message.info('This is a normal message');
 
   return Promise.reject(error);
 });
@@ -61,6 +61,7 @@ instance.interceptors.response.use(function (response) {
 
 export default function (method, url, data = null) {
   method = method.toLowerCase();
+  // console.log(789,data);
   if (method === 'post') {
     return instance.post(url, qs.stringify(data));
   } else if (method === 'get') {

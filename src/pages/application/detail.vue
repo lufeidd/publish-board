@@ -1,60 +1,96 @@
 <template>
-  <div id="eventPage">
-    <HeadNav type="application" :show="1" ref="head" @publisherChange="publisherChange()"></HeadNav>
+  <div id="eventPage" @click="bodyClick">
+    <HeadNav
+      type="application"
+      :show="1"
+      ref="head"
+      @publisherChange="publisherChange()"
+    ></HeadNav>
     <div class="wd-1220">
       <div class="clearfix">
         <div class="float-left">
           <SlideNav type="application" sort="event"></SlideNav>
         </div>
-        <div class="float-left">
+        <div class="float-right">
           <div class="main-container" v-if="goodsPower">
             <div class="model-container">
               <div class="model-bg">
                 <div class="event-desc">
-                  <p class="title">{{eventInfo.title}}</p>
+                  <p class="title">{{ eventInfo.title }}</p>
                   <div class="option">
                     <span class="name">事件类型</span>
-                    <span class="desc">{{eventInfo.type == 1?'公共':'内部'}}节日</span>
+                    <span class="desc"
+                      >{{ eventInfo.type == 1 ? "公共" : "内部" }}节日</span
+                    >
                   </div>
                   <div class="option">
                     <span class="name">发生时间</span>
-                    <span
-                      class="desc"
-                      v-if="eventInfo.repeat_year == 0"
-                    >{{eventInfo.effect_first_year}}-{{eventInfo.event_month>=10?eventInfo.event_month:'0'+eventInfo.event_month}}-{{eventInfo.event_day>=10?eventInfo.event_day:'0'+eventInfo.event_day}}</span>
+                    <span class="desc" v-if="eventInfo.repeat_year == 0"
+                      >{{ eventInfo.effect_first_year }}-{{
+                        eventInfo.event_month >= 10
+                          ? eventInfo.event_month
+                          : "0" + eventInfo.event_month
+                      }}-{{
+                        eventInfo.event_day >= 10
+                          ? eventInfo.event_day
+                          : "0" + eventInfo.event_day
+                      }}</span
+                    >
                     <span class="desc" v-else>
                       <span v-if="eventInfo.repeat_year == 1">每年循环</span>
                       <span v-if="eventInfo.repeat_year == 2">每两年循环</span>
                       <span v-if="eventInfo.repeat_year == 4">每四年循环</span>
-                       <span v-if="eventInfo.date_type == 1">公历</span>
-                       <span v-if="eventInfo.date_type == 2">农历</span> {{eventInfo.event_month>=10?eventInfo.event_month:'0'+eventInfo.event_month}}-{{eventInfo.event_day>=10?eventInfo.event_day:'0'+eventInfo.event_day}}
+                      <span v-if="eventInfo.date_type == 1">公历</span>
+                      <span v-if="eventInfo.date_type == 2">农历</span>
+                      {{
+                        eventInfo.event_month >= 10
+                          ? eventInfo.event_month
+                          : "0" + eventInfo.event_month
+                      }}-{{
+                        eventInfo.event_day >= 10
+                          ? eventInfo.event_day
+                          : "0" + eventInfo.event_day
+                      }}
                     </span>
                   </div>
                   <div class="option">
                     <span class="name">重要级别</span>
-                    <span class="desc" v-if="eventInfo.event_level == 1">一般</span>
-                    <span class="desc" v-if="eventInfo.event_level == 2">重要</span>
-                    <span class="desc" v-if="eventInfo.event_level == 3">特别重要</span>
+                    <span class="desc" v-if="eventInfo.event_level == 1"
+                      >一般</span
+                    >
+                    <span class="desc" v-if="eventInfo.event_level == 2"
+                      >重要</span
+                    >
+                    <span class="desc" v-if="eventInfo.event_level == 3"
+                      >特别重要</span
+                    >
                   </div>
                   <div class="option">
                     <span class="name">关键字</span>
                     <span class="desc" v-if="eventInfo.keywords.length > 0">
                       <span
                         class="data-tab data-tab-click data-tab-seven"
-                        v-for="(item,index) in eventInfo.keywords"
+                        v-for="(item, index) in eventInfo.keywords"
                         :key="index"
-                      >{{item.value}}</span>
+                        >{{ item.value }}</span
+                      >
                     </span>
                     <span class="desc" v-else>--</span>
                   </div>
                   <div class="option">
                     <span class="name">事件描述</span>
-                    <span class="desc" v-if="eventInfo.event_desc">{{eventInfo.event_desc}}</span>
+                    <span class="desc" v-if="eventInfo.event_desc">{{
+                      eventInfo.event_desc
+                    }}</span>
                     <span class="desc" v-else>--</span>
                   </div>
                   <div class="option">
                     <span class="name">创建时间</span>
-                    <span class="desc">{{eventInfo.update_time}} 由{{eventInfo.creator_platform}}创建</span>
+                    <span class="desc"
+                      >{{ eventInfo.update_time }} 由{{
+                        eventInfo.creator_platform
+                      }}创建</span
+                    >
                   </div>
                   <div class="option">
                     <span class="name">事件状态</span>
@@ -73,89 +109,130 @@
             </div>
             <!-- 关联品种 -->
             <div class="model-container" v-if="tabKey == '1'">
-              <div class="model-bg" style="min-height:400px;position:relative;padding-bottom:75px;">
+              <div
+                class="model-bg"
+                style="
+                  min-height: 400px;
+                  position: relative;
+                  padding-bottom: 75px;
+                "
+              >
                 <div class="section-title clearfix">
                   <div class="float-left">关联品种列表</div>
                   <div class="float-right">
-                    <span class="click-font" @click="toAdd" v-if="operatPower == 1">添加关联品种</span>
+                    <span
+                      class="click-font"
+                      @click="toAdd"
+                      v-if="operatPower == 1"
+                      >添加关联品种</span
+                    >
                   </div>
                 </div>
                 <div class="table">
-                  <table style="table-layout:fixed;">
+                  <table style="table-layout: fixed">
                     <colgroup>
                       <col width="240" />
                       <col width="120" />
                       <col width="160" />
+                      <col width="190" />
                       <col width="200" />
-                      <col width="200" />
-                      <col width="120" />
+                      <col width="130" />
                     </colgroup>
                     <thead>
                       <tr>
                         <td>品种</td>
-                        <td style="text-align:center;">ISBN</td>
-                        <td style="text-align:center;">作者</td>
+                        <td style="text-align: center">ISBN</td>
+                        <td>作者</td>
                         <td>
-                          <a-dropdown :trigger="['click']" placement="bottomLeft">
+                          <a-dropdown
+                            :trigger="['click']"
+                            placement="bottomLeft"
+                          >
                             <a
                               class="ant-dropdown-link"
-                              @click="e => e.preventDefault()"
-                              style="font-size:12px;color:#4576DB;"
+                              @click="(e) => e.preventDefault()"
+                              style="font-size: 12px; color: #4576db"
                             >
-                              {{publishType}}
+                              {{ publishType }}
                               <a-icon type="down" />
                             </a>
                             <a-menu slot="overlay">
                               <a-menu-item>
                                 <a
                                   href="javascript:;"
-                                  style="padding:5px 15px;color:#515A6E;font-size:12px;"
+                                  style="
+                                    padding: 5px 15px;
+                                    color: #515a6e;
+                                    font-size: 12px;
+                                  "
                                   @click="selectCategory(1)"
-                                >出版社</a>
+                                  >出版社</a
+                                >
                               </a-menu-item>
                               <a-menu-item>
                                 <a
                                   href="javascript:;"
-                                  style="padding:5px 15px;color:#515A6E;font-size:12px;"
+                                  style="
+                                    padding: 5px 15px;
+                                    color: #515a6e;
+                                    font-size: 12px;
+                                  "
                                   @click="selectCategory(2)"
-                                >仅看本社</a>
+                                  >仅看本社</a
+                                >
                               </a-menu-item>
                             </a-menu>
                           </a-dropdown>
                         </td>
                         <td>
-                          <a-dropdown :trigger="['click']" placement="bottomLeft">
+                          <a-dropdown
+                            :trigger="['click']"
+                            placement="bottomLeft"
+                          >
                             <a
                               class="ant-dropdown-link"
-                              @click="e => e.preventDefault()"
-                              style="font-size:12px;color:#4576DB;"
+                              @click="(e) => e.preventDefault()"
+                              style="font-size: 12px; color: #4576db"
                             >
-                              {{chooseYear?chooseYear:'年份'}}
+                              {{ chooseYear ? chooseYear : "年份" }}
                               <a-icon type="down" />
                             </a>
                             <a-menu slot="overlay">
                               <a-menu-item>
                                 <a
                                   href="javascript:;"
-                                  style="padding:5px 15px;color:#515A6E;font-size:12px;"
-                                  @click="selectYear(null,-1)"
-                                >所有版本</a>
+                                  style="
+                                    padding: 5px 15px;
+                                    color: #515a6e;
+                                    font-size: 12px;
+                                  "
+                                  @click="selectYear(null, -1)"
+                                  >所有版本</a
+                                >
                               </a-menu-item>
-                              <a-menu-item v-for="(item,index) in yearList" :key="index">
+                              <a-menu-item
+                                v-for="(item, index) in yearList"
+                                :key="index"
+                              >
                                 <a
                                   href="javascript:;"
-                                  style="padding:5px 15px;color:#515A6E;font-size:12px;"
-                                  @click="selectYear(item,index)"
-                                >{{item}}{{eventInfo.title}}</a>
+                                  style="
+                                    padding: 5px 15px;
+                                    color: #515a6e;
+                                    font-size: 12px;
+                                  "
+                                  @click="selectYear(item, index)"
+                                  >{{ item }}{{ eventInfo.title }}</a
+                                >
                               </a-menu-item>
                             </a-menu>
                           </a-dropdown>
                         </td>
-                        <td style="text-align:right;">操作</td>
+                        <td style="text-align: right">操作</td>
                       </tr>
                     </thead>
                     <tbody v-if="goodsList.length > 0">
-                      <tr v-for="(item,index) in goodsList" :key="index">
+                      <tr v-for="(item, index) in goodsList" :key="index">
                         <td>
                           <div class="goods-desc">
                             <img
@@ -165,28 +242,64 @@
                               height="40px"
                               v-if="item.cover_pic"
                             />
-                            <span v-else class="no-pic" style="min-width:40px;min-height:40px;"></span>
+                            <span
+                              v-else
+                              class="no-pic"
+                              style="min-width: 40px; min-height: 40px"
+                            ></span>
                             <span
                               class="click-font goods-name"
                               :title="item.goods_name"
-                              @click="toDetail(item,index)"
-                            >{{item.goods_name}}</span>
+                              @click="toDetail(item, index)"
+                              >{{ item.goods_name }}</span
+                            >
                           </div>
                         </td>
-                        <td style="text-align:center;">{{item.isbn}}</td>
-                        <td style="text-align:center;">
-                          <span class="click-font">(日)东野圭吾</span>
+                        <td style="text-align: center">{{ item.isbn }}</td>
+                        <td>
+                          <div class="click-font author">
+                            <div
+                              class="author-name"
+                              @click.stop="openAuthor(item, index)"
+                            >
+                              {{ item.goods_author }}
+                            </div>
+                            <div class="author-list" v-if="item.active">
+                              <div v-if="item.authors.length > 0">
+                                <div
+                                  class="author-item click"
+                                  v-for="(aitem, aindex) in item.authors"
+                                  :key="aindex"
+                                  @click.stop="toAuthor(aitem, aindex)"
+                                >
+                                  {{ aitem.name }}
+                                </div>
+                              </div>
+                              <div v-else>
+                                <div class="author-item">
+                                  未查询到对应作者信息
+                                </div>
+                              </div>
+                            </div>
+                          </div>
                         </td>
-                        <td>{{item.publisher_name}}</td>
-                        <td>{{item.year}}年{{item.title}}（{{item.solar}}）</td>
-                        <td style="text-align:right;">
-                          <span class="click-font" @click="readConnect(item,index)">查看关联</span>
+                        <td>{{ item.supplier_name }}</td>
+                        <td>
+                          {{ item.year }}年{{ item.title }}（{{ item.solar }}）
+                        </td>
+                        <td style="text-align: right">
+                          <span
+                            class="click-font"
+                            @click="readConnect(item, index)"
+                            >查看关联</span
+                          >
+                          <!-- <span class="click-font" style="margin-left:5px;" @click="deleteConnect(item,index)">移除关联</span> -->
                         </td>
                       </tr>
                     </tbody>
                     <tbody v-else>
                       <tr>
-                        <td colspan="6" style="text-align:center;">
+                        <td colspan="6" style="text-align: center">
                           <a-empty />
                         </td>
                       </tr>
@@ -194,9 +307,12 @@
                   </table>
                 </div>
                 <!-- 分页 -->
-                <div class="page" style="position:absolute;right:15px;bottom:15px;">
+                <div
+                  class="page"
+                  style="position: absolute; right: 15px; bottom: 15px"
+                >
                   <a-pagination
-                    :show-total="total => `共 ${total1} 条数据`"
+                    :show-total="(total) => `共 ${total1} 条数据`"
                     :default-current="1"
                     v-model="page1"
                     :total="total1"
@@ -208,15 +324,27 @@
             </div>
             <!-- 关联版本 -->
             <div class="model-container" v-if="tabKey == '2'">
-              <div class="model-bg" style="min-height:400px;position:relative;padding-bottom:75px;">
+              <div
+                class="model-bg"
+                style="
+                  min-height: 400px;
+                  position: relative;
+                  padding-bottom: 75px;
+                "
+              >
                 <div class="section-title clearfix">
                   <div class="float-left">版本列表</div>
                   <div class="float-right">
-                    <span class="click-font" @click="toAddVersion" v-if="operatPower == 1">添加版本</span>
+                    <span
+                      class="click-font"
+                      @click="toAddVersion"
+                      v-if="operatPower == 1"
+                      >添加版本</span
+                    >
                   </div>
                 </div>
                 <div class="table">
-                  <table style="table-layout:fixed;">
+                  <table style="table-layout: fixed">
                     <colgroup>
                       <col width="240" />
                       <col width="120" />
@@ -228,34 +356,38 @@
                         <td>版本</td>
                         <td>版本时间</td>
                         <td>版本备注</td>
-                        <td style="text-align:right;">操作</td>
+                        <td style="text-align: right">操作</td>
                       </tr>
                     </thead>
                     <tbody v-if="versionList.length > 0">
-                      <tr v-for="(item,index) in versionList" :key="index">
+                      <tr v-for="(item, index) in versionList" :key="index">
                         <td>
-                          <span class="main-font">{{item.year}}年{{item.title}}</span>
+                          <span class="main-font"
+                            >{{ item.year }}年{{ item.title }}</span
+                          >
                         </td>
-                        <td>{{item.solar}}</td>
-                        <td>{{item.remark}}</td>
-                        <td style="text-align:right;">
+                        <td>{{ item.solar }}</td>
+                        <td>{{ item.remark }}</td>
+                        <td style="text-align: right">
                           <span
                             class="click-font"
-                            @click="editVersion(item,index)"
+                            @click="editVersion(item, index)"
                             v-if="operatPower == 1"
-                          >编辑</span>
+                            >编辑</span
+                          >
                           <span
                             class="click-font"
-                            style="margin-left:10px;"
-                            @click="remove(item,index)"
+                            style="margin-left: 10px"
+                            @click="remove(item, index)"
                             v-if="operatPower == 1"
-                          >删除</span>
+                            >删除</span
+                          >
                         </td>
                       </tr>
                     </tbody>
                     <tbody v-else>
                       <tr>
-                        <td colspan="4" style="text-align:center;">
+                        <td colspan="4" style="text-align: center">
                           <a-empty />
                         </td>
                       </tr>
@@ -263,9 +395,12 @@
                   </table>
                 </div>
                 <!-- 分页 -->
-                <div class="page" style="position:absolute;right:15px;bottom:15px;">
+                <div
+                  class="page"
+                  style="position: absolute; right: 15px; bottom: 15px"
+                >
                   <a-pagination
-                    :show-total="total => `共 ${total2} 条数据`"
+                    :show-total="(total) => `共 ${total2} 条数据`"
                     :default-current="1"
                     v-model="page2"
                     :total="total1"
@@ -278,7 +413,14 @@
           </div>
           <div class="main-container" v-else>
             <div class="model-container">
-              <div class="model-bg" style="min-height:660px;padding-bottom:75px;position:relative">
+              <div
+                class="model-bg"
+                style="
+                  min-height: 660px;
+                  padding-bottom: 75px;
+                  position: relative;
+                "
+              >
                 <PageNoPower></PageNoPower>
               </div>
             </div>
@@ -287,22 +429,33 @@
       </div>
     </div>
     <!-- 关联说明弹层 -->
-    <a-modal v-model="connectDesc" width="600px" title="关联说明" on-ok="readhandleOk">
+    <a-modal
+      v-model="connectDesc"
+      width="600px"
+      title="关联说明"
+      on-ok="readhandleOk"
+    >
       <template slot="footer">
         <div class="clearfix">
           <div
             class="float-left click-font-warn"
-            style="line-height:32px;"
+            style="line-height: 32px"
             @click="deleteOrganize()"
             v-if="operatPower == 1"
-          >取消关联</div>
+          >
+            取消关联
+          </div>
           <div class="float-right">
             <a-button key="back" @click="handleCancel">取消</a-button>
-            <a-button key="submit" type="primary" @click="readhandleOk">确定</a-button>
+            <a-button key="submit" type="primary" @click="readhandleOk"
+              >确定</a-button
+            >
           </div>
         </div>
       </template>
-      <div style="padding:24px;" class="content">{{readInfo.time}} 由{{readInfo.name}}关联</div>
+      <div style="padding: 24px" class="content">
+        {{ readInfo.time }} 由{{ readInfo.name }}关联
+      </div>
     </a-modal>
     <!-- 添加关联弹层 -->
     <a-modal
@@ -319,30 +472,34 @@
       <div class="popup" @click="showResult = false">
         <div class="connect">
           <span class="title">*关联年份</span>
-          <span style="margin-left:15px;">
+          <span style="margin-left: 15px">
             <a-dropdown :trigger="['click']" placement="bottomLeft">
               <a
                 class="ant-dropdown-link"
-                @click="e => e.preventDefault()"
-                style="font-size:12px;color:#4576DB;"
+                @click="(e) => e.preventDefault()"
+                style="font-size: 12px; color: #4576db"
               >
-                {{popupChooseYear?popupChooseYear:'年份'}}
+                {{ popupChooseYear ? popupChooseYear : "年份" }}
                 <a-icon type="down" />
               </a>
               <a-menu slot="overlay">
-                <a-menu-item v-for="(yitem,yindex) in popupYearList" :key="yindex">
+                <a-menu-item
+                  v-for="(yitem, yindex) in popupYearList"
+                  :key="yindex"
+                >
                   <a
                     href="javascript:;"
-                    style="padding:5px 15px;color:#515A6E;font-size:12px;"
-                    @click="yearChoose(yitem,yindex)"
-                  >{{yitem}}</a>
+                    style="padding: 5px 15px; color: #515a6e; font-size: 12px"
+                    @click="yearChoose(yitem, yindex)"
+                    >{{ yitem }}</a
+                  >
                 </a-menu-item>
               </a-menu>
             </a-dropdown>
           </span>
-          <div style="padding:5px;margin-top:10px;">
-            <span class="title" style="margin-right:5px;">选择品种</span>
-            <div class="common" style="position:relative;">
+          <div style="padding: 5px; margin-top: 10px">
+            <span class="title" style="margin-right: 5px">选择品种</span>
+            <div class="common" style="position: relative">
               <a-input
                 placeholder="搜索品种名称、ISBN"
                 @input="inputSearch"
@@ -354,9 +511,9 @@
                 <div class="list" v-if="dataSource.length > 0">
                   <div
                     class="result-content"
-                    v-for="(item1,index1) in dataSource"
+                    v-for="(item1, index1) in dataSource"
                     :key="index1"
-                    @click.stop="selected(item1,index1)"
+                    @click.stop="selected(item1, index1)"
                   >
                     <img
                       :src="item1.cover_pic"
@@ -365,24 +522,54 @@
                       height="20px"
                       v-if="item1.cover_pic"
                     />
-                    <span v-else class="no-pic" style="min-width:20px;min-height:20px;"></span>
-                    <span class="result-title" :title="item1.title">{{item1.title}}</span>
+                    <span
+                      v-else
+                      class="no-pic"
+                      style="min-width: 20px; min-height: 20px"
+                    ></span>
+                    <span class="result-title" :title="item1.title">{{
+                      item1.title
+                    }}</span>
                   </div>
                 </div>
-                <div class="no-result" v-if="dataSource.length == 0 && showAbout">没有相关商品</div>
-                <div style="text-align:center;margin-top:100px;" v-if="searchLoading">
+                <div
+                  class="no-result"
+                  v-if="dataSource.length == 0 && showAbout"
+                >
+                  没有相关商品
+                </div>
+                <div
+                  style="text-align: center; margin-top: 100px"
+                  v-if="searchLoading"
+                >
                   <a-spin tip></a-spin>
                 </div>
               </div>
             </div>
             <!-- 已选列表 -->
             <div class="choose">
-              <div class="list" v-for="(gitem,gindex) in popupGoodsList" :key="gindex">
-                <img :src="gitem.cover_pic" alt width="40px" height="40px" v-if="gitem.cover_pic" />
-                <span v-else class="no-pic" style="min-width:40px;min-height:40px;"></span>
-                <div class="name">{{gitem.title}}({{gitem.isbn}})</div>
-                <span style="margin-right:20px;">{{gitem.year}}</span>
-                <span class="click-font" @click="listCancel(gitem,gindex)">取消关联</span>
+              <div
+                class="list"
+                v-for="(gitem, gindex) in popupGoodsList"
+                :key="gindex"
+              >
+                <img
+                  :src="gitem.cover_pic"
+                  alt
+                  width="40px"
+                  height="40px"
+                  v-if="gitem.cover_pic"
+                />
+                <span
+                  v-else
+                  class="no-pic"
+                  style="min-width: 40px; min-height: 40px"
+                ></span>
+                <div class="name">{{ gitem.title }}({{ gitem.isbn }})</div>
+                <span style="margin-right: 20px">{{ gitem.year }}</span>
+                <span class="click-font" @click="listCancel(gitem, gindex)"
+                  >移除</span
+                >
               </div>
             </div>
           </div>
@@ -392,24 +579,30 @@
     <a-modal
       v-model="versionModel"
       width="600px"
-      :title="versionType?'编辑版本':'添加版本'"
+      :title="versionType ? '编辑版本' : '添加版本'"
       on-ok="versionOk"
     >
       <template slot="footer">
         <a-button key="back" @click="handleCancel">取消</a-button>
-        <a-button key="submit" type="primary" @click="versionhandle">确定</a-button>
+        <a-button key="submit" type="primary" @click="versionhandle"
+          >确定</a-button
+        >
       </template>
       <div class="popup">
         <div class="option">
           <span class="lable">事件信息</span>
-          <div class="normal">{{eventInfo.title}}</div>
+          <div class="normal">{{ eventInfo.title }}</div>
         </div>
         <div class="option">
           <span class="lable">*版本日期</span>
           <div class="normal">
-            <span style="margin-right:5px;">公历</span>
+            <span style="margin-right: 5px">公历</span>
             <span>
-              <a-date-picker @change="onChange" :allowClear="false" v-model="versionInfo.time" />
+              <a-date-picker
+                @change="onChange"
+                :allowClear="false"
+                v-model="versionInfo.time"
+              />
             </span>
           </div>
         </div>
@@ -421,6 +614,7 @@
         </div>
       </div>
     </a-modal>
+    <Loading ref="load" :show="1" :isLoading="isLoading"></Loading>
   </div>
 </template>
 <style lang="scss" scoped src="@/style/scss/pages/application/event.scss"></style>
@@ -433,7 +627,7 @@ import {
   EVENT_VERSION_LISTS,
   EVENT_VERSION_ADD,
   EVENT_VERSION_UPDATE,
-  EVENT_VERSION_DELETE
+  EVENT_VERSION_DELETE,
 } from "../../apis/admin.js";
 import { TOP_SEARCH } from "../../apis/publish.js";
 export default {
@@ -454,7 +648,7 @@ export default {
       showAbout: false,
       eventId: 0,
       eventInfo: {
-        keywords: []
+        keywords: [],
       },
       chooseYear: 0,
       yearList: [],
@@ -472,7 +666,7 @@ export default {
         name: "",
         id: 0,
         goodsName: "",
-        eventName: ""
+        eventName: "",
       },
       versionList: [],
       versionModel: false,
@@ -482,13 +676,14 @@ export default {
         time: "",
         desc: "",
         date: "",
-        year: 0
-      }
+        year: 0,
+      },
+      isLoading: true,
     };
   },
   mounted() {
     this.eventId = this.$route.query.event_id;
-    let  _num = Number(this.$moment().format("YYYY")) + 2;
+    let _num = Number(this.$moment().format("YYYY")) + 2;
     let _length = _num - 2000;
     for (let i = 0; i < _length + 1; i++) {
       if (i > 0) _num--;
@@ -506,14 +701,17 @@ export default {
     this.getVersionData();
   },
   updated() {
-    this.$setSlideHeight();
+    this.isLoading = false;
   },
   methods: {
     async getData() {
+      var tStamp = this.$getTimeStamp();
       let data = {
         organization_id: this.$refs.head.publishInfo.organization_id,
-        event_id: this.eventId
+        event_id: this.eventId,
+        timestamp: tStamp,
       };
+      data.sign = this.$getSign(data);
       let res = await EVENT_DETAIL(data);
       if (res.code == 0) {
         this.goodsPower = true;
@@ -527,20 +725,26 @@ export default {
       }
     },
     async getGoods() {
+      var tStamp = this.$getTimeStamp();
       let data = {
         organization_id: this.$refs.head.publishInfo.organization_id,
         event_id: this.eventId,
-        publisher_id: this.publisherId ? this.publisherId : "",
+        supplier_id: this.publisherId ? this.publisherId : "",
         year: this.chooseYear ? this.chooseYear : "",
         page: this.page1,
-        page_size: this.pageSize
+        page_size: this.pageSize,
+        timestamp: tStamp,
       };
+      data.sign = this.$getSign(data);
       let res = await EVENT_GOODS_LISTS(data);
       if (res.code == 0) {
         this.goodsPower = true;
         this.goodsList = [];
         this.yearList = [];
-        this.goodsList = res.data.goods;
+        res.data.goods.map((value, key) => {
+          value.active = false;
+          this.goodsList.push(value);
+        });
         this.total1 = res.data.count;
         this.yearList = res.data.years;
       } else {
@@ -552,13 +756,16 @@ export default {
       }
     },
     async search(_value) {
+      var tStamp = this.$getTimeStamp();
       let data = {
         organization_id: this.$refs.head.publishInfo.organization_id,
-        publisher_id: this.$refs.head.publishInfo.publisher_id,
+        supplier_id: this.$refs.head.publishInfo.supplier_id,
         search: _value,
         page: 1,
-        page_size: 100
+        page_size: 100,
+        timestamp: tStamp,
       };
+      data.sign = this.$getSign(data);
       let res = await TOP_SEARCH(data);
       if (res.code == 0) {
         if (res.data.search == this.inputVal) {
@@ -573,30 +780,32 @@ export default {
         this.$refs.head.globalTip(1, res.message, res.code);
       }
     },
-    async addGoods(id, _item) {
+    async addGoods(id) {
+      var tStamp = this.$getTimeStamp();
       let data = {
         event_id: this.eventId,
-        goods_id: id,
+        goods_ids: id,
         year: this.popupChooseYear,
-        organization_id: this.$refs.head.publishInfo.organization_id
+        organization_id: this.$refs.head.publishInfo.organization_id,
+        timestamp: tStamp,
       };
+      data.sign = this.$getSign(data);
       let res = await EVENT_GOODS_ADD(data);
       if (res.code == 0) {
         this.$refs.head.globalTip(2, "关联成功", 0);
         this.getGoods();
-        let _obj = _item;
-        _obj.year = this.popupChooseYear;
-        _obj.connect_id = res.data.connect_id;
-        this.popupGoodsList.push(_obj);
-        // this.addConnect = false;
+        this.addConnect = false;
       } else {
         this.$refs.head.globalTip(1, res.message, res.code);
       }
     },
     async cancelGoods(type, id) {
+      var tStamp = this.$getTimeStamp();
       let data = {
-        connect_id: type == 1 ? this.readInfo.id : id
+        connect_id: type == 1 ? this.readInfo.id : id,
+        timestamp: tStamp,
       };
+      data.sign = this.$getSign(data);
       let res = await EVENT_GOODS_DELETE(data);
       if (res.code == 0) {
         this.$refs.head.globalTip(2, "取消关联成功", 0);
@@ -604,21 +813,21 @@ export default {
         if (type == 1) {
           this.connectDesc = false;
         } else {
-          this.popupGoodsList = this.popupGoodsList.filter((value, key) => {
-            return id != value.connect_id;
-          });
         }
       } else {
         this.$refs.head.globalTip(1, res.message, res.code);
       }
     },
     async getVersionData() {
+      var tStamp = this.$getTimeStamp();
       let data = {
         organization_id: this.$refs.head.publishInfo.organization_id,
         event_id: this.eventId,
         page: this.page2,
-        page_size: this.pageSize
+        page_size: this.pageSize,
+        timestamp: tStamp,
       };
+      data.sign = this.$getSign(data);
       let res = await EVENT_VERSION_LISTS(data);
       if (res.code == 0) {
         this.goodsPower = true;
@@ -634,12 +843,15 @@ export default {
       }
     },
     async addVersion() {
+      var tStamp = this.$getTimeStamp();
       let data = {
         event_id: this.eventId,
         year: this.versionInfo.year,
         version_date: this.versionInfo.date,
-        remark: this.versionInfo.desc
+        remark: this.versionInfo.desc,
+        timestamp: tStamp,
       };
+      data.sign = this.$getSign(data);
       let res = await EVENT_VERSION_ADD(data);
       if (res.code == 0) {
         this.$refs.head.globalTip(2, "添加版本成功", 0);
@@ -650,11 +862,14 @@ export default {
       }
     },
     async updateVersion() {
+      var tStamp = this.$getTimeStamp();
       let data = {
         version_id: this.versionInfo.id,
         version_date: this.versionInfo.date,
-        remark: this.versionInfo.desc
+        remark: this.versionInfo.desc,
+        timestamp: tStamp,
       };
+      data.sign = this.$getSign(data);
       let res = await EVENT_VERSION_UPDATE(data);
       if (res.code == 0) {
         this.$refs.head.globalTip(2, "编辑成功", 0);
@@ -665,9 +880,12 @@ export default {
       }
     },
     async deleteVersion(id) {
+      var tStamp = this.$getTimeStamp();
       let data = {
-        version_id: id
+        version_id: id,
+        timestamp: tStamp,
       };
+      data.sign = this.$getSign(data);
       let res = await EVENT_VERSION_DELETE(data);
       if (res.code == 0) {
         this.$refs.head.globalTip(2, "删除成功", 0);
@@ -675,6 +893,30 @@ export default {
       } else {
         this.$refs.head.globalTip(1, res.message, res.code);
       }
+    },
+    openAuthor(item, index) {
+      this.goodsList = this.goodsList.map((value, key) => {
+        if (index == key) {
+          value.active = true;
+        } else {
+          value.active = false;
+        }
+        return value;
+      });
+    },
+    toAuthor(aitem, aindex) {
+      this.$router.push({
+        name: "authordetail",
+        query: {
+          author_id: aitem.author_id,
+        },
+      });
+    },
+    bodyClick() {
+      this.goodsList = this.goodsList.map((value, key) => {
+        value.active = false;
+        return value;
+      });
     },
     callback(key) {
       this.tabKey = key;
@@ -685,7 +927,7 @@ export default {
         this.publisherId = 0;
       } else if (type == 2) {
         this.publishType = "仅看本社";
-        this.publisherId = this.$refs.head.publishInfo.publisher_id;
+        this.publisherId = this.$refs.head.publishInfo.supplier_id;
       }
       this.page1 = 1;
       this.getGoods();
@@ -723,9 +965,9 @@ export default {
       this.$confirm({
         title: "确认取消品种关联",
         content:
-          "确认取消{" +
+          "确认取消《" +
           _this.readInfo.goodsName +
-          "}与{" +
+          "》与{" +
           _this.readInfo.eventName +
           "}的关联吗？确定后将会立即删除关联关系。",
         okText: "删除",
@@ -734,14 +976,46 @@ export default {
         onOk() {
           _this.cancelGoods(1, _this.readInfo.id);
         },
-        onCancel() {}
+        onCancel() {},
+      });
+    },
+    deleteConnect(item, index) {
+      var _this = this;
+      this.$confirm({
+        title: "确认取消品种关联",
+        content:
+          "确认取消《" +
+          item.goods_name +
+          "》与{" +
+          item.title +
+          "}的关联吗？确定后将会立即删除关联关系。",
+        okText: "删除",
+        cancelText: "取消",
+        okType: "danger",
+        onOk() {
+          _this.cancelGoods(2, item.connect_id);
+        },
+        onCancel() {},
       });
     },
     listCancel(gitem, gindex) {
-      this.cancelGoods(2, gitem.connect_id);
+      this.popupGoodsList = this.popupGoodsList.filter((value, key) => {
+        return gitem.goods_id != value.goods_id;
+      });
+      // this.cancelGoods(2, gitem.connect_id);
     },
     addhandle() {
-      this.addConnect = false;
+      if (this.popupChooseYear == 0) {
+        this.$refs.head.globalTip(1, "请选择关联年份", 0);
+        return;
+      }
+      let _ids = [];
+      this.popupGoodsList.map((value, key) => {
+        _ids.push(value.goods_id);
+      });
+      _ids = _ids.join(",");
+      this.addGoods(_ids);
+      // this.addConnect = false;
     },
     toAdd() {
       this.popupChooseYear = 0;
@@ -751,7 +1025,7 @@ export default {
     },
     inputClick() {},
     inputSearch() {
-      console.log(111);
+      // console.log(111);
       this.dataSource = [];
       if (this.inputVal.length > 0) {
         this.showResult = true;
@@ -763,13 +1037,27 @@ export default {
       }
     },
     selected(item1, index1) {
-      console.log(222);
+      // console.log(111);
+      let _check = 0;
       if (this.popupChooseYear == 0) {
         this.$refs.head.globalTip(1, "请选择关联年份", 0);
         return;
       }
-      this.addGoods(item1.goods_id, item1);
-      this.showResult = false;
+      this.popupGoodsList.map((value, key) => {
+        // console.log(item1.goods_id,value.goods_id);
+        if (item1.goods_id == value.goods_id) {
+          _check++;
+        }
+      });
+      if (_check) {
+        this.$refs.head.globalTip(1, "请勿重复选择", 0);
+      } else {
+        let _obj = item1;
+        _obj.year = this.popupChooseYear;
+        this.popupGoodsList.push(_obj);
+        // this.addGoods(item1.goods_id, item1);
+        this.showResult = false;
+      }
     },
     searchclose() {
       this.showResult = false;
@@ -826,7 +1114,7 @@ export default {
         onOk() {
           _this.deleteVersion(item.version_id);
         },
-        onCancel() {}
+        onCancel() {},
       });
     },
     onChange(date, dateString) {
@@ -837,6 +1125,7 @@ export default {
         dateString.split("-")[1] + "-" + dateString.split("-")[2];
     },
     publisherChange() {
+      this.isLoading = true;
       if (this.$refs.head.accountInfo.type == 1) {
         this.operatPower = 1;
       } else {
@@ -851,7 +1140,7 @@ export default {
       this.getData();
       this.getGoods();
       this.getVersionData();
-    }
-  }
+    },
+  },
 };
 </script>

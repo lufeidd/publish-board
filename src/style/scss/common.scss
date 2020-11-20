@@ -54,6 +54,11 @@ img{
   object-fit: contain;
   // background-color: #A1A1A1;
 }
+.uploadPackage{
+  input{
+    cursor: pointer;
+  }
+}
 // 底部版权
 .copyright{
   text-align: center;
@@ -148,6 +153,10 @@ img{
 .data-font {
   font-size: $fontSize + 10;
   color: $fontColor1;
+  & .small{
+    font-size: $fontSize - 2;
+    font-weight: normal;
+  }
 }
 
 // 主体内容模块
@@ -183,7 +192,7 @@ img{
 }
 // 无图片背景
 .no-pic{
-  background-color: $fontColor2;
+  background-color: $themeColor20;
   display: inline-block;
   vertical-align: middle;
 }
@@ -294,7 +303,7 @@ img{
           position: relative;
           &:hover{
             & .author-list{
-              display: block;
+              // display: block;
             }
           }
           & .author-name{
@@ -302,10 +311,10 @@ img{
           }
           & .author-list{
             position: absolute;
-            display: none;
+            // display: none;
             box-shadow:0 0 10px rgba(0, 0, 0, .15);
             background-color: $clf;
-            z-index: 99;
+            z-index: 9;
             & .author-item{
               padding: 0 15px;
               // min-width: 240px;
@@ -365,6 +374,42 @@ img{
 
 /*******组件******/
 // 按钮
+.ant-btn{
+  color: $themeColor80 !important;
+  border-color: $themeColor20 !important;
+  font-size: $fontSize - 2 !important;
+  &:hover{
+    border-color: $themeColor60 !important;
+  }
+}
+.ant-btn-primary {
+  background-color: $themeColor80 !important;
+  border-color: $themeColor80 !important;
+  font-weight: normal !important;
+  color: $clf !important;
+  font-size: $fontSize - 2 !important;
+
+  &:hover {
+    background-color: $themeColor60 !important;
+    border-color: $themeColor60 !important;
+  }
+}
+.ant-btn-default{
+  color: $fontColor2 !important;
+  border-color: $themeColor20 !important;
+  font-size: $fontSize - 2 !important;
+  &:hover{
+    border-color: $themeColor100 !important;
+  }
+}
+.ant-btn-danger{
+  color: $clf !important;
+  border-color: $red !important;
+  font-size: $fontSize - 2 !important;
+  &:hover{
+    border-color: $red !important;
+  }
+}
 .modelNoPower {
   .ant-btn-primary {
     background-color: $themeColor5 !important;
@@ -380,76 +425,9 @@ img{
   }
 }
 
-.ant-btn-primary {
-  background-color: $themeColor80 !important;
-  border-color: $themeColor80 !important;
-  font-weight: normal !important;
-  font-size: $fontSize - 2 !important;
-
-  &:hover {
-    background-color: $themeColor60 !important;
-  }
-}
-.ant-btn-default{
-  color: $fontColor2 !important;
-  border-color: $themeColor20 !important;
-  font-size: $fontSize - 2 !important;
-  &:hover{
-    border-color: $themeColor100 !important;
-  }
-}
-
-// 周月年时间选择
-.time-choose{
-  & .time-text{
-    font-size: $fontSize - 2;
-  }
-  & .time-picker {
-    position: relative;
-    display: inline-block;
-    // cursor: pointer;
-    margin-left: 10px;
-
-    & .picker {
-      display: inline-block;
-      width: 32px;
-      height: 32px;
-      line-height: 32px;
-      color: $themeColor80;
-      box-sizing: border-box;
-      border: 1px solid $themeColor80;
-      border-radius: 5px;
-      text-align: center;
-      cursor: pointer;
-      font-size: $fontSize - 2;
-
-      &.active {
-        background-color: $themeColor80;
-        color: $clf;
-      }
-      &.disabled{
-        cursor: not-allowed;
-        border-color: $themeColor20;
-        color: $themeColor20;
-      }
-    }
-
-    & .week {
-      width: 32px;
-      position: absolute;
-      top: 0;
-      left: 0;
-      opacity: 0;
-      cursor: pointer;
-      & .ant-input{
-        cursor: pointer;
-      }
-    }
-  }
-}
 
 // 输入框
-#organizePage,#paramPage,#functionPage,#taopuPage,#competePage {
+#organizePage,#paramPage,#functionPage,#taopuPage,#competePage,#eventPage {
   & .content.user {
     & .ant-input {
       padding-left: 100px;
@@ -491,7 +469,13 @@ img{
     color: $fontColor2 !important;
   }
 }
-
+.time-choose{
+  & .week{
+    & .ant-input{
+      cursor: pointer !important;
+    }
+  }
+}
 // 单选
 .ant-radio-group-small {
   & .ant-radio-wrapper {

@@ -1,6 +1,11 @@
 <template>
-  <div id="detailPage" @click="show1 = false,showYear = false">
-    <HeadNav type="publish" ref="head" :show="1" @publisherChange="publisherChange()"></HeadNav>
+  <div id="detailPage" @click="show1 = false;if(tabKey == '1') {$refs.time.showYear = false}">
+    <HeadNav
+      type="publish"
+      ref="head"
+      :show="1"
+      @publisherChange="publisherChange()"
+    ></HeadNav>
     <div class="wd-1220">
       <div class="clearfix">
         <div class="float-left">
@@ -15,43 +20,61 @@
                   <img
                     :src="goodsInfo.cover_pic"
                     alt
-                    width="175px"
-                    height="175px"
+                    width="200px"
+                    height="200px"
                     v-if="goodsInfo.cover_pic"
                   />
-                  <span v-else class="no-pic" style="min-width:175px;min-height:175px;"></span>
+                  <span
+                    v-else
+                    class="no-pic"
+                    style="
+                      min-width: 200px;
+                      min-height: 200px;
+                      vertical-align: top;
+                    "
+                  ></span>
                   <div class="goods-desc">
-                    <div class="title">{{goodsInfo.title}}</div>
+                    <div class="title">{{ goodsInfo.title }}</div>
                     <div class="isbn">
                       <span>ISBN</span>
-                      <span class="value">{{goodsInfo.isbn}}</span>
+                      <span class="value">{{ goodsInfo.isbn }}</span>
                     </div>
                     <div class="money">
                       <span>定价</span>
-                      <span class="value">￥{{goodsInfo.fixed_price.toFixed(2)}}</span>
+                      <span class="value"
+                        >￥{{ goodsInfo.fixed_price.toFixed(2) }}</span
+                      >
                     </div>
                     <div class="author">
                       <span>作者</span>
-                      <span class="value">{{goodsInfo.author}}</span>
+                      <span class="value" :title="goodsInfo.author">{{ goodsInfo.author }}</span>
                     </div>
                     <div class="publish">
                       <span>出版社</span>
-                      <span class="value">{{goodsInfo.publisher_short}}</span>
+                      <span class="value">{{ goodsInfo.publisher_short }}</span>
+                    </div>
+                    <div class="publish-time">
+                      <span>出版时间</span>
+                      <span class="value">{{ goodsInfo.publish_date }}</span>
                     </div>
                     <div class="cate">
                       <span>类目</span>
-                      <span
-                        class="value"
-                      >{{goodsInfo.cate_node_2}} ＞ {{goodsInfo.cate_node_3}} ＞ {{goodsInfo.cate_node_4}}</span>
+                      <span class="value">
+                        <span v-if="goodsInfo.cate_node_2">{{ goodsInfo.cate_node_2 }}</span>
+                        <span v-if="goodsInfo.cate_node_3">＞
+                        {{ goodsInfo.cate_node_3 }}</span>
+                        <span v-if="goodsInfo.cate_node_4"> ＞
+                        {{ goodsInfo.cate_node_4 }}</span>
+                      </span>
                     </div>
                   </div>
                   <!-- 雷达图 -->
-                  <div class="radarMap" style="width:400px;">
+                  <div class="radarMap" style="width: 400px">
                     <div id="radar"></div>
                   </div>
                 </div>
-                <div style="height:240px;position:relative;" v-else>
-                  <ModelNoPower type="noPower"></ModelNoPower>
+                <div style="height: 240px; position: relative" v-else>
+                  <ModelNoPower type="noPower" :id="goodsDetailPowerID" :organizeId="$refs.head.publishInfo.organization_id"></ModelNoPower>
                 </div>
                 <!-- 标签页 -->
                 <div class="tabs">
@@ -69,57 +92,7 @@
               <div class="model-bg choose clearfix" v-if="salePower">
                 <div class></div>
                 <div class="float-right">
-                  <div class="time-choose">
-                    <span class="time-text">统计时间 {{dateText}}</span>
-                    <span class="time-picker">
-                      <span :class="dateType == 2?'picker active':'picker'">周</span>
-                      <a-week-picker
-                        class="week"
-                        :allowClear="false"
-                        placeholder="Select Week"
-                        @change="weekChange"
-                        :disabledDate="disabledEndDate"
-                        :value="chooseWeek"
-                      />
-                    </span>
-                    <span class="time-picker">
-                      <span :class="dateType == 3?'picker active':'picker'">月</span>
-                      <a-month-picker
-                        class="week"
-                        :allowClear="false"
-                        @change="monthChange"
-                        placeholder="Select month"
-                        :value="chooseMonth"
-                        :disabledDate="disabledEndDate"
-                      />
-                    </span>
-                    <span class="time-picker">
-                      <span :class="dateType == 4?'picker active':'picker'">年</span>
-                      <span @click.stop="showYear = true">
-                        <a-date-picker
-                          class="week"
-                          :allowClear="false"
-                          mode="year"
-                          format="YYYY"
-                          :open="showYear"
-                          @panelChange="yearChange($event)"
-                          :value="chooseYear"
-                          :disabledDate="disabledEndDate"
-                          inputReadOnly
-                        />
-                      </span>
-                    </span>
-                    <span class="time-picker">
-                      <span :class="canSub?'picker':'picker disabled'" @click="subLeft">
-                        <a-icon type="left" />
-                      </span>
-                    </span>
-                    <span class="time-picker">
-                      <span :class="canAdd?'picker':'picker disabled'" @click="addRight">
-                        <a-icon type="right" />
-                      </span>
-                    </span>
-                  </div>
+                  <TimeChoose ref="time" @changeTime="changeTime"></TimeChoose>
                 </div>
               </div>
             </div>
@@ -161,166 +134,248 @@
                   <div class="clearfix">
                     <!-- 销售点数 -->
                     <span
-                      :class="typeText == 'sale_total'?'data-block float-left active':'data-block float-left'"
+                      :class="
+                        typeText == 'sale_total'
+                          ? 'data-block float-left active'
+                          : 'data-block float-left'
+                      "
                       @click="coreTypeChange('sale_total')"
                     >
                       <div>
                         <a-icon type="line-chart" />
                         <span class="secondary-font">销售点数</span>
                       </div>
-                      <div class="data-font">{{sale_total_info.now}}</div>
-                      <div class="clearfix compare" style="width:160px;">
-                        <div class="float-left" v-if="dateType == 2">上周对比</div>
-                        <div class="float-left" v-if="dateType == 3">上月对比</div>
-                        <div class="float-left" v-if="dateType == 4">上年对比</div>
+                      <div class="data-font">{{ sale_total_info.now }}</div>
+                      <div class="clearfix compare" style="width: 160px">
+                        <div class="float-left" v-if="dateType == 2">
+                          上周对比
+                        </div>
+                        <div class="float-left" v-if="dateType == 3">
+                          上月对比
+                        </div>
+                        <div class="float-left" v-if="dateType == 4">
+                          上年对比
+                        </div>
                         <div
                           class="float-right up-number"
                           v-if="sale_total_info.pre_compare > 0"
-                        >{{sale_total_info.pre_compare}}% ↑</div>
+                        >
+                          {{ sale_total_info.pre_compare }}% ↑
+                        </div>
                         <div
                           class="float-right down-number"
                           v-if="sale_total_info.pre_compare < 0"
-                        >{{sale_total_info.pre_compare}}% ↓</div>
+                        >
+                          {{ sale_total_info.pre_compare*-1 }}% ↓
+                        </div>
                         <div
                           class="float-right down-number"
                           v-if="sale_total_info.pre_compare == 0"
-                        >{{sale_total_info.pre_compare}}</div>
+                        >
+                          {{ sale_total_info.pre_compare }}
+                        </div>
                         <div
                           class="float-right down-number"
                           v-if="sale_total_info.pre_compare == '--'"
-                        >{{sale_total_info.pre_compare}}</div>
+                        >
+                          {{ sale_total_info.pre_compare }}
+                        </div>
                       </div>
-                      <div class="clearfix compare" style="width:160px;">
+                      <div class="clearfix compare" style="width: 160px">
                         <div class="float-left">上年同期</div>
                         <div
                           class="float-right up-number"
                           v-if="sale_total_info.last_compare > 0"
-                        >{{sale_total_info.last_compare}}% ↑</div>
+                        >
+                          {{ sale_total_info.last_compare }}% ↑
+                        </div>
                         <div
                           class="float-right down-number"
                           v-if="sale_total_info.last_compare < 0"
-                        >{{sale_total_info.last_compare}}% ↓</div>
+                        >
+                          {{ sale_total_info.last_compare*-1 }}% ↓
+                        </div>
                         <div
                           class="float-right down-number"
                           v-if="sale_total_info.last_compare == 0"
-                        >{{sale_total_info.last_compare}}</div>
+                        >
+                          {{ sale_total_info.last_compare }}
+                        </div>
                         <div
                           class="float-right down-number"
                           v-if="sale_total_info.last_compare == '--'"
-                        >{{sale_total_info.last_compare}}</div>
+                        >
+                          {{ sale_total_info.last_compare }}
+                        </div>
                       </div>
                     </span>
                     <!-- 销售排名 -->
                     <span
-                      :class="typeText == 'sale_rank'?'data-block float-left active':'data-block float-left'"
+                      :class="
+                        typeText == 'sale_rank'
+                          ? 'data-block float-left active'
+                          : 'data-block float-left'
+                      "
                       @click="coreTypeChange('sale_rank')"
                     >
                       <div>
                         <a-icon type="line-chart" />
                         <span class="secondary-font">行业排名</span>
                       </div>
-                      <div class="data-font">{{sale_rank_info.now}}</div>
-                      <div class="clearfix compare" style="width:160px;">
-                        <div class="float-left" v-if="dateType == 2">上周对比</div>
-                        <div class="float-left" v-if="dateType == 3">上月对比</div>
-                        <div class="float-left" v-if="dateType == 4">上年对比</div>
+                      <div class="data-font">{{ sale_rank_info.now }}</div>
+                      <div class="clearfix compare" style="width: 160px">
+                        <div class="float-left" v-if="dateType == 2">
+                          上周对比
+                        </div>
+                        <div class="float-left" v-if="dateType == 3">
+                          上月对比
+                        </div>
+                        <div class="float-left" v-if="dateType == 4">
+                          上年对比
+                        </div>
                         <div
                           class="float-right down-number"
                           v-if="sale_rank_info.pre_compare > 0"
-                        >{{sale_rank_info.pre_compare}} ↓</div>
+                        >
+                          {{ sale_rank_info.pre_compare }} ↓
+                        </div>
                         <div
                           class="float-right up-number"
                           v-if="sale_rank_info.pre_compare < 0"
-                        >{{sale_rank_info.pre_compare*-1}} ↑</div>
+                        >
+                          {{ sale_rank_info.pre_compare * -1 }} ↑
+                        </div>
                         <div
                           class="float-right down-number"
                           v-if="sale_rank_info.pre_compare == 0"
-                        >{{sale_rank_info.pre_compare}}</div>
+                        >
+                          {{ sale_rank_info.pre_compare }}
+                        </div>
                         <div
                           class="float-right down-number"
                           v-if="sale_rank_info.pre_compare == '--'"
-                        >{{sale_rank_info.pre_compare}}</div>
+                        >
+                          {{ sale_rank_info.pre_compare }}
+                        </div>
                       </div>
-                      <div class="clearfix compare" style="width:160px;">
+                      <div class="clearfix compare" style="width: 160px">
                         <div class="float-left">上年同期</div>
                         <div
                           class="float-right down-number"
                           v-if="sale_rank_info.last_compare > 0"
-                        >{{sale_rank_info.last_compare}} ↓</div>
+                        >
+                          {{ sale_rank_info.last_compare }} ↓
+                        </div>
                         <div
                           class="float-right up-number"
                           v-if="sale_rank_info.last_compare < 0"
-                        >{{sale_rank_info.last_compare}} ↑</div>
+                        >
+                          {{ sale_rank_info.last_compare * -1 }} ↑
+                        </div>
                         <div
                           class="float-right down-number"
                           v-if="sale_rank_info.last_compare == 0"
-                        >{{sale_rank_info.last_compare}}</div>
+                        >
+                          {{ sale_rank_info.last_compare }}
+                        </div>
                         <div
                           class="float-right down-number"
                           v-if="sale_rank_info.last_compare == '--'"
-                        >{{sale_rank_info.last_compare}}</div>
+                        >
+                          {{ sale_rank_info.last_compare }}
+                        </div>
                       </div>
                     </span>
                     <!-- 市场占有率 -->
                     <span
-                      :class="typeText == 'sale_ratio'?'data-block float-left active':'data-block float-left'"
+                      :class="
+                        typeText == 'sale_ratio'
+                          ? 'data-block float-left active'
+                          : 'data-block float-left'
+                      "
                       @click="coreTypeChange('sale_ratio')"
                     >
                       <div>
                         <a-icon type="line-chart" />
                         <span class="secondary-font">类目排名</span>
                       </div>
-                      <div class="data-font">{{sale_cate_rank_info.now}}</div>
-                      <div class="clearfix compare" style="width:160px;">
-                        <div class="float-left" v-if="dateType == 2">上周对比</div>
-                        <div class="float-left" v-if="dateType == 3">上月对比</div>
-                        <div class="float-left" v-if="dateType == 4">上年对比</div>
+                      <div class="data-font">{{ sale_cate_rank_info.now }}</div>
+                      <div class="clearfix compare" style="width: 160px">
+                        <div class="float-left" v-if="dateType == 2">
+                          上周对比
+                        </div>
+                        <div class="float-left" v-if="dateType == 3">
+                          上月对比
+                        </div>
+                        <div class="float-left" v-if="dateType == 4">
+                          上年对比
+                        </div>
                         <div
                           class="float-right up-number"
                           v-if="sale_cate_rank_info.pre_compare > 0"
-                        >{{sale_cate_rank_info.pre_compare}} ↓</div>
+                        >
+                          {{ sale_cate_rank_info.pre_compare }} ↓
+                        </div>
                         <div
                           class="float-right down-number"
                           v-if="sale_cate_rank_info.pre_compare < 0"
-                        >{{sale_cate_rank_info.pre_compare*-1}} ↑</div>
+                        >
+                          {{ sale_cate_rank_info.pre_compare * -1 }} ↑
+                        </div>
                         <div
                           class="float-right down-number"
                           v-if="sale_cate_rank_info.pre_compare == 0"
-                        >{{sale_cate_rank_info.pre_compare}}</div>
+                        >
+                          {{ sale_cate_rank_info.pre_compare }}
+                        </div>
                         <div
                           class="float-right down-number"
                           v-if="sale_cate_rank_info.pre_compare == '--'"
-                        >{{sale_cate_rank_info.pre_compare}}</div>
+                        >
+                          {{ sale_cate_rank_info.pre_compare }}
+                        </div>
                       </div>
-                      <div class="clearfix compare" style="width:160px;">
+                      <div class="clearfix compare" style="width: 160px">
                         <div class="float-left">上年同期</div>
                         <div
                           class="float-right up-number"
                           v-if="sale_cate_rank_info.last_compare > 0"
-                        >{{sale_cate_rank_info.last_compare}} ↑</div>
+                        >
+                          {{ sale_cate_rank_info.last_compare }} ↑
+                        </div>
                         <div
                           class="float-right down-number"
                           v-if="sale_cate_rank_info.last_compare < 0"
-                        >{{sale_cate_rank_info.last_compare}} ↓</div>
+                        >
+                          {{ sale_cate_rank_info.last_compare * -1 }} ↓
+                        </div>
                         <div
                           class="float-right down-number"
                           v-if="sale_cate_rank_info.last_compare == 0"
-                        >{{sale_cate_rank_info.last_compare}}</div>
+                        >
+                          {{ sale_cate_rank_info.last_compare }}
+                        </div>
                         <div
                           class="float-right down-number"
                           v-if="sale_cate_rank_info.last_compare == '--'"
-                        >{{sale_cate_rank_info.last_compare}}</div>
+                        >
+                          {{ sale_cate_rank_info.last_compare }}
+                        </div>
                       </div>
                     </span>
                   </div>
                   <!-- 折线图 -->
-                  <div style="margin-top:20px;">
+                  <div style="margin-top: 20px">
                     <div id="broken-line1"></div>
                   </div>
                 </div>
               </div>
-              <div class="model-bg" style="height:450px;position:relative;" v-else>
-                <ModelNoPower type="noPower"></ModelNoPower>
+              <div
+                class="model-bg"
+                style="height: 450px; position: relative"
+                v-else
+              >
+                <ModelNoPower type="noPower" :id="salePowerID" :organizeId="$refs.head.publishInfo.organization_id"></ModelNoPower>
               </div>
             </div>
             <!-- 生命周期走势 -->
@@ -334,30 +389,48 @@
                         <a-icon type="line-chart" />
                         <span class="secondary-font">品种类型</span>
                       </div>
-                      <div class="data-font" v-if="sale_type == 1">新品品种</div>
-                      <div class="data-font" v-else-if="sale_type == 2">畅销品种</div>
-                      <div class="data-font" v-else-if="sale_type == 3">常销品种</div>
-                      <div class="data-font" v-else-if="sale_type == 4">一般品种</div>
-                      <div class="data-font" v-else-if="sale_type == 5">滞销品种</div>
+                      <div class="data-font" v-if="sale_type == 1">
+                        新品品种
+                      </div>
+                      <div class="data-font" v-else-if="sale_type == 2">
+                        畅销品种
+                      </div>
+                      <div class="data-font" v-else-if="sale_type == 3">
+                        常销品种
+                      </div>
+                      <div class="data-font" v-else-if="sale_type == 4">
+                        一般品种
+                      </div>
+                      <div class="data-font" v-else-if="sale_type == 5">
+                        滞销品种
+                      </div>
                       <div class="data-font" v-else>--</div>
                     </span>
                     <span class="data-block">
                       <div>
                         <a-icon type="line-chart" />
-                        <span class="secondary-font">上市时间</span>
+                        <span class="secondary-font">上市日期</span>
                       </div>
-                      <div class="data-font">{{publish_duration}}个月</div>
+                      <div class="data-font">
+                        {{goodsInfo.publish_date}}
+                        <span class="small" v-if="publish_duration > 0">({{ publish_duration }}个月)</span>
+                        <span class="small" v-else>(预售中)</span>
+                      </div>
                     </span>
                   </div>
                   <div class="float-right">
                     <div
-                      :class="close1?'set-compare active':'set-compare'"
+                      :class="close1 ? 'set-compare active' : 'set-compare'"
                       @click.stop="show1 = true"
                     >
-                      <div class="names">{{text1}}</div>
-                      <a-icon type="close" v-if="close1" @click.stop="delete1" />
+                      <div class="names">{{ text1 }}</div>
+                      <a-icon
+                        type="close"
+                        v-if="close1"
+                        @click.stop="delete1"
+                      />
                       <div class="search" v-if="show1">
-                        <div style="padding:0 10px;">
+                        <div style="padding: 0 10px">
                           <a-input
                             placeholder="搜索品种名称、ISBN"
                             v-model="inputVal1"
@@ -367,9 +440,9 @@
                         <div class="list">
                           <div
                             class="content"
-                            v-for="(item1,index1) in goodshList1"
+                            v-for="(item1, index1) in goodshList1"
                             :key="index1"
-                            @click.stop="onSelect1(item1,index1)"
+                            @click.stop="onSelect1(item1, index1)"
                           >
                             <img
                               :src="item1.cover_pic"
@@ -378,11 +451,20 @@
                               height="20px"
                               v-if="item1.cover_pic"
                             />
-                            <span v-else class="no-pic" style="min-width:20px;min-height:20px;"></span>
-                            <span class="title" :title="item1.title">{{item1.title}}</span>
+                            <span
+                              v-else
+                              class="no-pic"
+                              style="min-width: 20px; min-height: 20px"
+                            ></span>
+                            <span class="title" :title="item1.title">{{
+                              item1.title
+                            }}</span>
                           </div>
                         </div>
-                        <div style="text-align:center;margin-top:10px;" v-if="searchLoading">
+                        <div
+                          style="text-align: center; margin-top: 10px"
+                          v-if="searchLoading"
+                        >
                           <a-spin tip></a-spin>
                         </div>
                       </div>
@@ -390,13 +472,17 @@
                   </div>
                 </div>
                 <!-- 折线图 -->
-                <div style="padding:15px;">
+                <div style="padding: 15px">
                   <div id="broken-line2"></div>
                   <!-- <div id="slider"></div> -->
                 </div>
               </div>
-              <div class="model-bg" v-else style="height:450px;position:relative;">
-                <ModelNoPower type="noPower"></ModelNoPower>
+              <div
+                class="model-bg"
+                v-else
+                style="height: 450px; position: relative"
+              >
+                <ModelNoPower type="noPower" :id="lifePowerID" :organizeId="$refs.head.publishInfo.organization_id"></ModelNoPower>
               </div>
             </div>
             <!-- 读者画像 -->
@@ -406,20 +492,20 @@
                 <div class="model-container life-cycle">
                   <div class="model-bg">
                     <div class="section-title">读者概况</div>
-                    <div class="data-choose" style="padding:20px 15px;">
+                    <div class="data-choose" style="padding: 20px 15px">
                       <span class="data-block">
                         <div>
                           <a-icon type="line-chart" />
                           <span class="secondary-font">读者基数</span>
                         </div>
-                        <div class="data-font">{{readerBase}}</div>
+                        <div class="data-font">{{ readerBase }}</div>
                       </span>
                       <span class="data-block">
                         <div>
                           <a-icon type="line-chart" />
                           <span class="secondary-font">人均购买</span>
                         </div>
-                        <div class="data-font">{{readerAverage}}本</div>
+                        <div class="data-font">{{ readerAverage }}本</div>
                       </span>
                     </div>
                   </div>
@@ -430,36 +516,56 @@
                     <div class="section-title">基础特征</div>
                     <div class="feature">
                       <div class="clearfix">
-                        <div class="float-left">
+                        <div class="float-left" style="width:500px;">
                           <div>性别分布</div>
                           <div v-if="ringData1.length > 0">
-                            <div id="ring1" style="width:400px;margin-top:20px;"></div>
+                            <div
+                              id="ring1"
+                              style="width: 400px; margin-top: 20px"
+                            ></div>
                           </div>
-                          <div style="width:400px;" v-else>
-                            <div class="no-data">基础数据不足，暂无分析</div>
+                          <div style="width: 500px" v-else>
+                            <div class="no-data">数据量较小，暂不支持分析</div>
                           </div>
-                          <div style="margin-top:20px;">消费能力</div>
+                          <div style="margin-top: 20px">消费能力</div>
                           <div v-if="ringData2.length > 0">
-                            <div id="ring2" style="width:400px;margin-top:20px;"></div>
+                            <div
+                              id="ring2"
+                              style="width: 400px; margin-top: 20px"
+                            ></div>
                           </div>
-                          <div style="width:400px;" v-else>
-                            <div class="no-data">基础数据不足，暂无分析</div>
+                          <div style="width: 500px" v-else>
+                            <div class="no-data">数据量较小，暂不支持分析</div>
                           </div>
                         </div>
-                        <div class="float-left" style="margin-left:100px;">
-                          <div>年龄分布</div>
+                        <div class="float-left" style="margin-left: 10px;width:500px;">
+                          <div style="margin-left:40px;">年龄分布</div>
                           <div v-if="columnData1.length > 0">
-                            <div id="column1" style="width:400px;margin-left:40px;margin-top:20px;"></div>
+                            <div
+                              id="column1"
+                              style="
+                                width: 400px;
+                                margin-left: 90px;
+                                margin-top: 20px;
+                              "
+                            ></div>
                           </div>
-                          <div style="width:400px;" v-else>
-                            <div class="no-data">基础数据不足，暂无分析</div>
+                          <div style="width: 500px;margin-left:38px;" v-else>
+                            <div class="no-data">数据量较小，暂不支持分析</div>
                           </div>
-                          <div style="margin-top:20px;">兴趣分布</div>
+                          <div style="margin-top: 20px;margin-left:40px;">兴趣分布</div>
                           <div v-if="columnData2.length > 0">
-                            <div id="column2" style="width:400px;margin-left:40px;margin-top:20px;"></div>
+                            <div
+                              id="column2"
+                              style="
+                                width: 400px;
+                                margin-left: 90px;
+                                margin-top: 20px;
+                              "
+                            ></div>
                           </div>
-                          <div style="width:400px;" v-else>
-                            <div class="no-data">基础数据不足，暂无分析</div>
+                          <div style="width: 500px;margin-left:38px;" v-else>
+                            <div class="no-data">数据量较小，暂不支持分析</div>
                           </div>
                         </div>
                       </div>
@@ -470,36 +576,49 @@
                 <div class="model-container">
                   <div class="model-bg">
                     <div class="section-title">地域</div>
-                    <div class="clearfix" style="padding-bottom:15px;" v-if="barData1.length > 4">
-                      <div class="float-left" style="position:relative;margin-top:15px;">
-                        <div id="map" style="height:284px;width:520px;"></div>
+                    <div
+                      class="clearfix"
+                      style="padding-bottom: 15px"
+                      v-if="barData1.length > 0"
+                    >
+                      <div
+                        class="float-left"
+                        style="position: relative; margin-top: 15px"
+                      >
+                        <div id="map" style="height: 284px; width: 520px"></div>
                       </div>
-                      <div class="float-left" style="width:500px;margin-left:50px;">
-                        <p style="margin-top:15px;">地域（省）</p>
+                      <div
+                        class="float-left"
+                        style="width: 500px; margin-left: 50px"
+                      >
+                        <p style="margin-top: 15px">地域（省）</p>
                         <div id="bar-chart1"></div>
                       </div>
                     </div>
-                    <div class="no-data" v-else>基础数据不足，暂无分析</div>
+                    <div class="no-data" v-else>数据量较小，暂不支持分析</div>
                   </div>
                 </div>
                 <!-- 偏好 -->
                 <div class="model-container">
                   <div class="model-bg">
                     <div class="section-title">偏好</div>
-                    <div class="clearfix" style="padding:10px 15px 15px 15px;">
-                      <div class="float-left" style="width:500px;margin-right:50px;">
+                    <div class="clearfix" style="padding: 10px 15px 15px 15px">
+                      <div
+                        class="float-left"
+                        style="width: 500px; margin-right: 45px"
+                      >
                         <p>类目偏好</p>
-                        <div v-if="barData2.length > 4">
+                        <div v-if="barData2.length > 0">
                           <div id="bar-chart2"></div>
                         </div>
-                        <div class="no-data" v-else>基础数据不足，暂无分析</div>
+                        <div class="no-data" v-else>数据量较小，暂不支持分析</div>
                       </div>
-                      <div class="float-left" style="width:500px;">
+                      <div class="float-left" style="width: 500px">
                         <p>作家偏好</p>
-                        <div v-if="barData3.length > 4">
+                        <div v-if="barData3.length > 0">
                           <div id="bar-chart3"></div>
                         </div>
-                        <div class="no-data" v-else>基础数据不足，暂无分析</div>
+                        <div class="no-data" v-else>数据量较小，暂不支持分析</div>
                       </div>
                     </div>
                   </div>
@@ -507,8 +626,11 @@
               </div>
               <div v-else>
                 <div class="model-container">
-                  <div class="model-bg" style="height:450px;position:relative;">
-                    <ModelNoPower type="noPower"></ModelNoPower>
+                  <div
+                    class="model-bg"
+                    style="height: 450px; position: relative"
+                  >
+                    <ModelNoPower type="noPower" :id="readerPowerID" :organizeId="$refs.head.publishInfo.organization_id"></ModelNoPower>
                   </div>
                 </div>
               </div>
@@ -516,24 +638,24 @@
             <!-- 详细介绍 -->
             <div v-if="tabKey == '4'">
               <div class="model-container">
-                <div class="model-bg" style="min-height:312px;">
+                <div class="model-bg" style="min-height: 312px">
                   <div class="section-title">出版信息</div>
                   <div class="detail-desc">
                     <div class="content">
                       <span class="title">出版社</span>
-                      <span class="desc">{{goodsInfo.publisher_short}}</span>
+                      <span class="desc">{{ goodsInfo.publisher_short }}</span>
                     </div>
                     <div class="content">
                       <span class="title">ISBN</span>
-                      <span class="desc">{{goodsInfo.isbn}}</span>
+                      <span class="desc">{{ goodsInfo.isbn }}</span>
                     </div>
                     <div class="content">
                       <span class="title">作者</span>
-                      <span class="desc">{{goodsInfo.author}}</span>
+                      <span class="desc">{{ goodsInfo.author }}</span>
                     </div>
                     <div class="content">
                       <span class="title">出版日期</span>
-                      <span class="desc">{{goodsInfo.publish_date}}</span>
+                      <span class="desc">{{ goodsInfo.publish_date }}</span>
                     </div>
                     <div class="content">
                       <span class="title">包装</span>
@@ -545,7 +667,7 @@
                     </div>
                     <div class="content">
                       <span class="title">开本</span>
-                      <span class="desc">{{goodsInfo.format}}</span>
+                      <span class="desc">{{ goodsInfo.format }}</span>
                     </div>
                     <div class="content">
                       <span class="title">字数</span>
@@ -559,7 +681,7 @@
         </div>
       </div>
     </div>
-    <Loading ref="load" :show="1"></Loading>
+    <Loading ref="load" :show="1" :isLoading="isLoading"></Loading>
   </div>
 </template>
 <style scoped lang="scss" src="@/style/scss/pages/publish/detail.scss"></style>
@@ -580,7 +702,7 @@ import {
   TOP_GOODS_HISTORYCHART,
   TOP_GOODS_HISTORY,
   TOP_SEARCH,
-  TOP_GOODS_READER_BASE
+  TOP_GOODS_READER_BASE,
 } from "../../apis/publish.js";
 export default {
   data() {
@@ -589,13 +711,17 @@ export default {
       salePower: true,
       lifePower: true,
       readerPower: true,
-      isOwnPublish: true,
+      goodsDetailPowerID: 0,
+      salePowerID: 0,
+      lifePowerID: 0,
+      readerPowerID: 0,
+      isOwnPublishID: 0,
       radarData: [
         { item: "综合评分", 本社: 70 },
         { item: "销售评分", 本社: 60 },
         { item: "读者评分", 本社: 50 },
         { item: "热点评分", 本社: 40 },
-        { item: "生命周期评分", 本社: 60 }
+        { item: "生命周期评分", 本社: 60 },
       ],
       brokenLineData1: [
         // { month: "01月", city: "当期", temperature: 3000 },
@@ -638,36 +764,27 @@ export default {
       radardv: null,
       radarFirst: true,
       goodsInfo: {
-        fixed_price: 0
+        fixed_price: 0,
       },
-      showYear: false,
-      chooseWeek: null,
-      chooseMonth: null,
-      chooseYear: null,
-      dateText: "",
       dateType: 2,
-      cycle: "",
-      oneDay: "",
-      canSub: true,
-      canAdd: false,
       typeText: "sale_total",
       sale_total_info: {
         // 销售点数
         now: 0, // 现在
         pre_compare: 0, // 上一周期对比
-        last_compare: 0 // 上年同期
+        last_compare: 0, // 上年同期
       },
       sale_rank_info: {
         // 行业排名
         now: 0,
         pre_compare: 0,
-        last_compare: 0
+        last_compare: 0,
       },
       sale_cate_rank_info: {
         // 类目排名
         now: 0,
         pre_compare: 0,
-        last_compare: 0
+        last_compare: 0,
       },
       dateLifeType: 3,
       canLeft: false,
@@ -695,21 +812,16 @@ export default {
       close1: false,
       inputVal1: "",
       show1: false,
-      goodshList1: []
+      goodshList1: [],
+      isLoading:true,
     };
   },
   updated() {
-    this.$refs.load.isLoading = false;
-    this.$setSlideHeight();
+    this.isLoading = false;
   },
   mounted() {
+    this.dateType = this.$refs.time.dateType;
     this.goods_id = this.$route.query.goods_id;
-    this.cycle = this.$weekDate().weekth;
-    this.oneDay = this.$weekDate().start.replace(/-/g, "");
-    this.chooseWeek = this.$weekDate().start;
-    this.chooseMonth = this.$weekDate().start;
-    this.chooseYear = this.$weekDate().start;
-    this.dateText = this.$weekDate().start + "~" + this.$weekDate().end;
     // console.log(666,G2);
     this.getData();
     this.getCoreData();
@@ -719,21 +831,27 @@ export default {
   watch: {
     value(val) {
       // console.log("value", val);
-    }
+    },
   },
   methods: {
     // 商品基础信息
     async getData() {
+      var tStamp = this.$getTimeStamp();
       let data = {
-        publisher_id: this.$refs.head.publishInfo.publisher_id,
+        supplier_id: this.$refs.head.publishInfo.supplier_id,
         organization_id: this.$refs.head.publishInfo.organization_id,
-        goods_id: this.goods_id
+        goods_id: this.goods_id,
+        timestamp: tStamp,
       };
+      data.sign = this.$getSign(data);
       let res = await TOP_GOODS_INFO(data);
       if (res.code == 0) {
         this.goodsDetailPower = true;
         this.goodsInfo = res.data;
-        if (this.$refs.head.publishInfo.publisher_id != res.data.publisher_id) {
+        if (
+          this.$refs.head.publishInfo.supplier_id != res.data.supplier_id &&
+          this.$refs.head.accountInfo.type != 1
+        ) {
           this.isOwnPublish = false;
           this.tabKey = "4";
         } else {
@@ -773,16 +891,17 @@ export default {
               type: "fold",
               fields: ["本社"], // 展开字段集
               key: "user", // key字段
-              value: "score" // value字段
+              value: "score", // value字段
             });
             this.radarChart.changeData(this.radardv.rows);
           }, 500);
         }
         this.radarFirst = false;
-        this.$setSlideHeight();
+
       } else {
         if (res.code == 1009) {
           this.goodsDetailPower = false;
+          this.goodsDetailPowerID = res.data;
         } else {
           this.$refs.head.globalTip(1, res.message, res.code);
         }
@@ -790,14 +909,17 @@ export default {
     },
     // 获取销售走势核心数据
     async getCoreData() {
+      var tStamp = this.$getTimeStamp();
       let data = {
         organization_id: this.$refs.head.publishInfo.organization_id,
-        publisher_id: this.$refs.head.publishInfo.publisher_id,
+        supplier_id: this.$refs.head.publishInfo.supplier_id,
         goods_id: this.goods_id,
-        period: this.cycle,
-        date_type: this.dateType,
-        start_date: this.oneDay
+        period: this.$refs.time.cycle,
+        date_type: this.$refs.time.dateType,
+        start_date: this.$refs.time.oneDay,
+        timestamp: tStamp,
       };
+      data.sign = this.$getSign(data);
       let res = await TOP_GOODS_KERNELDATA(data);
       if (res.code == 0) {
         this.salePower = true;
@@ -854,7 +976,7 @@ export default {
         }
         _arr1.map((value, key) => {
           if (_arr1.length > key) this.saleRankList.push(_arr1[key]);
-          if (_arr1.length > key) this.saleRankList.push(_arr2[key]);
+          if (_arr2.length > key) this.saleRankList.push(_arr2[key]);
         });
         _arr1 = [];
         _arr2 = [];
@@ -878,27 +1000,35 @@ export default {
         }
         _arr1.map((value, key) => {
           if (_arr1.length > key) this.saleCateList.push(_arr1[key]);
-          if (_arr1.length > key) this.saleCateList.push(_arr2[key]);
+          if (_arr2.length > key) this.saleCateList.push(_arr2[key]);
         });
         _arr1 = [];
         _arr2 = [];
         this.brokenLineData1 = [];
-        this.brokenLineData1 = this.saleTotalList;
-        this.typeText = "sale_total";
-        // console.log(777, this.brokenLineData1);
+        if (this.typeText == "sale_total") {
+          this.brokenLineData1 = this.saleTotalList;
+        } else if (this.typeText == "sale_rank") {
+          this.brokenLineData1 = this.saleRankList;
+        } else if (this.typeText == "sale_ratio") {
+          this.brokenLineData1 = this.saleCateList;
+        }
+        // console.log(777, this.saleTotalList,this.saleRankList,this.saleCateList);
+        let _this = this;
         if (this.lineFirst1) {
           setTimeout(() => {
-            this.initLineData1();
+            _this.initLineData1();
           }, 500);
         } else {
           setTimeout(() => {
-            this.lineChart1.changeData(this.brokenLineData1);
+            _this.lineChart1.data(_this.brokenLineData1);
+            _this.lineChart1.render();
           }, 500);
         }
         this.lineFirst1 = false;
       } else {
         if (res.code == 1009) {
           this.salePower = false;
+          this.salePowerID = res.data;
         } else {
           this.$refs.head.globalTip(1, res.message, res.code);
         }
@@ -906,11 +1036,14 @@ export default {
     },
     // 获取生命周期数据
     async getDefault() {
+      var tStamp = this.$getTimeStamp();
       let data = {
         organization_id: this.$refs.head.publishInfo.organization_id,
-        publisher_id: this.$refs.head.publishInfo.publisher_id,
-        goods_id: this.goods_id
+        supplier_id: this.$refs.head.publishInfo.supplier_id,
+        goods_id: this.goods_id,
+        timestamp: tStamp,
       };
+      data.sign = this.$getSign(data);
       let res = await TOP_GOODS_HISTORY(data);
       if (res.code == 0) {
         this.lifePower = true;
@@ -919,18 +1052,22 @@ export default {
       } else {
         if (res.code == 1009) {
           this.lifePower = false;
+          this.lifePowerID = res.data;
         } else {
           this.$refs.head.globalTip(1, res.message, res.code);
         }
       }
     },
     async getLifeData() {
+      var tStamp = this.$getTimeStamp();
       let data = {
         organization_id: this.$refs.head.publishInfo.organization_id,
-        publisher_id: this.$refs.head.publishInfo.publisher_id,
+        supplier_id: this.$refs.head.publishInfo.supplier_id,
         goods_id: this.goods_id,
-        date_type: this.dateLifeType
+        date_type: this.dateLifeType,
+        timestamp: tStamp,
       };
+      data.sign = this.$getSign(data);
       let res = await TOP_GOODS_HISTORYCHART(data);
       if (res.code == 0) {
         this.lifePower = true;
@@ -955,22 +1092,26 @@ export default {
           }
           this.lineFirst2 = false;
         }
-        this.$setSlideHeight();
+
       } else {
         if (res.code == 1009) {
           this.lifePower = false;
+          this.lifePowerID = res.data;
         } else {
           this.$refs.head.globalTip(1, res.message, res.code);
         }
       }
     },
     async selectOther(id) {
+      var tStamp = this.$getTimeStamp();
       let data = {
         organization_id: this.$refs.head.publishInfo.organization_id,
-        publisher_id: this.$refs.head.publishInfo.publisher_id,
+        supplier_id: this.$refs.head.publishInfo.supplier_id,
         goods_id: id,
-        date_type: this.dateLifeType
+        date_type: this.dateLifeType,
+        timestamp: tStamp,
       };
+      data.sign = this.$getSign(data);
       let res = await TOP_GOODS_HISTORYCHART(data);
       if (res.code == 0) {
         this.otherGoods = [];
@@ -989,11 +1130,15 @@ export default {
     },
     // 搜索
     async search(val) {
+      var tStamp = this.$getTimeStamp();
       let data = {
         organization_id: this.$refs.head.publishInfo.organization_id,
-        publisher_id: this.$refs.head.publishInfo.publisher_id,
-        search: val
+        supplier_id: this.$refs.head.publishInfo.supplier_id,
+        search: val,
+        compete: 1,
+        timestamp: tStamp,
       };
+      data.sign = this.$getSign(data);
       let res = await TOP_SEARCH(data);
       if (res.code == 0) {
         if (res.data.search == this.inputVal1) {
@@ -1007,11 +1152,14 @@ export default {
     },
     // 读者画像
     async getReaderData() {
+      var tStamp = this.$getTimeStamp();
       let data = {
         organization_id: this.$refs.head.publishInfo.organization_id,
-        publisher_id: this.$refs.head.publishInfo.publisher_id,
-        goods_id: this.goods_id
+        supplier_id: this.$refs.head.publishInfo.supplier_id,
+        goods_id: this.goods_id,
+        timestamp: tStamp,
       };
+      data.sign = this.$getSign(data);
       let res = await TOP_GOODS_READER_BASE(data);
       if (res.code == 0) {
         this.readerPower = true;
@@ -1044,18 +1192,31 @@ export default {
           });
           let _this = this;
           setTimeout(() => {
-            if (_this.ringData1.length > 0) _this.initRing1();
-            if (_this.columnData1.length > 0) _this.initColumn1();
-            if (_this.ringData2.length > 0) _this.initRing2();
-            if (_this.columnData2.length > 0) _this.initColumn2();
-            if (_this.barData1.length > 4) _this.initMap();
-            if (_this.barData1.length > 4)
+            if (_this.ringData1.length > 0) {
+              _this.initRing1();
+            }
+            if (_this.columnData1.length > 0) {
+              _this.initColumn1();
+            }
+            if (_this.ringData2.length > 0) {
+              _this.initRing2();
+            }
+            if (_this.columnData2.length > 0) {
+              _this.initColumn2();
+            }
+            if (_this.barData1.length > 0) {
+              _this.initMap();
+            }
+            if (_this.barData1.length > 0) {
               _this.inintBar1(_this.barData1[0].value);
-            if (_this.barData2.length > 4)
+            }
+            if (_this.barData2.length > 0) {
               _this.inintBar2(_this.barData2[0].value);
-            if (_this.barData3.length > 4)
+            }
+            if (_this.barData3.length > 0) {
               _this.inintBar3(_this.barData3[0].value);
-            this.$setSlideHeight();
+            }
+
           }, 500);
         }
       } else {
@@ -1066,191 +1227,13 @@ export default {
         }
       }
     },
-    weekChange(date, dateString) {
-      // var _day = date._d.getDate();
-      const startDate = date.day(1).format("YYYY-MM-DD"); // 周一日期
-      const endDate = date.day(7).format("YYYY-MM-DD"); // 周日日期
-      if (
-        startDate <
-        this.$moment("2013-12-30")
-          .startOf("week")
-          .format("YYYY-MM-DD")
-      ) {
-        this.canAdd = true;
-      } else {
-        this.canAdd = false;
-      }
-      this.dateType = 2;
-      this.chooseWeek = startDate;
-      this.dateText = startDate + "~" + endDate;
-      this.cycle = dateString.replace(/-|周/g, "");
-      this.oneDay = startDate.replace(/-/g, "");
+    changeTime(){
+      this.dateType = this.$refs.time.dateType;
       this.getCoreData();
-      // console.log(666, startDate, endDate);
-    },
-    monthChange(date, dateString) {
-      const startDate = date
-        .month(date.month())
-        .startOf("month")
-        .format("YYYY-MM-DD");
-      const endDate = date
-        .month(date.month())
-        .endOf("month")
-        .format("YYYY-MM-DD");
-      // console.log(dateString, startDate, endDate);
-      if (
-        startDate <
-        this.$moment("2013-12-30")
-          .startOf("month")
-          .format("YYYY-MM-DD")
-      ) {
-        this.canAdd = true;
-      } else {
-        this.canAdd = false;
-      }
-      this.dateType = 3;
-      this.chooseMonth = startDate;
-      this.dateText = startDate + "~" + endDate;
-      this.cycle = dateString.replace(/-/g, "");
-      this.oneDay = startDate.replace(/-/g, "");
-      this.getCoreData();
-      // console.log(startDate, endDate);
-    },
-    yearChange(e) {
-      if (
-        e._d.getFullYear().toString() >=
-        this.$moment("2013-12-30").format("YYYY")
-      ) {
-        this.chooseYear = this.$moment("2013-12-30").format("YYYY");
-        this.canAdd = false;
-      } else {
-        this.chooseYear = e._d.getFullYear().toString();
-        this.canAdd = true;
-      }
-      this.dateType = 4;
-      this.cycle = this.chooseYear;
-      this.oneDay = this.$moment(this.chooseYear)
-        .format("YYYY-MM-DD")
-        .replace(/-/g, "");
-      this.dateText =
-        this.chooseYear + "-01-01 ~ " + this.chooseYear + "-12-31";
-      this.showYear = false;
-      this.getCoreData();
-      // console.log(this.oneDay);
-    },
-    subLeft() {
-      let _max = "";
-      if (this.dateType == 2) {
-        _max = this.$weekDate().start;
-        if (this.chooseWeek <= _max) {
-          let end = this.$moment(this.chooseWeek)
-            .week(this.$moment(this.chooseWeek).week() - 1)
-            .endOf("week")
-            .format("YYYY-MM-DD");
-          this.chooseWeek = this.$moment(this.chooseWeek)
-            .week(this.$moment(this.chooseWeek).week() - 1)
-            .startOf("week")
-            .format("YYYY-MM-DD");
-          this.cycle = (Number(this.cycle) - 1).toString();
-          this.oneDay = this.chooseWeek.replace(/-/g, "");
-          this.dateText = this.chooseWeek + "~" + end;
-          this.canAdd = true;
-        }
-      } else if (this.dateType == 3) {
-        _max = this.$moment("2013-12-30")
-          .startOf("month")
-          .format("YYYY-MM-DD");
-        if (this.chooseMonth <= _max) {
-          let end = this.$moment(this.chooseMonth)
-            .month(this.$moment(this.chooseMonth).month() - 1)
-            .endOf("month")
-            .format("YYYY-MM-DD");
-          this.chooseMonth = this.$moment(this.chooseMonth)
-            .month(this.$moment(this.chooseMonth).month() - 1)
-            .startOf("month")
-            .format("YYYY-MM-DD");
-          this.cycle = (Number(this.cycle) - 1).toString();
-          this.oneDay = this.chooseMonth.replace(/-/g, "");
-          this.dateText = this.chooseMonth + "~" + end;
-          this.canAdd = true;
-        }
-      } else if (this.dateType == 4) {
-        _max = this.$moment("2013-12-30").format("YYYY");
-        // console.log(111, this.chooseYear, _max, this.chooseYear <= _max);
-        if (this.chooseYear <= _max) {
-          this.chooseYear = (Number(this.chooseYear) - 1).toString();
-          this.cycle = (Number(this.cycle) - 1).toString();
-          this.dateText = this.cycle + "-01-01 ~ " + this.cycle + "-12-31";
-          this.oneDay = this.$moment(this.chooseYear)
-            .format("YYYY-MM-DD")
-            .replace(/-/g, "");
-          this.canAdd = true;
-        }
-      }
-      this.getCoreData();
-    },
-    addRight() {
-      if (this.canAdd) {
-        let _max = "";
-        if (this.dateType == 2) {
-          _max = this.$weekDate().start;
-          if (this.chooseWeek < _max) {
-            let end = this.$moment(this.chooseWeek)
-              .week(this.$moment(this.chooseWeek).week() + 1)
-              .endOf("week")
-              .format("YYYY-MM-DD");
-            this.chooseWeek = this.$moment(this.chooseWeek)
-              .week(this.$moment(this.chooseWeek).week() + 1)
-              .startOf("week")
-              .format("YYYY-MM-DD");
-            this.cycle = (Number(this.cycle) + 1).toString();
-            this.oneDay = this.chooseWeek.replace(/-/g, "");
-            this.dateText = this.chooseWeek + "~" + end;
-            if (this.chooseWeek >= _max) this.canAdd = false;
-          }
-        } else if (this.dateType == 3) {
-          _max = this.$moment("2013-12-30")
-            .startOf("month")
-            .format("YYYY-MM-DD");
-          if (this.chooseMonth < _max) {
-            let end = this.$moment(this.chooseMonth)
-              .month(this.$moment(this.chooseMonth).month() + 1)
-              .endOf("month")
-              .format("YYYY-MM-DD");
-            this.chooseMonth = this.$moment(this.chooseMonth)
-              .month(this.$moment(this.chooseMonth).month() + 1)
-              .startOf("month")
-              .format("YYYY-MM-DD");
-            this.cycle = (Number(this.cycle) + 1).toString();
-            this.oneDay = this.chooseMonth.replace(/-/g, "");
-            this.dateText = this.chooseMonth + "~" + end;
-            if (this.chooseMonth >= _max) this.canAdd = false;
-          }
-        } else if (this.dateType == 4) {
-          _max = this.$moment("2013-12-30").format("YYYY");
-          if (this.chooseYear < _max) {
-            this.chooseYear = (Number(this.chooseYear) + 1).toString();
-            this.cycle = (Number(this.cycle) + 1).toString();
-            this.oneDay = this.$moment(this.chooseYear)
-              .format("YYYY-MM-DD")
-              .replace(/-/g, "");
-            this.dateText = this.cycle + "-01-01 ~ " + this.cycle + "-12-31";
-            if (this.chooseYear >= _max) this.canAdd = false;
-          }
-        }
-        this.getCoreData();
-      }
-    },
-    disabledEndDate(endValue) {
-      // console.log(endValue);
-      const startValue = new Date("2013-12-30");
-      if (!endValue || !startValue) {
-        return false;
-      }
-      return startValue.valueOf() <= endValue.valueOf();
     },
     coreTypeChange(text) {
       this.typeText = text;
+      this.brokenLineData1 = [];
       if (text == "sale_total") {
         this.brokenLineData1 = this.saleTotalList;
       } else if (text == "sale_rank") {
@@ -1258,7 +1241,9 @@ export default {
       } else if (text == "sale_ratio") {
         this.brokenLineData1 = this.saleCateList;
       }
-      this.lineChart1.changeData(this.brokenLineData1);
+      // console.log(this.brokenLineData1);
+      this.lineChart1.data(this.brokenLineData1);
+      this.lineChart1.render();
     },
     lifeChange(type) {
       this.dateLifeType = type;
@@ -1289,23 +1274,23 @@ export default {
       }
       var _this = this;
       if (this.tabKey == "1") {
-        setTimeout(function() {
+        setTimeout(function () {
           _this.initLineData1();
         }, 500);
       } else if (this.tabKey == "2") {
-        setTimeout(function() {
+        setTimeout(function () {
           _this.initLineData2();
         }, 500);
       } else if (this.tabKey == "3") {
         this.getReaderData();
       }
       setTimeout(() => {
-        this.$setSlideHeight();
+
       }, 500);
       // console.log(this.tabKey);
     },
     onSelect1(item1, index1) {
-      console.log("onSelect");
+      // console.log("onSelect");
       this.show1 = false;
       this.close1 = true;
       this.inputVal1 = "";
@@ -1346,17 +1331,18 @@ export default {
           this.brokenLineData2.push(this.otherGoods[i]);
         }
       }
-      console.log(1, this.brokenLineData2);
+      // console.log(1, this.brokenLineData2);
       setTimeout(() => {
         this.lineChart2.option("slider", {
           start: 0,
           end: 1,
           data: this.brokenLineData2,
           trendCfg: {
-            isArea: false
-          }
+            isArea: false,
+          },
         });
-        this.lineChart2.changeData(this.brokenLineData2);
+        this.lineChart2.data(this.brokenLineData2);
+        this.lineChart2.render();
       }, 500);
     },
     initRadarData() {
@@ -1364,15 +1350,15 @@ export default {
       this.radardv = new DataView().source(this.radarData);
       this.radardv.transform({
         type: "fold",
-        fields: ["本社"], // 展开字段集
+        fields: ["本品"], // 展开字段集
         key: "user", // key字段
-        value: "score" // value字段
+        value: "score", // value字段
       });
       this.radarChart = new Chart({
         container: "radar",
         forceFit: false,
         autoFit: true,
-        height: 240
+        height: 240,
       });
       this.radarChart.legend(false);
       this.radarChart.data(this.radardv.rows);
@@ -1380,10 +1366,10 @@ export default {
         min: 0,
         // max: this.radarMax + 2,
         max: 10,
-        show: false
+        show: false,
       });
       this.radarChart.coordinate("polar", {
-        radius: 0.8
+        radius: 0.8,
       });
       // chart.axis(false);
       this.radarChart.axis("score", {
@@ -1394,11 +1380,11 @@ export default {
           line: {
             type: "circle",
             style: {
-              lineDash: null
-            }
+              lineDash: null,
+            },
           },
-          alternateColor: "rgba(0, 0, 0, 0)"
-        }
+          alternateColor: "rgba(0, 0, 0, 0)",
+        },
       });
       this.radarChart.tooltip({
         shared: true, // 合并数据项
@@ -1411,10 +1397,10 @@ export default {
             // crosshairs 线样式
             style: {
               stroke: "#565656",
-              lineDash: [4]
-            }
-          }
-        }
+              lineDash: [4],
+            },
+          },
+        },
       });
       this.radarChart
         .point()
@@ -1425,7 +1411,7 @@ export default {
         .style({
           stroke: "#fff",
           lineWidth: 1,
-          fillOpacity: 1
+          fillOpacity: 1,
         });
       this.radarChart
         .line()
@@ -1434,28 +1420,30 @@ export default {
         .size(2)
         .style({
           fill: "#5B8DF0",
-          fillOpacity: 0.3
+          fillOpacity: 0.3,
         });
       this.radarChart.render();
-      this.$setSlideHeight();
+
     },
     initLineData2() {
       this.lineChart2 = new Chart({
         container: "broken-line2",
         autoFit: true,
-        height: 240
+        height: 240,
       });
 
       this.lineChart2.data(this.brokenLineData2);
-      this.lineChart2.option("slider", {
-        start: 0,
-        end: 1,
-        data: this.brokenLineData2,
-        trendCfg: {
-          isArea: false
-        }
-      });
-      console.log(this.lineChart2);
+      if (this.brokenLineData2.length > 0) {
+        this.lineChart2.option("slider", {
+          start: 0,
+          end: 1,
+          data: this.brokenLineData2,
+          trendCfg: {
+            isArea: false,
+          },
+        });
+      }
+      // console.log(888,this.brokenLineData2);
       // this.sliderChart = new slider({
       //   container: 'slider',
       //   width:1000,
@@ -1468,31 +1456,45 @@ export default {
       // this.sliderChart.render();
       this.lineChart2.scale({
         month: {
-          range: [0, 1]
+          range: [0, 1],
         },
         temperature: {
           nice: true,
-          min: 0
-        }
+          min: 0,
+        },
       });
       this.lineChart2.tooltip({
         showCrosshairs: true,
-        shared: true
+        shared: true,
+      });
+      this.lineChart2.axis("month", {
+        label: {
+          formatter: (val) => {
+            return val;
+          },
+        },
+        autoHide: false | true,
       });
       this.lineChart2.axis("temperature", {
         label: {
-          formatter: val => {
+          formatter: (val) => {
             return val;
-          }
-        }
+          },
+        },
       });
       this.lineChart2.legend({
-        position: "top"
+        position: "top",
       });
       this.lineChart2
         .line()
         .position("month*temperature")
         .color("city")
+        .tooltip("city*temperature",(city,temperature)=>{
+          return{
+            name:city+'销售点数',
+            value:temperature,
+          }
+        })
         .shape("smooth")
         .style({ lineWidth: 1 });
 
@@ -1504,53 +1506,65 @@ export default {
       //   .shape("circle");
 
       this.lineChart2.render();
-      this.$setSlideHeight();
+
     },
     initLineData1() {
       this.lineChart1 = new Chart({
         container: "broken-line1",
         autoFit: true,
-        height: 240
+        height: 240,
       });
 
       this.lineChart1.data(this.brokenLineData1);
       this.lineChart1.scale({
         month: {
-          range: [0, 1]
+          range: [0, 1],
         },
         temperature: {
           nice: true,
-          min: 0
-        }
+          min: 0,
+        },
       });
       this.lineChart1.tooltip({
         showCrosshairs: true,
-        shared: true
+        shared: true,
       });
       this.lineChart1.axis("temperature", {
         label: {
           autoHide: false | true,
-          formatter: val => {
+          formatter: (val) => {
             return val;
-          }
-        }
+          },
+        },
       });
       this.lineChart1.legend(false);
       this.lineChart1
         .line()
         .position("month*temperature")
-        .color("city")
+        .color("city",(city) =>{
+          if(city == '上年同期'){
+            return "#D1DDF6";
+          }else if(city == '当期'){
+            return "#5A8BEE"
+          }
+        })
         .shape("circle")
         .style({ lineWidth: 2 });
 
       this.lineChart1
         .point()
         .position("month*temperature")
-        .color("city")
+        .color("city",(city) =>{
+          if(city == '上年同期'){
+            return "#D1DDF6";
+          }else if(city == '当期'){
+            return "#5A8BEE"
+          }
+        })
         .shape("circle");
 
       this.lineChart1.render();
-      this.$setSlideHeight();
+
     },
     // 环形图
     initRing1() {
@@ -1570,35 +1584,35 @@ export default {
           return container.addShape("path", {
             attrs: {
               fill: cfg.color,
-              path
-            }
+              path,
+            },
           });
-        }
+        },
       });
 
       const chart = new Chart({
         container: "ring1",
         autoFit: true,
-        height: 234
+        height: 234,
       });
 
       chart.data(this.ringData1);
       chart.coordinate("theta", {
         radius: 0.75,
-        innerRadius: 0.4
+        innerRadius: 0.4,
       });
       chart.tooltip({
         showTitle: false,
-        showMarkers: false
+        showMarkers: false,
       });
       chart.legend({
-        position: "right"
+        position: "right",
       });
       chart
         .interval()
         .adjust("stack")
         .position("value")
-        .color("name", name => {
+        .color("name", (name) => {
           if (name == "女") {
             return "#2F6CE4";
           } else if (name == "男") {
@@ -1608,7 +1622,7 @@ export default {
           }
         })
         .shape("slice-shape");
-
+      chart.interaction("element-active");
       chart.render();
     },
     initRing2() {
@@ -1628,35 +1642,35 @@ export default {
           return container.addShape("path", {
             attrs: {
               fill: cfg.color,
-              path
-            }
+              path,
+            },
           });
-        }
+        },
       });
 
       const chart = new Chart({
         container: "ring2",
         autoFit: true,
-        height: 234
+        height: 234,
       });
 
       chart.data(this.ringData2);
       chart.coordinate("theta", {
         radius: 0.75,
-        innerRadius: 0.4
+        innerRadius: 0.4,
       });
       chart.tooltip({
         showTitle: false,
-        showMarkers: false
+        showMarkers: false,
       });
       chart.legend({
-        position: "right"
+        position: "right",
       });
       chart
         .interval()
         .adjust("stack")
         .position("value")
-        .color("name", name => {
+        .color("name", (name) => {
           if (name == "高消费") {
             return "#2F6CE4";
           } else if (name == "中高消费") {
@@ -1668,7 +1682,7 @@ export default {
           }
         })
         .shape("slice-shape");
-
+      chart.interaction("element-active");
       chart.render();
     },
     // 柱状图
@@ -1677,33 +1691,34 @@ export default {
       const chart = new Chart({
         container: "column1",
         autoFit: true,
-        height: 234
+        autoHide: false,
+        height: 234,
       });
       chart.data(this.columnData1);
       chart.scale("value", {
-        nice: true
+        nice: true,
       });
       chart.axis("name", {
         tickLine: null,
-        autoHide: false | true,
-        autoRotate: false
+        autoHide: false,
+        autoRotate: false,
       });
       chart.axis("value", {
         label: {
-          formatter: val => {
+          formatter: (val) => {
             return val;
-          }
-        }
+          },
+        },
       });
       chart.tooltip({
-        showMarkers: false
+        showMarkers: false,
       });
       chart.interaction("active-region");
       chart.legend(false);
       chart
         .interval()
         .position("name*value")
-        .color("name", val => {
+        .color("name", (val) => {
           if (val == this.columnData1[0].name) {
             return "#2665E3";
           } else if (val == this.columnData1[1].name) {
@@ -1725,33 +1740,34 @@ export default {
       const chart = new Chart({
         container: "column2",
         autoFit: true,
-        height: 234
+        autoHide: false,
+        height: 234,
       });
       chart.data(this.columnData2);
       chart.scale("value", {
-        nice: true
+        nice: true,
       });
       chart.axis("name", {
         tickLine: null,
-        autoHide: false | true,
-        autoRotate: false
+        autoHide: false,
+        autoRotate: false,
       });
       chart.axis("value", {
         label: {
-          formatter: val => {
+          formatter: (val) => {
             return val;
-          }
-        }
+          },
+        },
       });
       chart.tooltip({
-        showMarkers: false
+        showMarkers: false,
       });
       chart.interaction("active-region");
       chart.legend(false);
       chart
         .interval()
         .position("name*value")
-        .color("name", val => {
+        .color("name", (val) => {
           if (val == this.columnData2[0].name) {
             return "#2665E3";
           } else if (val == this.columnData2[1].name) {
@@ -1779,15 +1795,15 @@ export default {
           style: "blank",
           zoom: 3,
           minZoom: 1,
-          maxZoom: 10
-        })
+          maxZoom: 10,
+        }),
       });
       scene.setMapStatus({
         dragEnable: false, //是否允许地图拖拽
         keyboardEnable: false, // 是否允许形键盘事件
         doubleClickZoom: false, // 双击放大
         zoomEnable: false, // 滚动缩放
-        rotateEnable: false // 旋转
+        rotateEnable: false, // 旋转
       });
       const attachMapContainer = document.createElement("div");
       attachMapContainer.id = "attach";
@@ -1809,14 +1825,14 @@ export default {
           coastlineWidth: 0,
           chinaNationalStroke: "#D1DDF5",
           label: {
-            enable: false
+            enable: false,
           },
           fill: {
             color: {
               field: "NAME_CHN",
               values:
                 ("name",
-                function(value) {
+                function (value) {
                   // console.log(value)
                   let _arr = _this.barMapData;
                   if (value.indexOf(_arr[0]) > -1 && _arr[0]) {
@@ -1834,16 +1850,16 @@ export default {
                   } else {
                     return "#D1DDF5";
                   }
-                })
+                }),
             },
-            activeColor: "#4777D8"
+            activeColor: "#4777D8",
           },
           popup: {
             enable: true,
-            Html: props => {
+            Html: (props) => {
               return `<span>${props.NAME_CHN}</span>`;
-            }
-          }
+            },
+          },
         });
       });
       // 添加附图，附图需要和主图保持一致
@@ -1857,17 +1873,17 @@ export default {
           zoom: 1.93,
           minZoom: 0,
           maxZoom: 3,
-          interactive: false
-        })
+          interactive: false,
+        }),
       });
       scene2.on("loaded", () => {
         new CountryLayer(scene2, {
           data: [],
           label: {
-            enable: false
+            enable: false,
           },
           popup: {
-            enable: true
+            enable: true,
           },
           autoFit: false,
           depth: 1,
@@ -1880,47 +1896,50 @@ export default {
                 "#fdae6b",
                 "#fd8d3c",
                 "#e6550d",
-                "#a63603"
-              ]
-            }
-          }
+                "#a63603",
+              ],
+            },
+          },
         });
       });
-      this.$setSlideHeight();
+
     },
     inintBar1(_max) {
-      console.log("max", _max);
+      // console.log("max", _max);
+      let _height = this.barData1.length*25.4;
       const chart = new Chart({
         container: "bar-chart1",
         autoFit: true,
-        height: 254
+        height: _height,
       });
       chart.data(this.barData1.reverse());
       chart.scale({
         value: {
-          max: 120,
+          max: 150,
           min: 0,
-          alias: " "
-        }
+          alias: " ",
+        },
       });
       chart.axis("name", {
         title: null,
         tickLine: null,
         grid: null,
         line: null,
-        label: {
-          textStyle: {
-            textAlign: "left"
-          }
-        }
       });
 
       chart.axis("value", {
         label: null,
         line: null,
         tickLine: null,
-        grid: null,
-        title: null
+        grid: {
+          line:{
+            style:{
+              fillOpacity:0,
+              strokeOpacity:0
+            }
+          }
+        },
+        title: null,
       });
       chart.legend(false);
       chart.coordinate().transpose();
@@ -1932,39 +1951,40 @@ export default {
         .label("value", {
           style: {
             fill: "#7789af",
-            autoHide: false | true
+            autoHide: false,
           },
-          offset: 10,
-          content: originData => {
+          // offset: 10,
+          content: (originData) => {
             return originData.value + "%";
           },
-          remove: false
+          remove: false,
         });
       // chart.interaction("element-active");
       chart.render();
-      this.$setSlideHeight();
+
     },
     inintBar2(_max) {
-      console.log("max", _max);
+      // console.log("max", _max);
+      let _height = this.barData2.length*25.4;
       const chart = new Chart({
         container: "bar-chart2",
         autoFit: true,
         autoHide: false,
-        height: 254
+        height: _height,
       });
       chart.data(this.barData2.reverse());
       chart.scale({
         value: {
           max: 150,
           min: 0,
-          alias: " "
-        }
+          alias: " ",
+        },
       });
       chart.axis("name", {
         title: null,
         tickLine: null,
         grid: null,
-        line: null
+        line: null,
         // label: {
         // textStyle: {
         // textAlign: "start"
@@ -1976,8 +1996,15 @@ export default {
         label: null,
         line: null,
         tickLine: null,
-        grid: null,
-        title: null
+        grid: {
+          line:{
+            style:{
+              fillOpacity:0,
+              strokeOpacity:0
+            }
+          }
+        },
+        title: null,
       });
       chart.legend(false);
       chart.coordinate().transpose();
@@ -1986,60 +2013,58 @@ export default {
         .interval()
         .position("name*value")
         .size(8)
-        .label("name", {
-          style: {
-            textAlign: "left"
-          }
-        })
         .label("value", {
           style: {
             fill: "#7789af",
-            autoHide: false | true
+            autoHide: false,
           },
-          offset: 10,
-          content: originData => {
+          // offset: 10,
+          content: (originData) => {
             return originData.value + "%";
           },
-          remove: false
+          remove: false,
         });
       // chart.interaction("element-active");
       chart.render();
-      this.$setSlideHeight();
+
     },
     inintBar3(_max) {
-      console.log("max", _max);
+      // console.log("max", _max);
+      let _height = this.barData3.length*25.4;
       const chart = new Chart({
         container: "bar-chart3",
         autoFit: true,
         autoHide: false,
-        height: 254
+        height: _height,
       });
       chart.data(this.barData3.reverse());
       chart.scale({
         value: {
           max: 150,
           min: 0,
-          alias: " "
-        }
+          alias: " ",
+        },
       });
       chart.axis("name", {
         title: null,
         tickLine: null,
         grid: null,
         line: null,
-        label: {
-          textStyle: {
-            textAlign: "left"
-          }
-        }
       });
 
       chart.axis("value", {
         label: null,
         line: null,
         tickLine: null,
-        grid: null,
-        title: null
+        grid: {
+          line:{
+            style:{
+              fillOpacity:0,
+              strokeOpacity:0
+            }
+          }
+        },
+        title: null,
       });
       chart.legend(false);
       chart.coordinate().transpose();
@@ -2048,48 +2073,47 @@ export default {
         .interval()
         .position("name*value")
         .size(8)
-        .label("name", {
-          style: {
-            textAlign: "left"
-          }
-        })
         .label("value", {
           style: {
             fill: "#7789af",
-            autoHide: false | true
+            autoHide: false,
           },
-          offset: 10,
-          content: originData => {
+          // offset: 10,
+          content: (originData) => {
             return originData.value + "%";
           },
-          autoHide: false | true,
-          remove: false
+          remove: false,
         });
       // chart.interaction("element-active");
       chart.render();
-      this.$setSlideHeight();
+
     },
     publisherChange() {
       // location.reload();
-      this.$refs.load.isLoading = true;
+      this.isLoading = true;
+      if(!this.salePower){
+        this.lineFirst1 = true;
+      }
+      if(!this.lifePower){
+        this.lineFirst2 = true;
+      }
       if (this.tabKey == "2") {
         this.lineFirst1 = true;
       }
       this.tabKey = "1";
-      this.cycle = this.$weekDate().weekth;
-      this.oneDay = this.$weekDate().start.replace(/-/g, "");
-      this.chooseWeek = this.$weekDate().start;
-      this.chooseMonth = this.$weekDate().start;
-      this.chooseYear = this.$weekDate().start;
-      this.dateText = this.$weekDate().start + "~" + this.$weekDate().end;
+      this.$refs.time.cycle = this.$weekDate().weekth;
+      this.$refs.time.oneDay = this.$weekDate().start.replace(/-/g, "");
+      this.$refs.time.chooseWeek = this.$weekDate().start;
+      this.$refs.time.chooseMonth = this.$weekDate().start;
+      this.$refs.time.chooseYear = this.$weekDate().start;
+      this.$refs.time.dateText = this.$weekDate().start + "~" + this.$weekDate().end;
       this.dateType = 2;
-      this.canSub = true;
-      this.canAdd = false;
+      this.$refs.time.dateType = 2;
       this.getData();
       this.getCoreData();
       this.getDefault();
       this.getLifeData();
-    }
-  }
+    },
+  },
 };
 </script>

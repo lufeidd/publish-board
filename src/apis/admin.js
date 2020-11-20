@@ -33,8 +33,12 @@ export const ORGANIZATION_GET = query => req('post', '/organization/get', query)
 export const USER_BASEGETS = query => req('post', '/user/basegets', query);
 // 用户列表（含机构）
 export const USER_GETSINCLUDE = query => req('post', '/user/gets', query);
-// 删除用户
+// 注销用户
 export const USER_DELETE = query => req('post', '/user/delete', query);
+// 删除用户
+export const USER_DESTROY = query => req('post', '/user/destroy', query);
+// 恢复用户
+export const USER_ACTIVE = query => req('post', '/user/active', query);
 // 用户已加入机构列表
 export const USER_ORGANIZATION_GETS = query => req('post', '/user/organization/gets', query);
 // 用户移出机构
@@ -43,6 +47,13 @@ export const USER_ORGANIZATION_DELETE = query => req('post', '/organization/memb
 export const USER_ORGANIZATION_AUTH = query => req('post', '/organization/member/auth/gets', query);
 // 修改用户在机构中的权限
 export const ORGANIZATION_MEMBER_AUTH_EDIT = query => req('post', '/organization/member/auth/edit', query);
+// 重置用户密码
+export const ORGANIZATION_MEMBER_RESETPWD = query => req('post', '/user/resetpwd', query);
+
+// 平台级权限列表
+export const ADMIN_AUTH_LISTS = query => req('post', '/admin/auth/lists', query);
+// 平台级权限配置
+export const ADMIN_AUTH_EDIT = query => req('post', '/admin/auth/edit', query);
 
 // 大事件部分
 export const EVENT_LISTS = query => req('post', '/event/lists', query);

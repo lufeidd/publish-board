@@ -6,10 +6,10 @@
         <div class="float-left">
           <SlideNav type="admin" sort="adminIndex"></SlideNav>
         </div>
-        <div class="float-left">
+        <div class="float-right">
           <div class="main-container">
             <div class="model-container">
-              <div class="model-bg" v-if="powerType == 1">
+              <div class="model-bg" v-if="powerType == 1" style="min-height:660px;">
                 <div class="section-title clearfix">
                   <div class="float-left">{{organization_name}} 功能配置</div>
                   <div class="float-right">
@@ -24,6 +24,7 @@
                       enter-button="搜索"
                       size="large"
                       @search="onSearch"
+                      v-model="inputVal"
                       style="width:800px;"
                     >
                       <div slot="prefix">
@@ -122,6 +123,7 @@
         </div>
       </div>
     </div>
+    <Loading ref="load" :show="1" :isLoading="isLoading"></Loading>
   </div>
 </template>
 <style scoped lang="scss" src="@/style/scss/pages/admin/function.scss"></style>
@@ -143,7 +145,9 @@ export default {
       industyList: [],
       applicationList: [],
       showList: [],
-      objInfo: {}
+      inputVal:"",
+      objInfo: {},
+      isLoading:true,
     };
   },
   mounted() {
@@ -152,24 +156,32 @@ export default {
     this.organization_name = this.$route.query.organization_name;
     if(this.powerType == 1){
       this.getData();
+    }else{
+      this.isLoading = false;
     }
-    this.$setSlideHeight();
+
   },
   updated() {
-    this.$setSlideHeight();
+
   },
   methods: {
     // 获取列表
     async getData() {
+      var tStamp = this.$getTimeStamp();
       let data = {
-        organization_id: this.organization_id
+        organization_id: this.organization_id,
+        timestamp: tStamp
       };
+      data.sign = this.$getSign(data);
       let res = await ORGANIZATION_AUTH_GETS(data);
       if (res.code == 0) {
         // this.objInfo = res.data;
         this.allList = [];
+        this.publishList = [];
+        this.competeList = [];
+        this.industyList = [];
+        this.applicationList = [];
         this.allList = res.data;
-        this.showList = this.allList;
         for (let i = 0; i < this.allList.length; i++) {
           if (this.allList[i].group == "本社") {
             this.publishList.push(this.allList[i]);
@@ -181,18 +193,24 @@ export default {
             this.applicationList.push(this.allList[i]);
           }
         }
+        this.changeArr();
+        this.isLoading = false;
         // console.log(this.publishList,this.competeList,this.industyList,this.applicationList)
       } else {
-          this.$refs.head.globalTip(1, res.message,res.code);
+        this.isLoading = false;
+        this.$refs.head.globalTip(1, res.message,res.code);
       }
     },
     // 功能权限修改
     async changeFunction(item, index) {
+      var tStamp = this.$getTimeStamp();
       let data = {
         organization_id: this.organization_id,
         group_id: item.group_id,
-        type: item.status ? "" : "add"
+        type: item.status ? "" : "add",
+        timestamp: tStamp
       };
+      data.sign = this.$getSign(data);
       let res = await ORGANIZATION_AUTH_EDIT(data);
       if (res.code == 0) {
         this.$refs.head.globalTip(2, "修改成功",0);
@@ -202,9 +220,13 @@ export default {
       }
     },
     onSearch(value) {
-      console.log(value);
-      var _list = [];
+      // console.log(value);
+      this.changeArr();
+    },
+    changeArr(){
+      // console.log(this.inputVal)
       this.showList = [];
+      var _list = [];
       if (this.chooseType == 0) {
         _list = this.allList;
       } else if (this.chooseType == 1) {
@@ -216,7 +238,7 @@ export default {
       } else if (this.chooseType == 4) {
         _list = this.applicationList;
       }
-      var reg = new RegExp(value);
+      var reg = new RegExp(this.inputVal);
       for (let i = 0; i < _list.length; i++) {
         //如果字符串中不包含目标字符会返回-1
         if (_list[i].title.match(reg)) {
@@ -231,20 +253,21 @@ export default {
       this.showList = [];
       if (_value == "全部") {
         this.chooseType = 0;
-        this.showList = this.allList;
+        // this.showList = this.allList;
       } else if (_value == "本社") {
         this.chooseType = 1;
-        this.showList = this.publishList;
+        // this.showList = this.publishList;
       } else if (_value == "竞争") {
         this.chooseType = 2;
-        this.showList = this.competeList;
+        // this.showList = this.competeList;
       } else if (_value == "行业") {
         this.chooseType = 3;
-        this.showList = this.industyList;
+        // this.showList = this.industyList;
       } else if (_value == "应用") {
         this.chooseType = 4;
-        this.showList = this.applicationList;
+        // this.showList = this.applicationList;
       }
+      this.changeArr();
     }
   }
 };

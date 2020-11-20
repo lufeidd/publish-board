@@ -6,7 +6,7 @@
         <div class="float-left">
           <SlideNav type="admin" sort="adminParam"></SlideNav>
         </div>
-        <div class="float-left">
+        <div class="float-right">
           <div class="main-container" v-if="powerType == 1">
             <div class="model-container">
               <div
@@ -259,21 +259,24 @@ export default {
       this.getData();
       this.getPublishList();
     }
-    this.$setSlideHeight();
+
   },
   updated() {
-    this.$setSlideHeight();
+
   },
   methods: {
     // 获取列表
     async getData() {
+      var tStamp = this.$getTimeStamp();
       let data = {
         type: 2,
         search: this.inputVal,
         id: this.searchId,
         page: this.page,
-        page_size: this.page_size
+        page_size: this.page_size,
+        timestamp: tStamp
       };
+      data.sign = this.$getSign(data);
       let res = await RATIO_GETS(data);
       if (res.code == 0) {
         this.list = [];
@@ -284,10 +287,13 @@ export default {
       }
     },
     async getCurrenData() {
+      var tStamp = this.$getTimeStamp();
       let data = {
         type: 2,
-        id: this.addInfo.cate_id
+        id: this.addInfo.cate_id,
+        timestamp: tStamp
       };
+      data.sign = this.$getSign(data);
       let res = await RATIO_CURREN(data);
       if (res.code == 0) {
         this.addInfo.currenRatio = res.data.current_ratio;
@@ -297,13 +303,16 @@ export default {
     },
     // 新增系数
     async add() {
+      var tStamp = this.$getTimeStamp();
       let data = {
         type: 2,
         id: this.addInfo.cate_id,
         name: this.addInfo.cate_name,
         ratio: this.addInfo.ratio,
-        year: this.addInfo.year
+        year: this.addInfo.year,
+        timestamp: tStamp
       };
+      data.sign = this.$getSign(data);
       let res = await RATIO_ADD(data);
       if (res.code == 0) {
         this.$refs.head.globalTip(2, "新增系数成功", 0);
@@ -317,7 +326,11 @@ export default {
     },
     // 类目列表获取
     async getPublishList() {
-      let data = {};
+      var tStamp = this.$getTimeStamp();
+      let data = {
+        timestamp: tStamp
+      };
+      data.sign = this.$getSign(data);
       let res = await COMMON_CATEGORY(data);
       if (res.code == 0) {
         this.cateList = res.data;
@@ -327,11 +340,14 @@ export default {
     },
     // 修改系数
     async editParam() {
+      var tStamp = this.$getTimeStamp();
       let data = {
         type: 2,
         id: this.addInfo.id,
-        ratio: this.addInfo.ratio
+        ratio: this.addInfo.ratio,
+        timestamp: tStamp
       };
+      data.sign = this.$getSign(data);
       let res = await RATIO_EDIT(data);
       if (res.code == 0) {
         this.$refs.head.globalTip(2, "修改成功", 0);
@@ -422,7 +438,7 @@ export default {
       }
     },
     onAddSearch(value) {
-      console.log(this.cateName);
+      // console.log(this.cateName);
       let _value = value.toString();
       this.dataSource = [];
       this.addInfo.cate_id = 0;
@@ -462,7 +478,7 @@ export default {
       this.readRecord = false;
     },
     selectSearch(litem, lindex) {
-      console.log(111);
+      // console.log(111);
       this.inputVal = litem.name;
       this.searchId = litem.category_id;
     }

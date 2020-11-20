@@ -63,6 +63,7 @@
         </div>
       </div>
     </div>
+    <Loading ref="load" :show="1" :isLoading="isLoading"></Loading>
   </div>
 </template>
 <style scoped lang="scss" src="@/style/scss/pages/help/index.scss"></style>
@@ -86,6 +87,7 @@ export default {
         { id: 5, name: "应用" },
       ],
       inputVal: "",
+      isLoading:true,
     };
   },
   mounted() {
@@ -94,6 +96,7 @@ export default {
   updated() {},
   methods: {
     async getData() {
+      var tStamp = this.$getTimeStamp();
       let data = {
         search: this.inputVal,
         type_id: this.tabKey,
@@ -101,27 +104,34 @@ export default {
         page: this.page,
         page_size: this.pageSize,
         logo_id: this.eventType,
+        timestamp: tStamp
       };
+      data.sign = this.$getSign(data);
       let res = await HELP_LISTS(data);
       if (res.code == 0) {
         this.list = [];
         this.list = res.data.helps;
         this.total = res.data.count;
+        this.isLoading = false;
       } else {
+        this.isLoading = false;
         this.$refs.head.globalTip(1, res.message, res.code);
       }
     },
     callback(key) {},
     change(item, index) {
+      this.isLoading = true;
       this.eventType = index;
       this.page = 1;
       this.getData();
     },
     onSearch() {
+      this.isLoading = true;
       this.page = 1;
       this.getData();
     },
     onShowSizeChange(page, pageSize){
+      this.isLoading = true;
       this.page = page;
       this.getData();
     }

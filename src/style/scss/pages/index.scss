@@ -124,58 +124,6 @@
       overflow: hidden;
       position: relative;
       & .animation-container{
-        position: absolute;
-        left: 15px;
-        right: 15px;
-        top: 112px;
-        animation: move 30s linear infinite;
-        -webkit-animation: move 30s linear infinite;
-        -moz-animation: move 30s linear infinite;
-        -ms-animation: move 30s linear infinite;
-        -o-animation: move 30s linear infinite;
-        &:hover{
-          animation-play-state: paused;
-        }
-        @keyframes move{
-          from{
-            top: 110px;
-          }
-          to{
-            top: -300px;
-          }
-        }
-        @-webkit-keyframes move{
-          from{
-            top: 110px;
-          }
-          to{
-            top: -300px;
-          }
-        }
-        @-moz-keyframes move{
-          from{
-            top: 110px;
-          }
-          to{
-            top: -300px;
-          }
-        }
-        @-ms-keyframes move{
-          from{
-            top: 110px;
-          }
-          to{
-            top: -300px;
-          }
-        }
-        @-o-keyframes move{
-          from{
-            top: 110px;
-          }
-          to{
-            top: -300px;
-          }
-        }
         & .list{
           margin-bottom: 10px;
           & .name{
@@ -269,5 +217,13 @@
         }
       }
     }
+  }
+  & .no-data{
+    color: $fontColor1;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    margin-top: -10px;
+    margin-left: -28px;
   }
 }

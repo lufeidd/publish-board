@@ -19,6 +19,11 @@ import competeSet from '@/pages/compete/set'
 import industryMarket from '@/pages/industry/market'
 import industryAuthors from '@/pages/industry/authors'
 import industryAuthorDetail from '@/pages/industry/authordetail'
+import authorEdit from '@/pages/industry/authoredit'
+// 查询
+import inquireSearch from '@/pages/inquire/search'
+import inquireRank from '@/pages/inquire/rank'
+import inquireDetail from '@/pages/inquire/detail'
 // 应用
 import applicationEvent from '@/pages/application/event'
 import eventDetail from '@/pages/application/detail'
@@ -29,6 +34,7 @@ import helpIndex from '@/pages/help/index'
 import register from '@/pages/login/register'
 import loginIndex from '@/pages/login/index'
 import improve from '@/pages/login/improve'
+import editPassword from '@/pages/login/editpassword'
 // 平台管理
 import adminIndex from '@/pages/admin/index'
 import adminMember from '@/pages/admin/member'
@@ -44,8 +50,11 @@ import adminEvent from '@/pages/admin/event'
 import adminHelp from '@/pages/admin/help'
 import adminFeedback from '@/pages/admin/feedback'
 import adminDynamic from '@/pages/admin/dynamic'
+import adminSet from '@/pages/admin/adminfunction'
 // 账号管理
 import userInfo from '@/pages/user/information'
+import userNotice from '@/pages/user/notice'
+import userSuggesstion from '@/pages/user/suggesstion'
 // 机构管理
 import organizeInfo from '@/pages/organize/information'
 import organizeMember from '@/pages/organize/member'
@@ -184,6 +193,39 @@ export default new Router({
         requireAuth: true // 需要登录才能进入的页面可以增加一个meta属性
       }
     },
+    {
+      path: '/industry/authoredit',
+      name: 'authoredit',
+      component: authorEdit,
+      meta: {
+        requireAuth: true // 需要登录才能进入的页面可以增加一个meta属性
+      }
+    },
+    // 查询
+    {
+      path: '/inquire/search',
+      name: 'inquiresearch',
+      component: inquireSearch,
+      meta: {
+        requireAuth: true // 需要登录才能进入的页面可以增加一个meta属性
+      }
+    },
+    {
+      path: '/inquire/rank',
+      name: 'inquirerank',
+      component: inquireRank,
+      meta: {
+        requireAuth: true // 需要登录才能进入的页面可以增加一个meta属性
+      }
+    },
+    {
+      path: '/inquire/detail',
+      name: 'inquiredetail',
+      component: inquireDetail,
+      meta: {
+        requireAuth: true // 需要登录才能进入的页面可以增加一个meta属性
+      }
+    },
     // 应用
     {
       path: '/application/event',
@@ -233,6 +275,11 @@ export default new Router({
       path: '/login/improve',
       name: 'improve',
       component: improve
+    },
+    {
+      path: '/login/editpassword',
+      name: 'editpassword',
+      component: editPassword
     },
     // 平台管理
     {
@@ -352,6 +399,15 @@ export default new Router({
         requireAuth: true // 需要登录才能进入的页面可以增加一个meta属性
       }
     },
+    // 平台管理--平台级权限配置
+    {
+      path: '/admin/adminfunction',
+      name: 'adminset',
+      component: adminSet,
+      meta: {
+        requireAuth: true // 需要登录才能进入的页面可以增加一个meta属性
+      }
+    },
     // 机构管理
     {
       path: '/organize/information',
@@ -386,6 +442,22 @@ export default new Router({
         requireAuth: true // 需要登录才能进入的页面可以增加一个meta属性
       }
     },
+    {
+      path: '/user/notice',
+      name: 'usernotice',
+      component: userNotice,
+      meta: {
+        requireAuth: true // 需要登录才能进入的页面可以增加一个meta属性
+      }
+    },
+    {
+      path: '/user/suggesstion',
+      name: 'usersuggesstion',
+      component: userSuggesstion,
+      meta: {
+        requireAuth: true // 需要登录才能进入的页面可以增加一个meta属性
+      }
+    },
     // 404
     {
       path: '/404',
@@ -398,6 +470,11 @@ export default new Router({
       name: 'noorganize',
       component: noOrganize
     },
+    {
+      path: '*', // 页面不存在的情况下会跳到404页面
+      redirect: '/404',
+      name: 'nopage',
+    }
   ]
 })
 const originalPush = Router.prototype.push

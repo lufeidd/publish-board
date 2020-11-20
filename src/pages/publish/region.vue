@@ -1,5 +1,5 @@
 <template>
-  <div id="regionPage" @click="showYear = false">
+  <div id="regionPage" @click="$refs.time.showYear = false">
     <HeadNav type="publish" ref="head" :show="1" @publisherChange="publisherChange()"></HeadNav>
     <div class="wd-1220">
       <div class="clearfix">
@@ -13,57 +13,7 @@
               <div class="model-bg clearfix" style="padding:7px 15px;">
                 <div class="float-left"></div>
                 <div class="float-right">
-                  <div class="time-choose">
-                    <span class="time-text">统计时间 {{dateText}}</span>
-                    <span class="time-picker">
-                      <span :class="dateType == 2?'picker active':'picker'">周</span>
-                      <a-week-picker
-                        class="week"
-                        placeholder="Select Week"
-                        :allowClear="false"
-                        @change="weekChange"
-                        :disabledDate="disabledEndDate"
-                        :value="chooseWeek"
-                      />
-                    </span>
-                    <span class="time-picker">
-                      <span :class="dateType == 3?'picker active':'picker'">月</span>
-                      <a-month-picker
-                        class="week"
-                        :allowClear="false"
-                        @change="monthChange"
-                        placeholder="Select month"
-                        :value="chooseMonth"
-                        :disabledDate="disabledEndDate"
-                      />
-                    </span>
-                    <span class="time-picker">
-                      <span :class="dateType == 4?'picker active':'picker'">年</span>
-                      <span @click.stop="showYear = true">
-                        <a-date-picker
-                          class="week"
-                          :allowClear="false"
-                          mode="year"
-                          format="YYYY"
-                          :open="showYear"
-                          @panelChange="yearChange($event)"
-                          :value="chooseYear"
-                          :disabledDate="disabledEndDate"
-                          inputReadOnly
-                        />
-                      </span>
-                    </span>
-                    <span class="time-picker">
-                      <span :class="canSub?'picker':'picker disabled'" @click="subLeft">
-                        <a-icon type="left" />
-                      </span>
-                    </span>
-                    <span class="time-picker">
-                      <span :class="canAdd?'picker':'picker disabled'" @click="addRight">
-                        <a-icon type="right" />
-                      </span>
-                    </span>
-                  </div>
+                  <TimeChoose ref="time" @changeTime="changeTime"></TimeChoose>
                 </div>
               </div>
             </div>
@@ -93,7 +43,7 @@
                           <span v-else>--</span>
                           <span
                             class="text red"
-                            v-if="incrTop.compare_rate"
+                            v-if="incrTop.compare_rate > 0"
                           >+{{incrTop.compare_rate}}%</span>
                           <span v-else class="text red">--</span>
                         </p>
@@ -115,7 +65,7 @@
                           <span v-else>--</span>
                           <span
                             class="text green"
-                            v-if="decrTop.compare_rate"
+                            v-if="decrTop.compare_rate < 0"
                           >{{decrTop.compare_rate}}%</span>
                           <span class="text green" v-else>--</span>
                         </p>
@@ -127,7 +77,7 @@
             </div>
             <!-- 地域排行 -->
             <div class="model-container">
-              <div class="model-bg">
+              <div class="model-bg" style="min-height:254px;padding-bottom:20px;">
                 <div class="section-title">地域排行</div>
                 <div class="table">
                   <table style="table-layout:fixed;">
@@ -196,7 +146,7 @@
         </div>
       </div>
     </div>
-    <Loading ref="load" :show="1"></Loading>
+    <Loading ref="load" :show="1" :isLoading="isLoading"></Loading>
   </div>
 </template>
 <style lang="scss" scoped>
@@ -237,16 +187,6 @@ export default {
   data() {
     return {
       pagePower: true,
-      showYear: false,
-      chooseWeek: null,
-      chooseMonth: null,
-      chooseYear: null,
-      dateText: "",
-      dateType: 2,
-      canSub: true,
-      canAdd: false,
-      oneDay: "",
-      cycle: "",
       cityTop: "",
       readerTop: {
         name: "",
@@ -260,30 +200,28 @@ export default {
         name: "",
         compare_rate: 0
       },
-      list: []
+      list: [],
+      isLoading: true,
     };
   },
   mounted() {
-    this.cycle = this.$weekDate().weekth;
-    this.oneDay = this.$weekDate().start.replace(/-/g, "");
-    this.chooseWeek = this.$weekDate().start;
-    this.chooseMonth = this.$weekDate().start;
-    this.chooseYear = this.$weekDate().start;
-    this.dateText = this.$weekDate().start + "~" + this.$weekDate().end;
     this.getData();
   },
   updated() {
-    this.$setSlideHeight();
+
   },
   methods: {
     async getData() {
+      var tStamp = this.$getTimeStamp();
       let data = {
         organization_id: this.$refs.head.publishInfo.organization_id,
-        publisher_id: this.$refs.head.publishInfo.publisher_id,
-        date_type: this.dateType,
-        start_date: this.oneDay,
-        period: this.cycle
+        supplier_id: this.$refs.head.publishInfo.supplier_id,
+        date_type: this.$refs.time.dateType,
+        start_date: this.$refs.time.oneDay,
+        period: this.$refs.time.cycle,
+        timestamp: tStamp
       };
+      data.sign = this.$getSign(data);
       let res = await MYREGION_INDEX(data);
       if (res.code == 0) {
         this.pagePower = true;
@@ -293,203 +231,23 @@ export default {
         this.readerTop = res.data.reader_top;
         this.incrTop = res.data.incr_top;
         this.decrTop = res.data.decr_top;
-        this.initMap();
-        this.$refs.load.isLoading = false;
+        setTimeout(()=>{
+          this.initMap();
+        },500)
+        this.isLoading = false;
       } else {
-        this.$refs.load.isLoading = false;
+        this.isLoading = false;
         if (res.code == 1009) {
           this.pagePower = false;
         } else {
           this.$refs.head.globalTip(1, res.message,res.code);
         }
+
       }
     },
-    weekChange(date, dateString) {
-      // var _day = date._d.getDate();
-      this.$refs.load.isLoading = true;
-      const startDate = date.day(1).format("YYYY-MM-DD"); // 周一日期
-      const endDate = date.day(7).format("YYYY-MM-DD"); // 周日日期
-      if (
-        startDate <
-        this.$moment("2013-12-30")
-          .startOf("week")
-          .format("YYYY-MM-DD")
-      ) {
-        this.canAdd = true;
-      } else {
-        this.canAdd = false;
-      }
-      this.dateType = 2;
-      this.chooseWeek = startDate;
-      this.dateText = startDate + "~" + endDate;
-      this.cycle = dateString.replace(/-|周/g, "");
-      this.oneDay = startDate.replace(/-/g, "");
+    changeTime(){
+      this.isLoading = true;
       this.getData();
-      console.log(666, startDate, endDate);
-    },
-    monthChange(date, dateString) {
-      this.$refs.load.isLoading = true;
-      const startDate = date
-        .month(date.month())
-        .startOf("month")
-        .format("YYYY-MM-DD");
-      const endDate = date
-        .month(date.month())
-        .endOf("month")
-        .format("YYYY-MM-DD");
-      console.log(dateString, startDate, endDate);
-      if (
-        startDate <
-        this.$moment("2013-12-30")
-          .startOf("month")
-          .format("YYYY-MM-DD")
-      ) {
-        this.canAdd = true;
-      } else {
-        this.canAdd = false;
-      }
-      this.dateType = 3;
-      this.chooseMonth = startDate;
-      this.dateText = startDate + "~" + endDate;
-      this.cycle = dateString.replace(/-/g, "");
-      this.oneDay = startDate.replace(/-/g, "");
-      this.getData();
-      console.log(startDate, endDate);
-    },
-    yearChange(e) {
-      this.$refs.load.isLoading = true;
-      if (
-        e._d.getFullYear().toString() >=
-        this.$moment("2013-12-30").format("YYYY")
-      ) {
-        this.chooseYear = this.$moment("2013-12-30").format("YYYY");
-        this.canAdd = false;
-      } else {
-        this.chooseYear = e._d.getFullYear().toString();
-        this.canAdd = true;
-      }
-      this.dateType = 4;
-      this.cycle = this.chooseYear;
-      this.oneDay = this.$moment(this.chooseYear)
-        .format("YYYY-MM-DD")
-        .replace(/-/g, "");
-      this.dateText =
-        this.chooseYear + "-01-01 ~ " + this.chooseYear + "-12-31";
-      this.showYear = false;
-      this.getData();
-    },
-    subLeft() {
-      this.$refs.load.isLoading = true;
-      let _max = "";
-      if (this.dateType == 2) {
-        _max = this.$weekDate("2013-12-30").start;
-        if (this.chooseWeek <= _max) {
-          let end = this.$moment(this.chooseWeek)
-            .week(this.$moment(this.chooseWeek).week() - 1)
-            .endOf("week")
-            .format("YYYY-MM-DD");
-          this.chooseWeek = this.$moment(this.chooseWeek)
-            .week(this.$moment(this.chooseWeek).week() - 1)
-            .startOf("week")
-            .format("YYYY-MM-DD");
-          this.cycle = (Number(this.cycle) - 1).toString();
-          this.oneDay = this.chooseWeek.replace(/-/g, "");
-          this.dateText = this.chooseWeek + "~" + end;
-          this.canAdd = true;
-        }
-      } else if (this.dateType == 3) {
-        _max = this.$moment("2013-12-30")
-          .startOf("month")
-          .format("YYYY-MM-DD");
-        if (this.chooseMonth <= _max) {
-          let end = this.$moment(this.chooseMonth)
-            .month(this.$moment(this.chooseMonth).month() - 1)
-            .endOf("month")
-            .format("YYYY-MM-DD");
-          this.chooseMonth = this.$moment(this.chooseMonth)
-            .month(this.$moment(this.chooseMonth).month() - 1)
-            .startOf("month")
-            .format("YYYY-MM-DD");
-          this.cycle = (Number(this.cycle) - 1).toString();
-          this.oneDay = this.chooseMonth.replace(/-/g, "");
-          this.dateText = this.chooseMonth + "~" + end;
-          this.canAdd = true;
-        }
-      } else if (this.dateType == 4) {
-        _max = this.$moment("2013-12-30").format("YYYY");
-        // console.log(111, this.chooseYear, _max, this.chooseYear <= _max);
-        if (this.chooseYear <= _max) {
-          this.chooseYear = (Number(this.chooseYear) - 1).toString();
-          this.cycle = (Number(this.cycle) - 1).toString();
-          this.dateText = this.cycle + "-01-01 ~ " + this.cycle + "-12-31";
-          this.oneDay = this.$moment(this.chooseYear)
-            .format("YYYY-MM-DD")
-            .replace(/-/g, "");
-          this.canAdd = true;
-        }
-      }
-      this.getData();
-    },
-    addRight() {
-      if (this.canAdd) {
-        this.$refs.load.isLoading = true;
-        let _max = "";
-        if (this.dateType == 2) {
-          _max = this.$weekDate().start;
-          if (this.chooseWeek < _max) {
-            let end = this.$moment(this.chooseWeek)
-              .week(this.$moment(this.chooseWeek).week() + 1)
-              .endOf("week")
-              .format("YYYY-MM-DD");
-            this.chooseWeek = this.$moment(this.chooseWeek)
-              .week(this.$moment(this.chooseWeek).week() + 1)
-              .startOf("week")
-              .format("YYYY-MM-DD");
-            this.cycle = (Number(this.cycle) + 1).toString();
-            this.oneDay = this.chooseWeek.replace(/-/g, "");
-            this.dateText = this.chooseWeek + "~" + end;
-            if (this.chooseWeek >= _max) this.canAdd = false;
-          }
-        } else if (this.dateType == 3) {
-          _max = this.$moment("2013-12-30")
-            .startOf("month")
-            .format("YYYY-MM-DD");
-          if (this.chooseMonth < _max) {
-            let end = this.$moment(this.chooseMonth)
-              .month(this.$moment(this.chooseMonth).month() + 1)
-              .endOf("month")
-              .format("YYYY-MM-DD");
-            this.chooseMonth = this.$moment(this.chooseMonth)
-              .month(this.$moment(this.chooseMonth).month() + 1)
-              .startOf("month")
-              .format("YYYY-MM-DD");
-            this.cycle = (Number(this.cycle) + 1).toString();
-            this.oneDay = this.chooseMonth.replace(/-/g, "");
-            this.dateText = this.chooseMonth + "~" + end;
-            if (this.chooseMonth >= _max) this.canAdd = false;
-          }
-        } else if (this.dateType == 4) {
-          _max = this.$moment("2013-12-30").format("YYYY");
-          if (this.chooseYear < _max) {
-            this.chooseYear = (Number(this.chooseYear) + 1).toString();
-            this.cycle = (Number(this.cycle) + 1).toString();
-            this.oneDay = this.$moment(this.chooseYear)
-              .format("YYYY-MM-DD")
-              .replace(/-/g, "");
-            this.dateText = this.cycle + "-01-01 ~ " + this.cycle + "-12-31";
-            if (this.chooseYear >= _max) this.canAdd = false;
-          }
-        }
-        this.getData();
-      }
-    },
-    disabledEndDate(endValue) {
-      // console.log(endValue);
-      const startValue = new Date("2013-12-30");
-      if (!endValue || !startValue) {
-        return false;
-      }
-      return startValue.valueOf() <= endValue.valueOf();
     },
     initMap() {
       let _this = this;
@@ -618,16 +376,17 @@ export default {
           }
         });
       });
-      this.$setSlideHeight();
+
     },
     publisherChange() {
-      this.$refs.load.isLoading = true;
-      this.cycle = this.$weekDate().weekth;
-      this.oneDay = this.$weekDate().start.replace(/-/g, "");
-      this.chooseWeek = this.$weekDate().start;
-      this.chooseMonth = this.$weekDate().start;
-      this.chooseYear = this.$weekDate().start;
-      this.dateText = this.$weekDate().start + "~" + this.$weekDate().end;
+      this.isLoading = true;
+      this.$refs.time.cycle = this.$weekDate().weekth;
+      this.$refs.time.oneDay = this.$weekDate().start.replace(/-/g, "");
+      this.$refs.time.chooseWeek = this.$weekDate().start;
+      this.$refs.time.chooseMonth = this.$weekDate().start;
+      this.$refs.time.chooseYear = this.$weekDate().start;
+      this.$refs.time.dateText = this.$weekDate().start + "~" + this.$weekDate().end;
+      this.$refs.time.showYear = false;
       this.getData();
     }
   }

@@ -23,6 +23,9 @@
       & .publish-name{
         color: $fontColor1;
       }
+      &.edit{
+        margin-top: 50px;
+      }
     }
     & .head{
       display: inline-block;
@@ -52,6 +55,13 @@
       & input{
         &::placeholder{
           text-align: center;
+        }
+      }
+      &.edit{
+        & input{
+          &::placeholder{
+            text-align: left;
+          }
         }
       }
       & .icon{

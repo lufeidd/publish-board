@@ -1,4 +1,53 @@
 @charset "UTF-8";
 #feedbackPage{
   padding-bottom: 20px;
+  & .model-container{
+    & .top{
+      line-height: 41px;
+      padding: 0 15px;
+      font-size: $fontSize - 2;
+      color: $fontColor1;
+      border-bottom: 1px solid $themeColor5;
+      & .title{
+        font-size: $fontSize;
+      }
+    }
+    & .middle{
+      padding: 20px 15px;
+      font-size: $fontSize - 2;
+      color: $fontColor1;
+      border-bottom: 1px solid $themeColor5;
+      &.one{
+        color: $fontColor2;
+      }
+    }
+    & .bottom{
+      padding: 20px 15px;
+      font-size: $fontSize - 2;
+      & .desc{
+        color: $fontColor1;
+      }
+    }
+    & .bottom1{
+      padding: 10px 15px;
+    }
+    & .page{
+      padding: 10px 15px;
+      text-align: right;
+    }
+  }
+  .no-data{
+    color: $fontColor1;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    margin-top: -10px;
+    margin-left: -28px;
+  }
+}
+.popup{
+  & .text{
+    color: $fontColor2;
+    font-size: $fontSize - 2;
+  }
 }

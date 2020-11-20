@@ -6,10 +6,13 @@
         <div class="float-left">
           <SlideNav type="admin" sort="event"></SlideNav>
         </div>
-        <div class="float-left">
+        <div class="float-right">
           <div class="main-container" v-if="powerType == 1">
             <div class="model-container">
-              <div class="model-bg" style="padding-bottom:75px;min-height:660px;">
+              <div
+                class="model-bg"
+                style="padding-bottom: 75px; min-height: 660px"
+              >
                 <div class="section-title clearfix">
                   <div class="float-left">大事件管理</div>
                   <div class="float-right">
@@ -40,41 +43,45 @@
                     <span class="title">事件类型</span>
                     <span
                       class="high-tab"
-                      v-for="(item,index) in eventTypeList"
+                      v-for="(item, index) in eventTypeList"
                       :key="index"
-                      :class="{'active':eventType==index}"
-                      @click="change(index,'event')"
-                    >{{item.name}}</span>
+                      :class="{ active: eventType == index }"
+                      @click="change(index, 'event')"
+                      >{{ item.name }}</span
+                    >
                   </div>
                   <div class="option">
                     <span class="title">发生时间</span>
                     <span
                       class="high-tab"
-                      v-for="(item,index) in timeList"
+                      v-for="(item, index) in timeList"
                       :key="index"
-                      :class="{'active':timeType==index}"
-                      @click="change(index,'time')"
-                    >{{item.name}}</span>
+                      :class="{ active: timeType == index }"
+                      @click="change(index, 'time')"
+                      >{{ item.name }}</span
+                    >
                   </div>
                   <div class="option">
                     <span class="title">循环类型</span>
                     <span
                       class="high-tab"
-                      v-for="(item,index) in loopList"
+                      v-for="(item, index) in loopList"
                       :key="index"
-                      :class="{'active':loopType==index}"
-                      @click="change(index,'loop')"
-                    >{{item.name}}</span>
+                      :class="{ active: loopType == index }"
+                      @click="change(index, 'loop')"
+                      >{{ item.name }}</span
+                    >
                   </div>
                   <div class="option">
                     <span class="title">排序方式</span>
                     <span
                       class="high-tab"
-                      v-for="(item,index) in sortList"
+                      v-for="(item, index) in sortList"
                       :key="index"
-                      :class="{'active':sortType==index}"
-                      @click="change(index,'sort')"
-                    >{{item.name}}</span>
+                      :class="{ active: sortType == index }"
+                      @click="change(index, 'sort')"
+                      >{{ item.name }}</span
+                    >
                   </div>
                 </div>
                 <div class="search-switch click-font">
@@ -90,8 +97,8 @@
                   </span>
                 </div>
                 <!-- 列表 -->
-                <div class="table" style="margin-top:50px;">
-                  <table style="table-layout:fixed;">
+                <div class="table" style="margin-top: 50px">
+                  <table style="table-layout: fixed">
                     <colgroup>
                       <col width="100" />
                       <col width="200" />
@@ -107,79 +114,128 @@
                       <tr>
                         <td>事件ID</td>
                         <td>事件名称</td>
-                        <td style="text-align:center;">类型</td>
-                        <td style="text-align:center;">时间</td>
-                        <td style="text-align:center;">重要性</td>
-                        <td style="text-align:center;">关联品种</td>
-                        <td style="text-align:center;">创建者</td>
-                        <td style="text-align:center;">状态</td>
-                        <td style="text-align:right;">操作</td>
+                        <td style="text-align: center">类型</td>
+                        <td style="text-align: center">时间</td>
+                        <td style="text-align: center">重要性</td>
+                        <td style="text-align: center">关联品种</td>
+                        <td style="text-align: center">创建者</td>
+                        <td style="text-align: center">状态</td>
+                        <td style="text-align: right">操作</td>
                       </tr>
                     </thead>
                     <tbody v-if="list.length > 0">
-                      <tr v-for="(item,index) in list" :key="index">
-                        <td>{{item.event_id}}</td>
+                      <tr v-for="(item, index) in list" :key="index">
+                        <td>{{ item.event_id }}</td>
                         <td>
-                          <span class="click-font" @click="toDetail(item,index)">{{item.title}}</span>
-                          <span
-                            class="data-tab data-tab-seven data-tab-click"
-                            v-for="(litem,lindex) in item.keywords"
-                            :key="lindex"
-                          >{{litem.value}}</span>
-                        </td>
-                        <td style="text-align:center;">
-                          <span class="main-font">{{item.type==1?'公开':'内部'}}</span>
-                        </td>
-                        <td style="text-align:center;">
-                          <span
-                            class="main-font"
-                            v-if="item.repeat_year == 0"
-                          >{{item.effect_first_year}}-{{item.event_month>=10?item.event_month:'0'+item.event_month}}-{{item.event_day>=10?item.event_day:'0'+item.event_day}}</span>
-                          <span
-                            class="main-font"
-                            v-if="item.repeat_year == 1"
-                          >每年 {{item.event_month>=10?item.event_month:'0'+item.event_month}}-{{item.event_day>=10?item.event_day:'0'+item.event_day}}</span>
-                          <span
-                            class="main-font"
-                            v-if="item.repeat_year == 2"
-                          >每两年{{item.event_month>=10?item.event_month:'0'+item.event_month}}-{{item.event_day>=10?item.event_day:'0'+item.event_day}}</span>
-                          <span
-                            class="main-font"
-                            v-if="item.repeat_year == 4"
-                          >每四年{{item.event_month>=10?item.event_month:'0'+item.event_month}}-{{item.event_day>=10?item.event_day:'0'+item.event_day}}</span>
-                        </td>
-                        <td style="text-align:center;">
-                          <span class="main-font" v-if="item.event_level == 1">一般</span>
-                          <span class="main-font" v-if="item.event_level == 2">重要</span>
-                          <span class="main-font" v-if="item.event_level == 3">特别重要</span>
-                        </td>
-                        <td style="text-align:center;">
-                          <span class="main-font">{{item.goods_count}}个品种</span>
-                        </td>
-                        <td style="text-align:center;">
-                          <span class="main-font">{{item.creator_name}}</span>
-                        </td>
-                        <td style="text-align:center;">
-                          <span class="main-font">{{item.state == 1?'正常':'删除'}}</span>
-                        </td>
-                        <td style="text-align:right;">
                           <span
                             class="click-font"
-                            @click="openInfo(item,index)"
-                            v-if="item.state == 1"
-                          >信息</span>
+                            @click="toDetail(item, index)"
+                            >{{ item.title }}</span
+                          >
+                          <span v-if="item.title.length <= 10">
+                            <span
+                              class="data-tab data-tab-seven data-tab-click"
+                              v-for="(litem, lindex) in item.keywords"
+                              :key="lindex"
+                              >{{ litem.value }}</span>
+                            </span>
+                        </td>
+                        <td style="text-align: center">
+                          <span class="main-font">{{
+                            item.type == 1 ? "公开" : "内部"
+                          }}</span>
+                        </td>
+                        <td style="text-align: center">
+                          <span class="main-font" v-if="item.repeat_year == 0"
+                            >{{ item.effect_first_year }}-{{
+                              item.event_month >= 10
+                                ? item.event_month
+                                : "0" + item.event_month
+                            }}-{{
+                              item.event_day >= 10
+                                ? item.event_day
+                                : "0" + item.event_day
+                            }}</span
+                          >
+                          <span class="main-font" v-if="item.repeat_year == 1"
+                            >每年
+                            {{
+                              item.event_month >= 10
+                                ? item.event_month
+                                : "0" + item.event_month
+                            }}-{{
+                              item.event_day >= 10
+                                ? item.event_day
+                                : "0" + item.event_day
+                            }}</span
+                          >
+                          <span class="main-font" v-if="item.repeat_year == 2"
+                            >每两年{{
+                              item.event_month >= 10
+                                ? item.event_month
+                                : "0" + item.event_month
+                            }}-{{
+                              item.event_day >= 10
+                                ? item.event_day
+                                : "0" + item.event_day
+                            }}</span
+                          >
+                          <span class="main-font" v-if="item.repeat_year == 4"
+                            >每四年{{
+                              item.event_month >= 10
+                                ? item.event_month
+                                : "0" + item.event_month
+                            }}-{{
+                              item.event_day >= 10
+                                ? item.event_day
+                                : "0" + item.event_day
+                            }}</span
+                          >
+                        </td>
+                        <td style="text-align: center">
+                          <span class="main-font" v-if="item.event_level == 1"
+                            >一般</span
+                          >
+                          <span class="main-font" v-if="item.event_level == 2"
+                            >重要</span
+                          >
+                          <span class="main-font" v-if="item.event_level == 3"
+                            >特别重要</span
+                          >
+                        </td>
+                        <td style="text-align: center">
+                          <span class="main-font"
+                            >{{ item.goods_count }}个品种</span
+                          >
+                        </td>
+                        <td style="text-align: center">
+                          <span class="main-font">{{ item.creator_name }}</span>
+                        </td>
+                        <td style="text-align: center">
+                          <span class="main-font">{{
+                            item.state == 1 ? "正常" : "删除"
+                          }}</span>
+                        </td>
+                        <td style="text-align: right">
                           <span
                             class="click-font"
-                            style="margin-left:10px;"
+                            @click="openInfo(item, index)"
                             v-if="item.state == 1"
-                            @click="deleteOrganize(item,index)"
-                          >删除</span>
+                            >编辑</span
+                          >
+                          <span
+                            class="click-font"
+                            style="margin-left: 10px"
+                            v-if="item.state == 1"
+                            @click="deleteOrganize(item, index)"
+                            >删除</span
+                          >
                         </td>
                       </tr>
                     </tbody>
                     <tbody v-else>
                       <tr>
-                        <td colspan="9" style="text-align:center;">
+                        <td colspan="9" style="text-align: center">
                           <a-empty />
                         </td>
                       </tr>
@@ -189,7 +245,7 @@
                 <!-- 分页 -->
                 <div class="page">
                   <a-pagination
-                    :show-total="total => `共 ${total} 条数据`"
+                    :show-total="(total) => `共 ${total} 条数据`"
                     :default-current="1"
                     v-model="page"
                     :total="total"
@@ -202,7 +258,14 @@
           </div>
           <div class="main-container" v-else>
             <div class="model-container">
-              <div class="model-bg" style="min-height:660px;padding-bottom:75px;position:relative">
+              <div
+                class="model-bg"
+                style="
+                  min-height: 660px;
+                  padding-bottom: 75px;
+                  position: relative;
+                "
+              >
                 <PageNoPower></PageNoPower>
               </div>
             </div>
@@ -211,13 +274,22 @@
       </div>
     </div>
     <!-- 新增事件弹层 -->
-    <a-modal v-model="addOrganize" width="600px" :title="isAdd?'编辑事件':'新增事件'" on-ok="handleOk">
+    <a-modal
+      v-model="addOrganize"
+      width="600px"
+      :title="isAdd ? '编辑事件' : '新增事件'"
+      on-ok="handleOk"
+    >
       <template slot="footer">
         <div class="clearfix">
-          <div class="float-left click-font" style="line-height:32px;">不明白？查看大事件功能说明</div>
+          <div class="float-left click-font" style="line-height: 32px">
+            不明白？查看大事件功能说明
+          </div>
           <div class="float-rigth">
             <a-button key="back" @click="handleCancel">取消</a-button>
-            <a-button key="submit" type="primary" @click="handleOk">确定</a-button>
+            <a-button key="submit" type="primary" @click="handleOk"
+              >确定</a-button
+            >
           </div>
         </div>
       </template>
@@ -231,16 +303,25 @@
         <div class="option">
           <span class="lable event">*公开性</span>
           <div class="normal event">
-            <a-radio-group name="radioGroup" v-model="eventInfo.type" size="small">
-              <a-radio :value="1">公开</a-radio>
-              <a-radio :value="2">内部</a-radio>
+            <a-radio-group
+              name="radioGroup"
+              v-model="eventInfo.type"
+              size="small"
+            >
+              <a-radio :value="1" v-if="eventInfo.type == 1">公开</a-radio>
+              <a-radio :value="1" v-if="eventInfo.type == 2" disabled>公开</a-radio>
+              <a-radio :value="2" disabled>内部</a-radio>
             </a-radio-group>
           </div>
         </div>
         <div class="option">
           <span class="lable event">*循环规则</span>
           <div class="normal event">
-            <a-radio-group name="radioGroup" v-model="eventInfo.loop" size="small">
+            <a-radio-group
+              name="radioGroup"
+              v-model="eventInfo.loop"
+              size="small"
+            >
               <a-radio :value="1">不重复</a-radio>
               <a-radio :value="2">每年重复</a-radio>
               <a-radio :value="3">每两年重复</a-radio>
@@ -253,18 +334,27 @@
           <div class="normal event">
             <span
               class="click-font"
-              style="margin-right:5px;"
-              @click="eventInfo.timeType = eventInfo.timeType?0:1"
-            >{{eventInfo.timeType?'农历':'公历'}}</span>
+              style="margin-right: 5px"
+              @click="eventInfo.timeType = eventInfo.timeType ? 0 : 1"
+              >{{ eventInfo.timeType ? "农历" : "公历" }}</span
+            >
             <span>
-              <a-date-picker @change="onChange" :allowClear="false" v-model="eventInfo.time" />
+              <a-date-picker
+                @change="onChange"
+                :allowClear="false"
+                v-model="eventInfo.time"
+              />
             </span>
           </div>
         </div>
         <div class="option">
           <span class="lable event">*重要级别</span>
           <div class="normal event">
-            <a-radio-group name="radioGroup" v-model="eventInfo.level" size="small">
+            <a-radio-group
+              name="radioGroup"
+              v-model="eventInfo.level"
+              size="small"
+            >
               <a-radio :value="3">特别重要</a-radio>
               <a-radio :value="2">重要</a-radio>
               <a-radio :value="1">一般</a-radio>
@@ -281,18 +371,27 @@
               placeholder="选择关键字"
               @change="handleChange"
             >
-              <a-select-option v-for="(kitem,kindex) in keyList" :key="kitem.id">{{kitem.keywords}}</a-select-option>
+              <a-select-option
+                v-for="(kitem, kindex) in keyList"
+                :key="kitem.id"
+                >{{ kitem.keywords }}</a-select-option
+              >
             </a-select>
           </div>
         </div>
         <div class="option">
-          <span class="lable event" style="vertical-align:top;">事件描述</span>
+          <span class="lable event" style="vertical-align: top">事件描述</span>
           <div class="normal event">
-            <a-textarea placeholder v-model="eventInfo.desc" style="height:96px;" />
+            <a-textarea
+              placeholder
+              v-model="eventInfo.desc"
+              style="height: 96px"
+            />
           </div>
         </div>
       </div>
     </a-modal>
+    <Loading ref="load" :show="1" :isLoading="isLoading"></Loading>
   </div>
 </template>
 <style scoped lang="scss" src="@/style/scss/pages/admin/index.scss"></style>
@@ -357,7 +456,7 @@ export default {
       eventInfo: {
         id: 0,
         name: "",
-        type: 0,
+        type: 1,
         loop: 0,
         time: "",
         timeType: 0,
@@ -368,6 +467,7 @@ export default {
         keyWords: [],
         desc: "",
       },
+      isLoading:true,
     };
   },
   mounted() {
@@ -376,14 +476,15 @@ export default {
       this.getData();
       this.getKeyWords();
     } else {
-      this.$setSlideHeight();
+      this.isLoading = false;
     }
   },
   updated() {
-    this.$setSlideHeight();
+
   },
   methods: {
     async getData() {
+      var tStamp = this.$getTimeStamp();
       let _reapt, _sort, data;
       if (this.loopType == 0) {
         _reapt = "";
@@ -408,6 +509,7 @@ export default {
           title: this.inputVal,
           page: this.page,
           page_size: this.pageSize,
+          timestamp: tStamp,
         };
       } else {
         data = {
@@ -418,19 +520,27 @@ export default {
           event_month: this.timeType ? this.timeType : "",
           repeat_year: _reapt,
           sort: _sort,
+          timestamp: tStamp,
         };
       }
+      data.sign = this.$getSign(data);
       let res = await EVENT_LISTS(data);
       if (res.code == 0) {
         this.list = [];
         this.total = res.data.count;
         this.list = res.data.events;
+        this.isLoading = false;
       } else {
+        this.isLoading = false;
         this.$refs.head.globalTip(1, res.message, res.code);
       }
     },
     async getKeyWords() {
-      let data = {};
+      var tStamp = this.$getTimeStamp();
+      let data = {
+        timestamp: tStamp,
+      };
+      data.sign = this.$getSign(data);
       let res = await EVENT_KEYWORDS_LISTS(data);
       if (res.code == 0) {
         this.keyList = res.data;
@@ -439,6 +549,7 @@ export default {
       }
     },
     async addEvents() {
+      var tStamp = this.$getTimeStamp();
       let _type;
       if (this.eventInfo.loop == 1) {
         _type = 0;
@@ -460,8 +571,10 @@ export default {
         event_level: this.eventInfo.level,
         keywords: this.eventInfo.keyWords.join(","),
         event_desc: this.eventInfo.desc,
-        organization_id: this.$refs.head.publishInfo.organization_id,
+        // organization_id: 0,
+        timestamp: tStamp,
       };
+      data.sign = this.$getSign(data);
       let res = await EVENT_ADD(data);
       if (res.code == 0) {
         this.$refs.head.globalTip(2, "新增成功", 0);
@@ -472,6 +585,7 @@ export default {
       }
     },
     async editEvent() {
+      var tStamp = this.$getTimeStamp();
       let _type;
       if (this.eventInfo.loop == 1) {
         _type = 0;
@@ -490,12 +604,14 @@ export default {
         event_day: this.eventInfo.day,
         event_month: this.eventInfo.month,
         effect_first_year: this.eventInfo.year,
-        date_type: 1,
+        date_type: this.eventInfo.timeType ? 2 : 1,
         event_level: this.eventInfo.level,
         keywords: this.eventInfo.keyWords.join(","),
         event_desc: this.eventInfo.desc,
-        organization_id: this.$refs.head.publishInfo.organization_id,
+        // organization_id: this.$refs.head.publishInfo.organization_id,
+        timestamp: tStamp,
       };
+      data.sign = this.$getSign(data);
       let res = await EVENT_UPDATE(data);
       if (res.code == 0) {
         this.$refs.head.globalTip(2, "编辑成功", 0);
@@ -506,9 +622,12 @@ export default {
       }
     },
     async deleteEvent(id) {
+      var tStamp = this.$getTimeStamp();
       let data = {
         event_id: id,
+        timestamp: tStamp,
       };
+      data.sign = this.$getSign(data);
       let res = await EVENT_DELETE(data);
       if (res.code == 0) {
         this.$refs.head.globalTip(2, "删除成功", 0);
@@ -518,6 +637,7 @@ export default {
       }
     },
     onSearch(value) {
+      this.isLoading = true;
       this.page = 1;
       // this.searchVal = value;
       this.getData();
@@ -526,6 +646,7 @@ export default {
       this.type = this.type ? 0 : 1;
     },
     change(index, type) {
+      this.isLoading = true;
       if (type == "event") {
         this.eventType = index;
       } else if (type == "time") {
@@ -539,6 +660,7 @@ export default {
       this.getData();
     },
     onShowSizeChange(page, pageSize) {
+      this.isLoading = true;
       this.page = page;
       this.getData();
     },
@@ -546,7 +668,7 @@ export default {
       this.isAdd = 0;
       this.eventInfo.id = 0;
       this.eventInfo.name = "";
-      this.eventInfo.type = 0;
+      this.eventInfo.type = 1;
       this.eventInfo.loop = 0;
       this.eventInfo.time = "";
       this.eventInfo.year = "";

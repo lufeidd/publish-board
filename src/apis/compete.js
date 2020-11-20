@@ -10,8 +10,8 @@ export const PUBLISHER_COMPETE_GETS = query => req('post', '/compete/gets', quer
 // 品种竞争监控列表
 export const COMPETE_MONITOR_GOODS_LISTS = query => req('post', '/compete/monitor/goods/lists', query);
 // 竞社监控列表
-export const COMPETE_MONITOR_PUBLISHER_LISTS = query => req('post', '/compete/monitor/publisher/lists', query);
+export const COMPETE_MONITOR_PUBLISHER_LISTS = query => req('post', '/compete/monitor/supplier/lists', query);
 // 竞争数据信息
-export const COMPETE_MONITOR_PUBLISHER_INFO = query => req('post', '/compete/monitor/publisher/info', query);
+export const COMPETE_MONITOR_PUBLISHER_INFO = query => req('post', '/compete/monitor/supplier/info', query);
 // 竞争趋势--折线图
-export const COMPETE_MONITOR_PUBLISHER_TREND = query => req('post', '/compete/monitor/publisher/trend', query);
+export const COMPETE_MONITOR_PUBLISHER_TREND = query => req('post', '/compete/monitor/supplier/trend', query);

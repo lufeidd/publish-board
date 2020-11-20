@@ -1,13 +1,22 @@
 <template>
-  <div id="newProductPage" @click="showResult = false;">
-    <HeadNav type="publish" :show="1" ref="head" @publisherChange="publisherChange()"></HeadNav>
+  <div id="newProductPage" @click="showResult = false">
+    <HeadNav
+      type="publish"
+      :show="1"
+      ref="head"
+      @publisherChange="publisherChange()"
+    ></HeadNav>
     <div class="wd-1220">
       <div class="clearfix">
         <div class="float-left">
           <SlideNav type="publish" sort="newproduct"></SlideNav>
         </div>
-        <div class="float-left">
-          <div class="main-container" style="min-height:660px;" v-if="pagePower">
+        <div class="float-right">
+          <div
+            class="main-container"
+            style="min-height: 660px"
+            v-if="pagePower"
+          >
             <div class="model-container">
               <div class="model-bg">
                 <div class="section-title">新品追踪</div>
@@ -18,13 +27,19 @@
                         <a-icon type="line-chart" />
                         <span class="secondary-font">本社新品种数</span>
                       </div>
-                      <div class="data-font">{{goodsTotal}}</div>
+                      <div class="data-font">{{ goodsTotal }}</div>
                     </div>
                   </div>
-                  <div class="float-left" style="width:320px;margin-left:25px;">
+                  <div
+                    class="float-left"
+                    style="width: 320px; margin-left: 25px"
+                  >
                     <div id="ring-chart1"></div>
                   </div>
-                  <div class="float-left" style="width:320px;margin-left:25px;">
+                  <div
+                    class="float-left"
+                    style="width: 320px; margin-left: 25px"
+                  >
                     <div id="ring-chart2"></div>
                   </div>
                 </div>
@@ -33,13 +48,13 @@
             <!-- 选择条件 -->
             <div class="model-container">
               <div class="model-bg clearfix choose">
-                <div class="float-left" style="line-height:32px;">
+                <div class="float-left" style="line-height: 32px">
                   <span>
                     <a-dropdown :trigger="['click']" placement="bottomLeft">
                       <a
                         class="ant-dropdown-link"
-                        @click="e => e.preventDefault()"
-                        style="font-size:12px;color:#4576DB;"
+                        @click="(e) => e.preventDefault()"
+                        style="font-size: 12px; color: #4576db"
                       >
                         <span v-if="chooseTime == 0">全部上市时长</span>
                         <span v-if="chooseTime == 1">1~3个月</span>
@@ -49,22 +64,30 @@
                         <a-icon type="down" />
                       </a>
                       <a-menu slot="overlay">
-                        <a-menu-item v-for="(item,index) in timeList" :key="index">
+                        <a-menu-item
+                          v-for="(item, index) in timeList"
+                          :key="index"
+                        >
                           <a
                             href="javascript:;"
-                            style="padding:5px 15px;color:#515A6E;font-size:12px;"
-                            @click="selectTime(item,index)"
-                          >{{item.name}}</a>
+                            style="
+                              padding: 5px 15px;
+                              color: #515a6e;
+                              font-size: 12px;
+                            "
+                            @click="selectTime(item, index)"
+                            >{{ item.name }}</a
+                          >
                         </a-menu-item>
                       </a-menu>
                     </a-dropdown>
                   </span>
-                  <span style="margin-left:25px;">
+                  <span style="margin-left: 25px">
                     <a-dropdown :trigger="['click']" placement="bottomLeft">
                       <a
                         class="ant-dropdown-link"
-                        @click="e => e.preventDefault()"
-                        style="font-size:12px;color:#4576DB;"
+                        @click="(e) => e.preventDefault()"
+                        style="font-size: 12px; color: #4576db"
                       >
                         <span v-if="chooseTrend == 0">全部新品趋势</span>
                         <span v-if="chooseTrend == 1">逐步下降</span>
@@ -73,19 +96,27 @@
                         <a-icon type="down" />
                       </a>
                       <a-menu slot="overlay">
-                        <a-menu-item v-for="(item,index) in trendList" :key="index">
+                        <a-menu-item
+                          v-for="(item, index) in trendList"
+                          :key="index"
+                        >
                           <a
                             href="javascript:;"
-                            style="padding:5px 15px;color:#515A6E;font-size:12px;"
-                            @click="selectTrend(item,index)"
-                          >{{item.name}}</a>
+                            style="
+                              padding: 5px 15px;
+                              color: #515a6e;
+                              font-size: 12px;
+                            "
+                            @click="selectTrend(item, index)"
+                            >{{ item.name }}</a
+                          >
                         </a-menu-item>
                       </a-menu>
                     </a-dropdown>
                   </span>
                 </div>
                 <div class="float-right">
-                  <div class="common" style="position:relative;">
+                  <div class="common" style="position: relative">
                     <a-input
                       placeholder="搜索品种名称、ISBN"
                       @input="inputSearch"
@@ -96,9 +127,9 @@
                       <div class="list" v-if="dataSource.length > 0">
                         <div
                           class="result-content"
-                          v-for="(item1,index1) in dataSource"
+                          v-for="(item1, index1) in dataSource"
                           :key="index1"
-                          @click.stop="selected(item1,index1)"
+                          @click.stop="selected(item1, index1)"
                         >
                           <img
                             :src="item1.cover_pic"
@@ -107,12 +138,26 @@
                             height="35px"
                             v-if="item1.cover_pic"
                           />
-                          <span v-else class="no-pic" style="min-width:35px;min-height:35px;"></span>
-                          <span class="result-title" :title="item1.title">{{item1.title}}</span>
+                          <span
+                            v-else
+                            class="no-pic"
+                            style="min-width: 35px; min-height: 35px"
+                          ></span>
+                          <span class="result-title" :title="item1.title">{{
+                            item1.title
+                          }}</span>
                         </div>
                       </div>
-                      <div class="no-result" v-if="dataSource.length == 0 && showAbout">没有相关商品</div>
-                      <div style="text-align:center;margin-top:100px;" v-if="searchLoading">
+                      <div
+                        class="no-result"
+                        v-if="dataSource.length == 0 && showAbout"
+                      >
+                        没有相关商品
+                      </div>
+                      <div
+                        style="text-align: center; margin-top: 100px"
+                        v-if="searchLoading"
+                      >
                         <a-spin tip></a-spin>
                       </div>
                     </div>
@@ -122,7 +167,11 @@
             </div>
             <!-- 列表 -->
             <div v-if="goodsList.length > 0">
-              <div class="model-container" v-for="(item,index) in goodsList" :key="index">
+              <div
+                class="model-container"
+                v-for="(item, index) in goodsList"
+                :key="index"
+              >
                 <div class="model-bg">
                   <div class="goods-list clearfix">
                     <div class="float-left">
@@ -134,14 +183,26 @@
                           height="63px"
                           v-if="item.cover_pic"
                         />
-                        <span v-else class="no-pic" style="min-width:63px;min-height:63px;"></span>
-                        <div class="title click-font" :title="item.goods_name" @click="toDetail(item,index)">{{item.goods_name}}</div>
+                        <span
+                          v-else
+                          class="no-pic"
+                          style="min-width: 63px; min-height: 63px"
+                        ></span>
+                        <div
+                          class="title click-font"
+                          :title="item.goods_name"
+                          @click="toDetail(item, index)"
+                        >
+                          {{ item.goods_name }}
+                        </div>
                         <span class="data-tab data-tab-two data-tab-click">
                           <span v-if="item.trend == 1">逐步下降</span>
                           <span v-if="item.trend == 2">持续增长</span>
                           <span v-if="item.trend == 3">平稳销售</span>
                         </span>
-                        <span class="data-tab data-tab-seven data-tab-click">{{item.strategy}}</span>
+                        <span class="data-tab data-tab-seven data-tab-click">{{
+                          item.strategy
+                        }}</span>
                       </div>
                     </div>
                     <div class="float-right">
@@ -150,21 +211,22 @@
                           <a-icon type="line-chart" />
                           <span class="secondary-font">上市时长</span>
                         </div>
-                        <div class="font">{{item.publish_duration}}个月</div>
+                        <div class="font" v-if="item.publish_duration > 0">{{ item.publish_duration }}个月</div>
+                        <div class="font" v-else>预售中</div>
                       </div>
                       <div class="data-block">
                         <div>
                           <a-icon type="line-chart" />
                           <span class="secondary-font">上周销售点数</span>
                         </div>
-                        <div class="font">{{item.last_week_sale_total}}</div>
+                        <div class="font">{{ item.last_week_sale_total }}</div>
                       </div>
                       <div class="data-block">
                         <div>
                           <a-icon type="line-chart" />
                           <span class="secondary-font">累计销售点数</span>
                         </div>
-                        <div class="font">{{item.sale_total}}</div>
+                        <div class="font">{{ item.sale_total }}</div>
                       </div>
                     </div>
                   </div>
@@ -175,7 +237,7 @@
                 <div class="model-bg">
                   <div class="page">
                     <a-pagination
-                      :show-total="total => `共 ${total} 条数据`"
+                      :show-total="(total) => `共 ${total} 条数据`"
                       :default-current="1"
                       :total="total"
                       v-model="page"
@@ -196,7 +258,14 @@
           </div>
           <div class="main-container" v-else>
             <div class="model-container">
-              <div class="model-bg" style="min-height:660px;padding-bottom:75px;position:relative">
+              <div
+                class="model-bg"
+                style="
+                  min-height: 660px;
+                  padding-bottom: 75px;
+                  position: relative;
+                "
+              >
                 <PageNoPower></PageNoPower>
               </div>
             </div>
@@ -204,7 +273,7 @@
         </div>
       </div>
     </div>
-    <Loading ref="load" :show="1"></Loading>
+    <Loading ref="load" :show="1" :isLoading="isLoading"></Loading>
   </div>
 </template>
 <style lang="scss" scoped src="@/style/scss/pages/publish/other.scss"></style>
@@ -250,77 +319,87 @@ export default {
       searchLoading: false,
       showAbout: false,
       goodsList: [],
-      goodsTotal:0,
-      isFirst:true,
-      chartFirst:true,
+      goodsTotal: 0,
+      isFirst: true,
+      chartFirst: true,
       page: 1,
       total: 0,
       pageSize: 10,
+      isLoading: true,
     };
   },
   mounted() {
     this.getData();
   },
   updated() {
-    this.$setSlideHeight();
+
   },
   methods: {
     async getData() {
+      var tStamp = this.$getTimeStamp();
       let data = {
         organization_id: this.$refs.head.publishInfo.organization_id,
-        publisher_id: this.$refs.head.publishInfo.publisher_id,
+        supplier_id: this.$refs.head.publishInfo.supplier_id,
         publish_time: this.chooseTime,
         trend: this.chooseTrend,
         goods_id: this.chooseId,
         page: this.page,
         page_size: this.pageSize,
+        timestamp: tStamp,
       };
+      data.sign = this.$getSign(data);
       let res = await TRACE_NEWGOODS(data);
       if (res.code == 0) {
         this.pagePower = true;
         this.total = res.data.total;
-        this.ringData1 = this.ringData1.map((value,key)=>{
-          value.sold = res.data.publish_time_info[key+1]
+        this.isLoading = false;
+        this.ringData1 = this.ringData1.map((value, key) => {
+          value.sold = res.data.publish_time_info[key + 1];
           return value;
-        })
-        this.ringData2 = this.ringData2.map((value,key)=>{
-          value.sold = res.data.trend_info[key+1]
+        });
+        this.ringData2 = this.ringData2.map((value, key) => {
+          value.sold = res.data.trend_info[key + 1];
           return value;
-        })
-        if(this.isFirst){
-          this.goodsTotal = res.data.total;
-        }
-        if(this.chartFirst){
-          this.initData1();
-          this.initData2();
-        }else{
-          this.ringChart1.changeData(this.ringData1);
-          this.ringChart2.changeData(this.ringData2);
-        }
-        this.isFirst = false;
-        this.chartFirst = false;
+        });
+        let _this = this;
+        setTimeout(() => {
+          if (_this.isFirst) {
+            _this.goodsTotal = res.data.total;
+          }
+          if (_this.chartFirst) {
+            _this.initData1();
+            _this.initData2();
+          } else {
+            _this.ringChart1.changeData(_this.ringData1);
+            _this.ringChart2.changeData(_this.ringData2);
+          }
+          _this.isFirst = false;
+          _this.chartFirst = false;
+        }, 500);
         this.goodsList = [];
         this.goodsList = res.data.list;
         this.showResult = false;
-        this.$refs.load.isLoading = false;
       } else {
-        this.$refs.load.isLoading = false;
+        this.isLoading = false;
         if (res.code == 1009) {
           this.pagePower = false;
         } else {
           this.$refs.head.globalTip(1, res.message, res.code);
         }
-        this.$setSlideHeight();
+
       }
     },
     async search(_value) {
+      var tStamp = this.$getTimeStamp();
       let data = {
         organization_id: this.$refs.head.publishInfo.organization_id,
-        publisher_id: this.$refs.head.publishInfo.publisher_id,
+        supplier_id: this.$refs.head.publishInfo.supplier_id,
         search: _value,
         page: 1,
         page_size: 100,
+        timestamp: tStamp,
       };
+      data.sign = this.$getSign(data);
       let res = await TOP_SEARCH(data);
       if (res.code == 0) {
         if (res.data.search == this.inputVal) {
@@ -337,7 +416,6 @@ export default {
     },
     inputClick() {},
     inputSearch() {
-      console.log(111);
       this.dataSource = [];
       if (this.inputVal.length > 0) {
         this.showResult = true;
@@ -352,7 +430,6 @@ export default {
       }
     },
     selected(item1, index1) {
-      console.log(222);
       this.chooseId = item1.goods_id;
       this.changeData();
     },
@@ -364,22 +441,22 @@ export default {
       this.chooseTrend = item.id;
       this.changeData();
     },
-    changeData(){
-      this.$refs.load.isLoading = true;
+    changeData() {
+      this.isLoading = true;
       this.page = 1;
       this.getData();
     },
     onShowSizeChange(page, pageSize) {
       this.page = page;
-      this.$refs.load.isLoading = true;
+      this.isLoading = true;
       this.getData();
     },
-    toDetail(item,index){
+    toDetail(item, index) {
       this.$router.push({
         name: "detail",
         query: {
-          goods_id: item.goods_id
-        }
+          goods_id: item.goods_id,
+        },
       });
     },
     initData1() {
@@ -461,6 +538,7 @@ export default {
       this.ringChart1.interaction("element-active");
 
       this.ringChart1.render();
+
     },
     initData2() {
       // 可以通过调整这个数值控制分割空白处的间距，0-1 之间的数值
@@ -536,16 +614,20 @@ export default {
       this.ringChart2.interaction("element-active");
 
       this.ringChart2.render();
+
     },
-    publisherChange(){
+    publisherChange() {
       this.page = 1;
       this.chooseTime = 0;
       this.chooseTrend = 0;
       this.chooseId = 0;
-      this.$refs.load.isLoading = true;
-      this.isFirst = true;
+      this.isLoading = true;
+      if(!this.pagePower){
+        this.isFirst = true;
+        this.chartFirst = true;
+      }
       this.getData();
-    }
+    },
   },
 };
 </script>

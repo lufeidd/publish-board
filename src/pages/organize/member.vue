@@ -6,7 +6,7 @@
         <div class="float-left">
           <SlideNav type="organize" sort="member"></SlideNav>
         </div>
-        <div class="float-left">
+        <div class="float-right">
           <div class="main-container">
             <div class="model-container">
               <div
@@ -139,36 +139,37 @@
               alt
               width="60px"
               height="60px"
-              v-if="memberInfo.pic == 2"
+              v-else-if="memberInfo.pic == 2"
             />
             <img
               src="../../assets/user3.png"
               alt
               width="60px"
               height="60px"
-              v-if="memberInfo.pic == 3"
+              v-else-if="memberInfo.pic == 3"
             />
             <img
               src="../../assets/user4.png"
               alt
               width="60px"
               height="60px"
-              v-if="memberInfo.pic == 4"
+              v-else-if="memberInfo.pic == 4"
             />
             <img
               src="../../assets/user5.png"
               alt
               width="60px"
               height="60px"
-              v-if="memberInfo.pic == 5"
+              v-else-if="memberInfo.pic == 5"
             />
             <img
               src="../../assets/user6.png"
               alt
               width="60px"
               height="60px"
-              v-if="memberInfo.pic == 6"
+              v-else-if="memberInfo.pic == 6"
             />
+            <span v-else class="no-pic" style="min-width:60px;min-height:60px;border-radius:50%;"></span>
           </div>
         </div>
         <div class="option">
@@ -231,6 +232,7 @@
         </div>
       </div>
     </a-modal>
+    <Loading ref="load" :show="1" :isLoading="isLoading"></Loading>
   </div>
 </template>
 <style scoped lang="scss" src="@/style/scss/pages/admin/index.scss"></style>
@@ -278,45 +280,55 @@ export default {
         join_time: "2020-07-27 11:48:03", // 加入时间,
         inviter_account: ""
       },
-      chooseList: []
+      chooseList: [],
+      isLoading:true,
     };
   },
   mounted() {
-    this.powerType = this.$refs.head.publishInfo.user_organization_type;
     this.organization_id = this.$refs.head.publishInfo.organization_id;
     this.organization_name = this.$refs.head.publishInfo.organization_name;
-    if (this.powerType == 1) {
-      this.getData();
-    }
-    this.$setSlideHeight();
+    this.getData();
   },
   updated() {
-    this.$setSlideHeight();
+
   },
   methods: {
     // 获取成员列表
     async getData() {
+      var tStamp = this.$getTimeStamp();
       let data = {
         organization_id: this.organization_id,
         page: this.page,
         page_size: this.page_size,
         user_mix: this.searchVal,
-        user_state: 1
+        user_state: 1,
+        timestamp: tStamp
       };
+      data.sign = this.$getSign(data);
       let res = await ORGANIZATION_MEMBER_GETS(data);
       if (res.code == 0) {
+        this.powerType = 1;
         this.userList = res.data.lists;
         this.totalCount = res.data.total;
+        this.isLoading = false;
       } else {
-        this.$refs.head.globalTip(1, res.message, res.code);
+        this.isLoading = false;
+        if(res.code == 1009){
+          this.powerType = 0;
+        }else{
+          this.$refs.head.globalTip(1, res.message, res.code);
+        }
       }
     },
     // 查看成员信息
     async readMemberInfo(_index) {
+      var tStamp = this.$getTimeStamp();
       let data = {
         organization_id: this.organization_id,
-        user_id: this.user_id
+        user_id: this.user_id,
+        timestamp: tStamp
       };
+      data.sign = this.$getSign(data);
       let res = await ORGANIZATION_MEMBER_INFO(data);
       if (res.code == 0) {
         this.memberInfo = res.data;
@@ -328,10 +340,13 @@ export default {
     },
     // 删除成员
     async deleteMember() {
+      var tStamp = this.$getTimeStamp();
       let data = {
         organization_id: this.organization_id,
-        user_id: this.user_id
+        user_id: this.user_id,
+        timestamp: tStamp
       };
+      data.sign = this.$getSign(data);
       let res = await ORGANIZATION_MEMBER_DELETE(data);
       if (res.code == 0) {
         this.userList = this.userList.filter((value, key) => {
@@ -345,10 +360,13 @@ export default {
     },
     // 生成邀请码
     async buildInvite() {
+      var tStamp = this.$getTimeStamp();
       let data = {
         invite_type: this.roleValue,
-        organization_id: this.organization_id
+        organization_id: this.organization_id,
+        timestamp: tStamp
       };
+      data.sign = this.$getSign(data);
       let res = await USER_INVITE_CREATE(data);
       if (res.code == 0) {
         this.inviteUrl =
@@ -363,10 +381,12 @@ export default {
     // 分页切换
     onShowSizeChange(page, pageSize) {
       // console.log(page,pageSize)
+      this.isLoading = true;
       this.page = page;
       this.getData();
     },
     onSearch(value) {
+      this.isLoading = true;
       this.page = 1;
       this.searchVal = value;
       this.getData();
@@ -431,10 +451,11 @@ export default {
       this.buildInvite();
     },
     publisherChange() {
-      this.powerType = this.$refs.head.publishInfo.user_organization_type;
+      this.isLoading = true;
+      // this.powerType = this.$refs.head.publishInfo.user_organization_type;
       this.organization_id = this.$refs.head.publishInfo.organization_id;
       this.organization_name = this.$refs.head.publishInfo.organization_name;
-      console.log(this.powerType);
+      // console.log(this.powerType);
       this.getData();
     }
   }

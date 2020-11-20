@@ -1,6 +1,6 @@
 import req from './http.js'
 // 本社看板--综合概况
-export const MYVIEW_PUBLISHERINFO = query => req('post', '/myview/publisherinfo', query);
+export const MYVIEW_PUBLISHERINFO = query => req('post', '/myview/supplierinfo', query);
 // 本社看板--品种排行
 export const MYVIEW_GOODSRANK = query => req('post', '/myview/goodsrank', query);
 // 本社看板--地域排行

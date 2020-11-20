@@ -6,7 +6,7 @@
         <div class="float-left">
           <SlideNav type="admin" sort="adminParam"></SlideNav>
         </div>
-        <div class="float-left">
+        <div class="float-right">
           <div class="main-container" v-if="powerType == 1">
             <div class="model-container">
               <div
@@ -312,21 +312,24 @@ export default {
       this.getData();
       // this.getCurrenData();
     }
-    this.$setSlideHeight();
+
   },
   updated() {
-    this.$setSlideHeight();
+
   },
   methods: {
     // 获取列表
     async getData() {
+      var tStamp = this.$getTimeStamp();
       let data = {
         type: 1,
         search: this.inputVal,
         id: this.searchId,
         page: this.page,
-        page_size: this.page_size
+        page_size: this.page_size,
+        timestamp: tStamp
       };
+      data.sign = this.$getSign(data);
       let res = await RATIO_GETS(data);
       if (res.code == 0) {
         this.list = [];
@@ -338,10 +341,13 @@ export default {
     },
     // 获取日志列表
     async getRecordData(id) {
+      var tStamp = this.$getTimeStamp();
       let data = {
         type: 1,
-        target_id: id
+        target_id: id,
+        timestamp: tStamp
       };
+      data.sign = this.$getSign(data);
       let res = await RATIO_LOGS(data);
       if (res.code == 0) {
         this.recordInfo.recordList = [];
@@ -352,10 +358,13 @@ export default {
       }
     },
     async getCurrenData() {
+      var tStamp = this.$getTimeStamp();
       let data = {
         type: 1,
-        id: this.addInfo.publisher_id
+        id: this.addInfo.publisher_id,
+        timestamp: tStamp
       };
+      data.sign = this.$getSign(data);
       let res = await RATIO_CURREN(data);
       if (res.code == 0) {
         this.addInfo.currenRatio = res.data.current_ratio;
@@ -365,13 +374,16 @@ export default {
     },
     // 新增系数
     async add() {
+      var tStamp = this.$getTimeStamp();
       let data = {
         type: 1,
         id: this.addInfo.publisher_id,
         name: this.addInfo.publisher_name,
         ratio: this.addInfo.ratio,
-        year: this.addInfo.year
+        year: this.addInfo.year,
+        timestamp: tStamp
       };
+      data.sign = this.$getSign(data);
       let res = await RATIO_ADD(data);
       if (res.code == 0) {
         this.$refs.head.globalTip(2, "新增系数成功", 0);
@@ -385,11 +397,14 @@ export default {
     },
     // 出版社列表获取
     async getPublishList(val, type) {
+      var tStamp = this.$getTimeStamp();
       let data = {
         publisher_name: val,
         page: 1,
-        page_size: 1000000000000
+        page_size: 10000,
+        timestamp: tStamp
       };
+      data.sign = this.$getSign(data);
       let res = await PUBLISHER_GETS(data);
       if (res.code == 0) {
         if (type == 1) {
@@ -403,7 +418,7 @@ export default {
         } else {
           this.dataSource = res.data.list;
         }
-        console.log(this.searchLoading, this.searchList);
+        // console.log(this.searchLoading, this.searchList);
       } else {
         this.searchLoading = false;
         this.$refs.head.globalTip(1, res.message, res.code);
@@ -411,11 +426,14 @@ export default {
     },
     // 修改系数
     async editParam() {
+      var tStamp = this.$getTimeStamp();
       let data = {
         type: 1,
         id: this.addInfo.id,
-        ratio: this.addInfo.ratio
+        ratio: this.addInfo.ratio,
+        timestamp: tStamp
       };
+      data.sign = this.$getSign(data);
       let res = await RATIO_EDIT(data);
       if (res.code == 0) {
         this.$refs.head.globalTip(2, "修改成功", 0);
@@ -501,7 +519,7 @@ export default {
       }
     },
     onAddSearch(value) {
-      console.log(11122);
+      // console.log(11122);
       let _value = value.toString();
       this.dataSource = [];
       this.addInfo.publisher_id = 0;
@@ -516,7 +534,7 @@ export default {
         }
       });
       this.getCurrenData();
-      console.log(666, value, this.dataSource);
+      // console.log(666, value, this.dataSource);
     },
     yearChange(e) {
       let _year = e._d.getFullYear();
@@ -541,7 +559,7 @@ export default {
       this.readRecord = false;
     },
     selectSearch(litem, lindex) {
-      console.log(111);
+      // console.log(111);
       this.inputVal = litem.publisher_name;
       this.searchId = litem.publisher_id;
     }

@@ -25,11 +25,10 @@
 </style>
 <script>
 export default {
-  props: ["show"],
+  props: ["show","isLoading"],
   data() {
     return {
       indicator: <a-icon type="loading" style="font-size: 50px" spin />,
-      isLoading: true
     };
   }
 };

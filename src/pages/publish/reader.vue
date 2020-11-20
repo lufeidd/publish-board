@@ -6,7 +6,7 @@
         <div class="float-left">
           <SlideNav type="publish" sort="reader"></SlideNav>
         </div>
-        <div class="float-left">
+        <div class="float-right">
           <div class="main-container" v-if="pagePower">
             <!-- 读者概况 -->
             <div class="model-container">
@@ -36,36 +36,36 @@
                 <div class="section-title">基础特征</div>
                 <div class="feature">
                   <div class="clearfix" style="padding:15px;">
-                    <div class="float-left">
+                    <div class="float-left" style="width:500px;">
                       <div>性别分布</div>
                       <div v-if="ringData1.length > 0">
                         <div id="ring1" style="width:400px;margin-top:20px;"></div>
                       </div>
-                      <div style="width:400px;" v-else>
-                        <div class="no-data">基础数据不足，暂无分析</div>
+                      <div style="width:500px;" v-else>
+                        <div class="no-data">数据量较小，暂不支持分析</div>
                       </div>
                       <div style="margin-top:20px;">消费能力</div>
                       <div v-if="ringData2.length > 0">
                         <div id="ring2" style="width:400px;margin-top:20px;"></div>
                       </div>
-                      <div style="width:400px;" v-else>
-                        <div class="no-data">基础数据不足，暂无分析</div>
+                      <div style="width:500px;" v-else>
+                        <div class="no-data">数据量较小，暂不支持分析</div>
                       </div>
                     </div>
-                    <div class="float-left" style="margin-left:100px;">
-                      <div>年龄分布</div>
+                    <div class="float-left" style="margin-left:10px;width:500px;">
+                      <div style="margin-left:40px;">年龄分布</div>
                       <div v-if="columnData1.length > 0">
-                        <div id="column1" style="width:400px;margin-left:40px;margin-top:20px;"></div>
+                        <div id="column1" style="width:400px;margin-left:90px;margin-top:20px;"></div>
                       </div>
-                      <div style="width:400px;" v-else>
-                        <div class="no-data">基础数据不足，暂无分析</div>
+                      <div style="width:500px;margin-left:38px;" v-else>
+                        <div class="no-data">数据量较小，暂不支持分析</div>
                       </div>
-                      <div style="margin-top:20px;">兴趣分布</div>
+                      <div style="margin-top:20px;margin-left:40px;">兴趣分布</div>
                       <div v-if="columnData2.length > 0">
-                        <div id="column2" style="width:400px;margin-left:40px;margin-top:20px;"></div>
+                        <div id="column2" style="width:400px;margin-left:90px;margin-top:20px;"></div>
                       </div>
-                      <div style="width:400px;" v-else>
-                        <div class="no-data">基础数据不足，暂无分析</div>
+                      <div style="width:500px;margin-left:38px;" v-else>
+                        <div class="no-data">数据量较小，暂不支持分析</div>
                       </div>
                     </div>
                   </div>
@@ -76,16 +76,16 @@
             <div class="model-container">
               <div class="model-bg">
                 <div class="section-title">地域</div>
-                <div class="clearfix" style="padding-bottom:15px;" v-if="barData1.length > 4">
+                <div class="clearfix" style="padding-bottom:15px;" v-if="barData1.length > 0">
                   <div class="float-left" style="position:relative;margin-top:15px;">
                     <div id="map" style="height:284px;width:520px;"></div>
                   </div>
-                  <div class="float-left" style="width:500px;margin-left:50px;">
+                  <div class="float-left" style="width:500px;margin-left:45px;">
                     <p style="margin-top:15px;">地域（省）</p>
                     <div id="bar-chart1"></div>
                   </div>
                 </div>
-                <div class="no-data" v-else>基础数据不足，暂无分析</div>
+                <div class="no-data" v-else>数据量较小，暂不支持分析</div>
               </div>
             </div>
             <!-- 偏好 -->
@@ -95,17 +95,17 @@
                 <div class="clearfix" style="padding:10px 15px 15px 15px;">
                   <div class="float-left" style="width:500px;margin-right:50px;">
                     <p>类目偏好</p>
-                    <div v-if="barData2.length > 4">
+                    <div v-if="barData2.length > 0">
                       <div id="bar-chart2"></div>
                     </div>
-                    <div class="no-data" v-else>基础数据不足，暂无分析</div>
+                    <div class="no-data" v-else>数据量较小，暂不支持分析</div>
                   </div>
                   <div class="float-left" style="width:500px;">
                     <p>作家偏好</p>
-                    <div v-if="barData3.length > 4">
+                    <div v-if="barData3.length > 0">
                       <div id="bar-chart3"></div>
                     </div>
-                    <div class="no-data" v-else>基础数据不足，暂无分析</div>
+                    <div class="no-data" v-else>数据量较小，暂不支持分析</div>
                   </div>
                 </div>
               </div>
@@ -121,7 +121,7 @@
         </div>
       </div>
     </div>
-    <Loading ref="load" :show="1"></Loading>
+    <Loading ref="load" :show="1" :isLoading="isLoading"></Loading>
   </div>
 </template>
 <style scoped lang="scss">
@@ -168,7 +168,8 @@ export default {
       barData3: [],
       barChange3: null,
       barMapData: [],
-      isFirst: true
+      isFirst: true,
+      isLoading: true,
     };
   },
   mounted() {
@@ -179,10 +180,13 @@ export default {
   },
   methods: {
     async getData() {
+      var tStamp = this.$getTimeStamp();
       let data = {
         organization_id: this.$refs.head.publishInfo.organization_id,
-        publisher_id: this.$refs.head.publishInfo.publisher_id
+        supplier_id: this.$refs.head.publishInfo.supplier_id,
+        timestamp: tStamp
       };
+      data.sign = this.$getSign(data);
       let res = await READER_BASE(data);
       if (res.code == 0) {
         this.pagePower = true;
@@ -220,39 +224,55 @@ export default {
               if (_this.columnData1.length > 0) _this.initColumn1();
               if (_this.ringData2.length > 0) _this.initRing2();
               if (_this.columnData2.length > 0) _this.initColumn2();
-              if (_this.barData1.length > 4) _this.initMap();
-              if (_this.barData1.length > 4)
+              if (_this.barData1.length > 0) _this.initMap();
+              if (_this.barData1.length > 0)
                 _this.inintBar1(_this.barData1[0].value);
-              if (_this.barData2.length > 4)
+              if (_this.barData2.length > 0)
                 _this.inintBar2(_this.barData2[0].value);
-              if (_this.barData3.length > 4)
+              if (_this.barData3.length > 0)
                 _this.inintBar3(_this.barData3[0].value);
             } else {
-              if (_this.ringData1.length > 0)
+              if (_this.ringData1.length > 0){
                 _this.ringChange1.changeData(_this.ringData1);
-              if (_this.ringData2.length > 0)
+              }
+              if (_this.ringData2.length > 0){
                 _this.ringChange2.changeData(_this.ringData2);
-              if (_this.columnData1.length > 0)
-                _this.columnChange1.changeData(_this.columnData1);
-              if (_this.columnData2.length > 0)
-                _this.columnChange2.changeData(_this.columnData2);
-              if (_this.barData1.length > 4)
-                _this.barChange1.changeData(_this.barData1.reverse());
-              if (_this.barData2.length > 4)
-                _this.barChange2.changeData(_this.barData2.reverse());
-              if (_this.barData3.length > 4)
-                _this.barChange3.changeData(_this.barData3.reverse());
-              if (_this.barData1.length > 4) _this.initMap();
+              }
+              if (_this.columnData1.length > 0){
+                _this.columnChange1.destroy();
+                _this.initColumn1();
+                // _this.columnChange1.changeData(_this.columnData1);
+              }
+              if (_this.columnData2.length > 0){
+                _this.columnChange2.destroy();
+                _this.initColumn2();
+                // _this.columnChange2.data(_this.columnData2);
+                // _this.columnChange2.render();
+              }
+              if (_this.barData1.length > 0){
+                _this.barChange1.destroy();
+                _this.inintBar1(_this.barData1[0].value);
+              }
+              if (_this.barData2.length > 0){
+                _this.barChange2.destroy();
+                _this.inintBar2(_this.barData2[0].value);
+              }
+              if (_this.barData3.length > 0){
+                _this.barChange3.destroy();
+                _this.inintBar3(_this.barData3[0].value);
+              }
+              if (_this.barData1.length > 0) {
+                _this.initMap();
+              }
             }
             _this.isFirst = false;
-            _this.$setSlideHeight();
           }, 500);
         } else {
           this.isFirst = true;
         }
-        this.$refs.load.isLoading = false;
+        this.isLoading = false;
       } else {
-        this.$refs.load.isLoading = false;
+        this.isLoading = false;
         if (res.code == 1009) {
           this.pagePower = false;
         } else {
@@ -287,7 +307,7 @@ export default {
       this.ringChange1 = new Chart({
         container: "ring1",
         autoFit: true,
-        height: 234
+        height: 234,
       });
 
       this.ringChange1.data(this.ringData1);
@@ -316,7 +336,7 @@ export default {
           }
         })
         .shape("slice-shape");
-
+      this.ringChange1.interaction("element-active");
       this.ringChange1.render();
     },
     initRing2() {
@@ -376,7 +396,7 @@ export default {
           }
         })
         .shape("slice-shape");
-
+      this.ringChange2.interaction("element-active");
       this.ringChange2.render();
     },
     // 柱状图
@@ -385,6 +405,7 @@ export default {
       this.columnChange1 = new Chart({
         container: "column1",
         autoFit: true,
+        autoHide: false,
         height: 234
       });
       this.columnChange1.data(this.columnData1);
@@ -393,7 +414,7 @@ export default {
       });
       this.columnChange1.axis("name", {
         tickLine: null,
-        autoHide: false | true,
+        autoHide: false,
         autoRotate: false
       });
       this.columnChange1.axis("value", {
@@ -433,6 +454,7 @@ export default {
       this.columnChange2 = new Chart({
         container: "column2",
         autoFit: true,
+        autoHide: false,
         height: 234
       });
       this.columnChange2.data(this.columnData2);
@@ -441,7 +463,7 @@ export default {
       });
       this.columnChange2.axis("name", {
         tickLine: null,
-        autoHide: false | true,
+        autoHide: false,
         autoRotate: false
       });
       this.columnChange2.axis("value", {
@@ -597,16 +619,17 @@ export default {
       this.$setSlideHeight();
     },
     inintBar1(_max) {
-      console.log("max", _max);
+      // console.log("max", _max);
+      let _height = this.barData1.length*25.4;
       this.barChange1 = new Chart({
         container: "bar-chart1",
         autoFit: true,
-        height: 254
+        height: _height
       });
       this.barChange1.data(this.barData1.reverse());
       this.barChange1.scale({
         value: {
-          max: 110,
+          max: 150,
           min: 0,
           alias: " "
         }
@@ -627,7 +650,14 @@ export default {
         label: null,
         line: null,
         tickLine: null,
-        grid: null,
+        grid: {
+          line:{
+            style:{
+              fillOpacity:0,
+              strokeOpacity:0
+            }
+          }
+        },
         title: null
       });
       this.barChange1.legend(false);
@@ -642,7 +672,7 @@ export default {
             fill: "#7789af",
             autoHide: false | true
           },
-          offset: 10,
+          // offset: 10,
           content: originData => {
             return originData.value + "%";
           },
@@ -653,12 +683,13 @@ export default {
       this.$setSlideHeight();
     },
     inintBar2(_max) {
-      console.log("max", _max);
+      // console.log("max", _max);
+      let _height = this.barData2.length*25.4;
       this.barChange2 = new Chart({
         container: "bar-chart2",
         autoFit: true,
         autoHide: false,
-        height: 254
+        height: _height
       });
       this.barChange2.data(this.barData2.reverse());
       this.barChange2.scale({
@@ -684,7 +715,14 @@ export default {
         label: null,
         line: null,
         tickLine: null,
-        grid: null,
+        grid: {
+          line:{
+            style:{
+              fillOpacity:0,
+              strokeOpacity:0
+            }
+          }
+        },
         title: null
       });
       this.barChange2.legend(false);
@@ -694,18 +732,12 @@ export default {
         .interval()
         .position("name*value")
         .size(8)
-        .label("name", {
-          style: {
-            textAlign: "start",
-            fill: "#333"
-          }
-        })
         .label("value", {
           style: {
             fill: "#7789af",
-            autoHide: false | true
+            autoHide: false
           },
-          offset: 10,
+          // offset: 10,
           content: originData => {
             return originData.value + "%";
           },
@@ -716,12 +748,13 @@ export default {
       this.$setSlideHeight();
     },
     inintBar3(_max) {
-      console.log("max", _max);
+      // console.log("max", _max);
+      let _height = this.barData3.length*25.4;
       this.barChange3 = new Chart({
         container: "bar-chart3",
         autoFit: true,
         autoHide: false,
-        height: 254
+        height: _height
       });
       this.barChange3.data(this.barData3.reverse());
       this.barChange3.scale({
@@ -736,18 +769,20 @@ export default {
         tickLine: null,
         grid: null,
         line: null,
-        label: {
-          textStyle: {
-            textAlign: "left"
-          }
-        }
       });
 
       this.barChange3.axis("value", {
         label: null,
         line: null,
         tickLine: null,
-        grid: null,
+        grid: {
+          line:{
+            style:{
+              fillOpacity:0,
+              strokeOpacity:0
+            }
+          }
+        },
         title: null
       });
       this.barChange3.legend(false);
@@ -757,21 +792,15 @@ export default {
         .interval()
         .position("name*value")
         .size(8)
-        .label("name", {
-          style: {
-            textAlign: "left"
-          }
-        })
         .label("value", {
           style: {
             fill: "#7789af",
-            autoHide: false | true
+            autoHide: false
           },
-          offset: 10,
+          // offset: 10,
           content: originData => {
             return originData.value + "%";
           },
-          autoHide: false | true,
           remove: false
         });
       // chart.interaction("element-active");
@@ -779,7 +808,10 @@ export default {
       this.$setSlideHeight();
     },
     publisherChange() {
-      this.$refs.load.isLoading = true;
+      this.isLoading = true;
+      if(!this.pagePower){
+        this.isFirst = true;
+      }
       this.getData();
     }
   }

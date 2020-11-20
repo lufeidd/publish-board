@@ -6,10 +6,10 @@
         <div class="float-left">
           <SlideNav type="publish" sort="authors"></SlideNav>
         </div>
-        <div class="float-left">
+        <div class="float-right">
           <div class="main-container" v-if="pagePower">
             <div class="model-container">
-              <div class="model-bg">
+              <div class="model-bg" style="min-height:660px;">
                 <div class="section-title">
                   本社作者
                   <span class="desc">共{{total}}名</span>
@@ -36,7 +36,7 @@
                         <td style="text-align:right;">操作</td>
                       </tr>
                     </thead>
-                    <tbody>
+                    <tbody v-if="list.length > 0">
                       <tr v-for="(item,index) in list" :key="index">
                         <td>{{index+1+((pageSize*page)-pageSize)}}</td>
                         <td>
@@ -51,10 +51,10 @@
                           </div>
                         </td>
                         <td style="text-align:center;">
-                          <span class="click-font">{{item.goods_count}}个品种</span>
+                          <span class="main-font">共{{item.goods_count}}部作品</span>
                         </td>
                         <td style="text-align:center;">
-                          <span class="click-font">{{item.publisher_count}}个出版社</span>
+                          <span class="main-font">涵盖{{item.supplier_count}}家出版机构</span>
                         </td>
                         <td style="text-align:right;">
                           <span class="main-font" v-if="item.birth_date">{{item.birth_date}}</span>
@@ -65,11 +65,18 @@
                           <span class="main-font" v-else>--</span>
                         </td>
                         <td style="text-align:right;">
-                          <span class="click-dark">编辑</span>
+                          <span class="click-font" @click="toEdit(item,index)">编辑</span>
                         </td>
                       </tr>
                     </tbody>
-                    <tfoot>
+                    <tbody v-else>
+                      <tr>
+                        <td colspan="7" style="text-align: center">
+                          <a-empty />
+                        </td>
+                      </tr>
+                    </tbody>
+                    <tfoot v-if="list.length > 0">
                       <tr>
                         <td colspan="7" style="text-align:right;">
                           <a-pagination
@@ -98,7 +105,7 @@
         </div>
       </div>
     </div>
-    <Loading ref="load" :show="1"></Loading>
+    <Loading ref="load" :show="1" :isLoading="isLoading"></Loading>
   </div>
 </template>
 <script>
@@ -110,32 +117,36 @@ export default {
       total: 0,
       page: 1,
       pageSize: 20,
-      list: []
+      list: [],
+      isLoading:true,
     };
   },
   mounted() {
     this.getData();
   },
   updated() {
-    this.$setSlideHeight();
+
   },
   methods: {
     async getData() {
+      var tStamp = this.$getTimeStamp();
       let data = {
         organization_id: this.$refs.head.publishInfo.organization_id,
-        publisher_id: this.$refs.head.publishInfo.publisher_id,
+        supplier_id: this.$refs.head.publishInfo.supplier_id,
         page: this.page,
-        page_size: this.pageSize
+        page_size: this.pageSize,
+        timestamp: tStamp
       };
+      data.sign = this.$getSign(data);
       let res = await MYAUTHOR_LISTS(data);
       if (res.code == 0) {
         this.pagePower = true;
         this.list = [];
         this.list = res.data.list;
         this.total = res.data.count;
-        this.$refs.load.isLoading = false;
+        this.isLoading = false;
       } else {
-        this.$refs.load.isLoading = false;
+        this.isLoading = false;
         if (res.code == 1009) {
           this.pagePower = false;
         }else {
@@ -144,7 +155,7 @@ export default {
       }
     },
     onShowSizeChange(current, pageSize) {
-      this.$refs.load.isLoading = true;
+      this.isLoading = true;
       this.page = current;
       this.getData();
     },
@@ -156,8 +167,16 @@ export default {
         }
       });
     },
+    toEdit(item,index){
+      this.$router.push({
+        name:"authoredit",
+        query:{
+          author_id: item.author_id
+        }
+      })
+    },
     publisherChange() {
-      this.$refs.load.isLoading = true;
+      this.isLoading = true;
       this.page = 1;
       this.getData();
     }
