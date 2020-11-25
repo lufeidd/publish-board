@@ -543,6 +543,18 @@ img{
   max-height: 230px;
   overflow-y: auto;
 }
+.ant-cascader-picker{
+  & .ant-cascader-picker-label{
+    font-size: $fontSize - 2 !important;
+  }
+  & .ant-cascader-input::placeholder{
+    color: $fontColor1 !important;
+  }
+}
+.ant-cascader-menus{
+  font-size: $fontSize - 2 !important;
+  color: $fontColor1 !important;
+}
 // tab标签页
 .ant-tabs-nav{
   & .ant-tabs-tab{

@@ -1081,18 +1081,17 @@ export default {
         });
         this.brokenLineData2 = this.goodsData;
         if (this.tabKey == 2) {
-          if (this.lineFirst2) {
-            setTimeout(() => {
+          let _this = this;
+          setTimeout(()=>{
+            if (_this.lineFirst2) {
               this.initLineData2();
-            }, 500);
-          } else {
-            setTimeout(() => {
-              this.lineChart2.changeData(this.brokenLineData2);
-            }, 500);
-          }
+            }else{
+              this.lineChart2.destroy();
+              _this.initLineData2();
+            }
+          },500)
           this.lineFirst2 = false;
         }
-
       } else {
         if (res.code == 1009) {
           this.lifePower = false;
@@ -1443,17 +1442,6 @@ export default {
           },
         });
       }
-      // console.log(888,this.brokenLineData2);
-      // this.sliderChart = new slider({
-      //   container: 'slider',
-      //   width:1000,
-      //   height:26,
-      //   data:this.brokenLineData2,
-      //   start:0,
-      //   end:1,
-
-      // })
-      // this.sliderChart.render();
       this.lineChart2.scale({
         month: {
           range: [0, 1],

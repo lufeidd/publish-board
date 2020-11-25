@@ -188,6 +188,7 @@ export default {
       let res = await USER_ORGANIZATION_AUTH(data);
       if (res.code == 0) {
         // this.objInfo = res.data;
+        this.powerType == 1;
         this.allList = [];
         this.publishList = [];
         this.competeList = [];
@@ -211,7 +212,11 @@ export default {
         // console.log(this.publishList,this.competeList,this.industyList,this.applicationList)
       } else {
         this.isLoading = false;
-        this.$refs.head.globalTip(1, res.message, res.code);
+        if(res.code == 1009){
+          this.powerType == 0;
+        }else{
+          this.$refs.head.globalTip(1, res.message, res.code);
+        }
       }
     },
     // 获取成员信息

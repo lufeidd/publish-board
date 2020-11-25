@@ -572,12 +572,17 @@ export default {
       data.sign = this.$getSign(data);
       let res = await USER_GETSINCLUDE(data);
       if (res.code == 0) {
+        this.powerType == 1;
         this.userList = res.data.lists;
         this.total = res.data.count;
         this.isLoading = false;
       } else {
         this.isLoading = false;
-        this.$refs.head.globalTip(1, res.message, res.code);
+        if(res.code == 1009){
+          this.powerType == 0;
+        }else{
+          this.$refs.head.globalTip(1, res.message, res.code);
+        }
       }
     },
     // 重置用户密码

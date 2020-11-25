@@ -107,6 +107,12 @@
         font-size: $fontSize - 2;
         & .num{
           margin-left: 30px;
+          &.green{
+            color: $green;
+          }
+          &.red{
+            color: $red;
+          }
         }
       }
     }
@@ -120,7 +126,7 @@
     }
     & .animation{
       padding:0 15px;
-      height: 112px;
+      height: 134px;
       overflow: hidden;
       position: relative;
       & .animation-container{

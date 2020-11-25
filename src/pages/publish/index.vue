@@ -68,45 +68,23 @@
               <div class="model-container">
                 <div class="model-bg clearfix choose">
                   <div class="float-left">
-                    <a-dropdown :trigger="['click']" placement="bottomLeft">
-                      <a
-                        class="ant-dropdown-link"
-                        @click="(e) => e.preventDefault()"
-                        style="font-size: 12px; color: #4576db"
-                      >
-                        {{ chooseCategory.name }}
-                        <a-icon type="down" />
-                      </a>
-                      <a-menu slot="overlay">
-                        <a-menu-item>
-                          <a
-                            href="javascript:;"
-                            style="
-                              padding: 5px 15px;
-                              color: #515a6e;
-                              font-size: 12px;
-                            "
-                            @click="selectCategory(null, -1)"
-                            >所有类目</a
-                          >
-                        </a-menu-item>
-                        <a-menu-item
-                          v-for="(item, index) in categoryList"
-                          :key="index"
-                        >
-                          <a
-                            href="javascript:;"
-                            style="
-                              padding: 5px 15px;
-                              color: #515a6e;
-                              font-size: 12px;
-                            "
-                            @click="selectCategory(item, index)"
-                            >{{ item.name }}</a
-                          >
-                        </a-menu-item>
-                      </a-menu>
-                    </a-dropdown>
+                    <a-cascader
+                      :field-names="{
+                        label: 'name',
+                        value: 'category_id',
+                        children: 'children',
+                      }"
+                      :options="categoryList"
+                      :load-data="loadData"
+                      placeholder="所有类目"
+                      :allowClear="false"
+                      change-on-select
+                      :popupVisible="catePopup"
+                      v-model="chooseCategory"
+                      @blur="catePopup = false"
+                      @click="catePopup = true"
+                      @change="selectCategory"
+                    />
                   </div>
                   <div class="float-right">
                     <TimeChoose
@@ -722,10 +700,8 @@ export default {
       },
       goodsRankList: [],
       categoryList: [],
-      chooseCategory: {
-        name: "所有类目",
-        id: 0,
-      },
+      chooseCategory: [0],
+      catePopup: false,
       typeText: "sale_total",
       isFirst: true,
       radarFirst: true,
@@ -772,7 +748,7 @@ export default {
     this.getData();
     this.getGoods();
     this.getRegion();
-    this.getCategory();
+    this.getFirstCategory();
     this.getCore();
     this.getCoreData();
   },
@@ -881,7 +857,7 @@ export default {
         supplier_id: this.$refs.head.publishInfo.supplier_id,
         period: this.$refs.time.cycle,
         date_type: this.$refs.time.dateType,
-        goods_cate: this.chooseCategory.id,
+        goods_cate: this.chooseCategory[this.chooseCategory.length - 1],
         timestamp: tStamp,
       };
       data.sign = this.$getSign(data);
@@ -911,7 +887,7 @@ export default {
         supplier_id: this.$refs.head.publishInfo.supplier_id,
         period: this.$refs.time.cycle,
         date_type: this.$refs.time.dateType,
-        goods_cate: this.chooseCategory.id,
+        goods_cate: this.chooseCategory[this.chooseCategory.length - 1],
         timestamp: tStamp,
       };
       data.sign = this.$getSign(data);
@@ -956,17 +932,65 @@ export default {
         }
       }
     },
-    // 获取分类列表
-    async getCategory() {
+    // 获取初级分类列表
+    async getFirstCategory() {
       var tStamp = this.$getTimeStamp();
       let data = {
         supplier_id: this.$refs.head.publishInfo.supplier_id,
+        floor: 2,
         timestamp: tStamp,
       };
       data.sign = this.$getSign(data);
       let res = await COMMON_PUBLISHERCATEGORY(data);
       if (res.code == 0) {
-        this.categoryList = res.data;
+        this.categoryList = [];
+        let _data = {
+          category_id: 0,
+          name: "所有类目",
+          isLeaf: true,
+          pid: 0,
+        };
+        this.categoryList.push(_data);
+        res.data.map((value, key) => {
+          let _obj = value;
+          _obj.isLeaf = false;
+          this.categoryList.push(_obj);
+        });
+      } else {
+        this.$refs.head.globalTip(1, res.message, res.code);
+      }
+    },
+    async getNextCate(id, arr) {
+      var tStamp = this.$getTimeStamp();
+      let data = {
+        supplier_id: this.$refs.head.publishInfo.supplier_id,
+        floor: 3,
+        pid: id,
+        timestamp: tStamp,
+      };
+      data.sign = this.$getSign(data);
+      let res = await COMMON_PUBLISHERCATEGORY(data);
+      if (res.code == 0) {
+        arr.loading = false;
+        if (res.data.length > 0) {
+          arr.isLeaf = false;
+          let _list = [];
+          res.data.map((value, key) => {
+            let _obj = value;
+            _obj.isLeaf = true;
+            _list.push(_obj);
+          });
+          arr.children = _list;
+          this.categoryList = [...this.categoryList];
+        } else {
+          arr.isLeaf = true;
+          this.catePopup = false;
+          this.isLoading = true;
+          this.getGoods();
+          this.getRegion();
+          this.getCore();
+          this.getCoreData();
+        }
       } else {
         this.$refs.head.globalTip(1, res.message, res.code);
       }
@@ -979,7 +1003,7 @@ export default {
         supplier_id: this.$refs.head.publishInfo.supplier_id,
         date_type: this.$refs.time.dateType,
         start_date: this.$refs.time.oneDay,
-        goods_cate: this.chooseCategory.id,
+        goods_cate: this.chooseCategory[this.chooseCategory.length - 1],
         period: this.$refs.time.cycle,
         timestamp: tStamp,
       };
@@ -1009,7 +1033,7 @@ export default {
         date_type: this.$refs.time.dateType,
         type: this.typeText,
         start_date: this.$refs.time.oneDay,
-        goods_cate: this.chooseCategory.id,
+        goods_cate: this.chooseCategory[this.chooseCategory.length - 1],
         period: this.$refs.time.cycle,
         timestamp: tStamp,
       };
@@ -1025,7 +1049,9 @@ export default {
           _obj.month = value.date.toString();
           _obj.city = "当期";
           _obj.temperature = value.value;
-          if(value.week_range){_obj.range = value.week_range};
+          if (value.week_range) {
+            _obj.range = value.week_range;
+          }
           _arr1.unshift(_obj);
         });
         res.data.last_data.map((value, key) => {
@@ -1033,7 +1059,9 @@ export default {
           _obj.month = value.date.toString();
           _obj.city = "上年同期";
           _obj.temperature = value.value;
-          if(value.week_range){_obj.range = value.week_range};
+          if (value.week_range) {
+            _obj.range = value.week_range;
+          }
           _arr2.unshift(_obj);
         });
         // console.log(_arr);
@@ -1331,16 +1359,21 @@ export default {
         })
         .shape("circle")
         .style({ lineWidth: 2 })
-        .tooltip("month*temperature*city*range", function (month, temperature, city,range) {
+        .tooltip("month*temperature*city*range", function (
+          month,
+          temperature,
+          city,
+          range
+        ) {
           // tooltip的第一个参数写上需要显示的字段'item1*item2*...'；第二个参数为一个函数，该函数的参数为需要显示的字段。
-          let _title
-          if(_this.$refs.time.dateType == 2){
-            _title = month + '（' + range + '）';
-          }else{
+          let _title;
+          if (_this.$refs.time.dateType == 2) {
+            _title = month + "（" + range + "）";
+          } else {
             _title = month;
           }
           return {
-            title:_title,
+            title: _title,
             name: city,
             value: temperature, // 这里也可以通过调用其他自定义函数的方式，去对数据进行更深层次的变换。但要注意this的指向问题！
           };
@@ -1546,20 +1579,30 @@ export default {
       this.barChart.render();
     },
     // 选择分类
-    selectCategory(item, index) {
-      // console.log(index)
-      this.isLoading = true;
-      if (index == -1) {
-        this.chooseCategory.name = "所有类目";
-        this.chooseCategory.id = 0;
-      } else {
-        this.chooseCategory.name = item.name;
-        this.chooseCategory.id = item.category_id;
+    selectCategory(value) {
+      console.log("选择", this.chooseCategory);
+      if (this.chooseCategory.length > 1 || this.chooseCategory[0] == 0) {
+        this.catePopup = false;
+        this.isLoading = true;
+        this.getGoods();
+        this.getRegion();
+        this.getCore();
+        this.getCoreData();
       }
-      this.getGoods();
-      this.getRegion();
-      this.getCore();
-      this.getCoreData();
+      // this.isLoading = true;
+      // if (index == -1) {
+      //   this.chooseCategory.name = "所有类目";
+      //   this.chooseCategory.id = 0;
+      // } else {
+      //   this.chooseCategory.name = item.name;
+      //   this.chooseCategory.id = item.category_id;
+      // }
+    },
+    loadData(selectedOptions) {
+      const targetOption = selectedOptions[selectedOptions.length - 1];
+      targetOption.loading = true;
+      this.getNextCate(selectedOptions[0].category_id, targetOption);
+      console.log("next", selectedOptions[0].category_id);
     },
     coreTypeChange(text) {
       this.typeText = text;
@@ -1584,8 +1627,7 @@ export default {
     publisherChange() {
       this.isLoading = true;
       this.typeText = "sale_total";
-      this.chooseCategory.name = "所有类目";
-      this.chooseCategory.id = 0;
+      this.chooseCategory = 0;
       this.$refs.time.cycle = this.$weekDate().weekth;
       this.$refs.time.oneDay = this.$weekDate().start.replace(/-/g, "");
       this.$refs.time.chooseWeek = this.$weekDate().start;
@@ -1609,7 +1651,7 @@ export default {
       this.getData();
       this.getGoods();
       this.getRegion();
-      this.getCategory();
+      this.getFirstCategory();
       this.getCore();
       this.getCoreData();
     },

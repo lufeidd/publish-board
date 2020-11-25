@@ -229,7 +229,7 @@
       </div>
       <div class="model-container clearfix">
         <!-- 今日实时数据 -->
-        <div class="float-left model-bg" style="height: 314px">
+        <div class="float-left model-bg" style="height: 336px;">
           <div class="real-data">
             <div class="section-title clearfix">
               <div class="float-left">今日实时数据</div>
@@ -255,6 +255,10 @@
                     <span>昨日全天</span>
                     <span class="num">{{ publishData.yesterday }}</span>
                   </div>
+                  <div class="before">
+                    <span>同时段对比</span>
+                    <span class="num green">33</span>
+                  </div>
                 </div>
                 <div
                   class="real-data-block float-left"
@@ -270,6 +274,10 @@
                     <span>昨日全天</span>
                     <span class="num">{{ allData.yesterday }}</span>
                   </div>
+                  <div class="before">
+                    <span>同时段对比</span>
+                    <span class="num red">33</span>
+                  </div>
                 </div>
               </div>
               <div style="padding: 0 15px 15px 15px">
@@ -279,7 +287,7 @@
             </div>
             <div
               class="content"
-              style="height: 272px; position: relative"
+              style="height: 294px; position: relative;"
               v-else
             >
               <ModelNoPower
@@ -360,7 +368,7 @@
                   </div>
                 </div>
               </div>
-              <div v-else style="height: 112px; position: relative">
+              <div v-else style="height: 134px; position: relative">
                 <div class="no-data">暂无数据</div>
               </div>
             </div>
