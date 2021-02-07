@@ -1,0 +1,156 @@
+<template>
+  <div id="industryPage">
+    <HeadNav
+      type="industry"
+      ref="head"
+      :show="1"
+      @publisherChange="publisherChange()"
+    ></HeadNav>
+    <div class="wd-1220">
+      <div class="clearfix">
+        <div class="float-left">
+          <SlideNav type="industry" sort="cate"></SlideNav>
+        </div>
+        <div class="float-right">
+          <div class="main-container">
+            <a-affix :offset-top="36">
+              <div class="model-container">
+                <div class="model-bg clearfix">
+                  <div class="float-right" style="padding: 7px 15px">
+                    <TimeChoose
+                      ref="time"
+                      @changeTime="changeTime"
+                    ></TimeChoose>
+                  </div>
+                </div>
+              </div>
+            </a-affix>
+            <!-- 列表 -->
+            <div class="model-container">
+              <div class="model-bg" style="min-height: 603px">
+                <div class="section-title">行业全类目销售排行</div>
+                <div class="table">
+                  <table style="table-layout: fixed">
+                    <colgroup>
+                      <col width="55" />
+                      <col width="210" />
+                      <col width="100" />
+                      <col width="100" />
+                      <col width="160" />
+                    </colgroup>
+                    <thead>
+                      <tr>
+                        <td>排名</td>
+                        <td style="text-align: center">类目</td>
+                        <td style="text-align: right">销售指数</td>
+                        <td style="text-align: right">占比</td>
+                        <td style="text-align: right">上期对比</td>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>100</td>
+                        <td style="text-align: center"></td>
+                        <td style="text-align: right"></td>
+                        <td style="text-align: right"></td>
+                        <td style="text-align: right"></td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+<script>
+import { COMMON_CATEGORY } from "../../apis/common.js";
+import { INDUSTRY_RANK_GOODS } from "../../apis/industry.js";
+export default {
+  data() {
+    return {
+      pagePower: true,
+      categoryList: [],
+      chooseCategory: [0],
+      catePopup: false,
+      isLoading: true,
+      goodsList: [],
+    };
+  },
+  mounted() {},
+  methods: {
+    async getData() {
+      var tStamp = this.$getTimeStamp();
+      let data = {
+        organization_id: this.$refs.head.publishInfo.organization_id,
+        date_type: this.$refs.time.dateType,
+        start_date: this.$refs.time.oneDay,
+        period: this.$refs.time.cycle,
+        cate_level: this.chooseCategory.length == 1 ? "one" : "two",
+        goods_cate: this.chooseCategory[this.chooseCategory.length - 1],
+        page: 1,
+        page_size: 100,
+        timestamp: tStamp,
+      };
+      data.sign = this.$getSign(data);
+      let res = await INDUSTRY_RANK_GOODS(data);
+      if (res.code == 0) {
+        this.pagePower = true;
+        this.goodsList = [];
+        res.data.result.map((value, key) => {
+          value.active = false;
+          this.goodsList.push(value);
+        });
+        this.isLoading = false;
+      } else {
+        this.isLoading = false;
+        if (res.code == 1009) {
+          this.pagePower = false;
+        } else {
+          this.$refs.head.globalTip(1, res.message, res.code);
+        }
+      }
+    },
+    // 获取初级分类列表
+    async getFirstCategory() {
+      var tStamp = this.$getTimeStamp();
+      let data = {
+        // floor: 2,
+        timestamp: tStamp,
+      };
+      data.sign = this.$getSign(data);
+      let res = await COMMON_CATEGORY(data);
+      if (res.code == 0) {
+        this.categoryList = [];
+        let _data = {
+          category_id: 0,
+          name: "所有类目",
+          pid: 0,
+        };
+        this.categoryList.push(_data);
+        res.data.map((value, key) => {
+          this.categoryList.push(value);
+        });
+      } else {
+        this.$refs.head.globalTip(1, res.message, res.code);
+      }
+    },
+    loadData() {},
+    // 选择分类
+    selectCategory(value, selectedOptions) {
+      // console.log(value,selectedOptions)
+      this.catePopup = false;
+      this.isLoading = true;
+      this.getData();
+    },
+    changeTime() {
+      this.isLoading = true;
+      this.getData();
+    },
+    changeTime() {},
+  },
+};
+</script>

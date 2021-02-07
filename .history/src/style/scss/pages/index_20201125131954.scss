@@ -1,0 +1,235 @@
+@charset "UTF-8";
+
+#indexPage {
+  padding-bottom: 20px;
+
+  & .data-paper.model-container {
+    & .section-title {
+      & .time {
+        font-size: $fontSize - 2;
+        color: $fontColor2;
+        margin-left: 15px;
+        font-weight: normal;
+      }
+    }
+
+    & .content {
+      padding: 15px;
+
+      & .left {
+        display: inline-block;
+        margin-right: 60px;
+
+        & .data-block {
+          display: inline-block;
+          padding: 15px 10px;
+          background-color: $themeColor5;
+          width: 220px;
+          box-sizing: border-box;
+          margin-right: 10px;
+        }
+      }
+
+      & .right {
+        display: inline-block;
+        vertical-align: top;
+        width: 420px;
+
+        & .main-category {
+          color: $fontColor2;
+          font-size: $fontSize - 2;
+
+          & .category-content {
+            // margin-bottom: 10px;
+          }
+
+          & .category-left {
+            display: inline-block;
+            vertical-align: top;
+            border-left: 2px solid $fontColor2;
+            padding: 0 10px;
+            margin: 6px 0;
+          }
+
+          & .category-right {
+            display: inline-block;
+            width: 340px;
+            line-height: 30px;
+          }
+        }
+      }
+    }
+  }
+
+  & .quick-enter {
+    width: 610px;
+    margin-bottom: 10px;
+
+    & .enter-content {
+      padding: 20px 0;
+      padding-left: 15px;
+
+      & .enter-click {
+        cursor: pointer;
+        display: inline-block;
+        width: 105px;
+        text-align: center;
+        line-height: 70px;
+        color: $themeColor80;
+        background-color: $themeColor5;
+        margin-right: 10px;
+        box-sizing: border-box;
+
+        &:last-child {
+          margin-right: 0;
+        }
+
+        &:hover {
+          color: $themeColor60;
+        }
+      }
+    }
+  }
+
+  & .real-data {
+    width: 600px;
+
+    & .real-data-block {
+      width: 260px;
+      padding: 15px 20px;
+      box-sizing: border-box;
+      border: 1px solid #f4f7fd;
+      cursor: pointer;
+      &.active{
+        border-color: $themeColor80;
+      }
+      & .before{
+        font-size: $fontSize - 2;
+        & .num{
+          margin-left: 30px;
+          &.green{
+            color: $green;
+          }
+          &.red{
+            color: $red;
+          }
+        }
+      }
+    }
+  }
+
+  & .impend-event {
+    width: 610px;
+
+    & .no-open {
+      height: 112px;
+    }
+    & .animation{
+      padding:0 15px;
+      height: 134px;
+      overflow: hidden;
+      position: relative;
+      & .animation-container{
+        & .list{
+          margin-bottom: 10px;
+          & .name{
+            color: $fontColor1;
+            font-size: $fontSize - 2;
+          }
+        }
+      }
+    }
+  }
+
+  & .sale-rank,
+  & .up-rank,
+  & .new-rank {
+    width: 400px;
+  }
+
+  & .sale-rank,
+  & .up-rank {
+    margin-right: 10px;
+  }
+
+  & .publish-top {
+    width: 605px;
+    margin-right: 10px;
+
+    & .no-open {
+      height: 290px;
+    }
+  }
+
+  & .compete-publish {
+    width: 605px;
+
+    & .no-open {
+      height: 290px;
+    }
+  }
+
+  & .no-open {
+    text-align: center;
+  }
+
+  & .last-week {
+    line-height: 48px;
+    padding: 0 15px;
+    color: $fontColor1;
+    font-size: $fontSize - 2;
+  }
+
+  & .table-data {
+    height: 350px;
+    position: relative;
+
+    & .compete-container {
+      padding: 20px 15px;
+      font-size: $fontSize - 2;
+
+      & .name {
+        display: inline-block;
+        padding: 0 10px;
+        box-sizing: border-box;
+        line-height: 32px;
+        text-align: center;
+        color: $fontColor1;
+        background-color: $themeColor5;
+        min-width: 155px;
+        margin-right: 20px;
+      }
+
+      & .num {
+        color: $fontColor1;
+        margin-left: 5px;
+        margin-right: 20px;
+      }
+
+      & .point {
+        display: inline-block;
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        margin-right: 2px;
+
+        // vertical-align: middle;
+        &.pub {
+          background-color: #4576DB;
+        }
+
+        &.comp {
+          background-color: #FF9900;
+        }
+      }
+    }
+  }
+  & .no-data{
+    color: $fontColor1;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    margin-top: -10px;
+    margin-left: -28px;
+  }
+}

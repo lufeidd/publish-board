@@ -1,0 +1,624 @@
+@charset "UTF-8";
+@import './var.scss';
+@import './minix.scss';
+
+body {
+  background-color: $themeColor10 !important;
+  color: $fontColor2 !important;
+  font-family:"Microsoft Yahei",微软雅黑 !important;
+}
+/* 隐藏滚动条 */
+::-webkit-scrollbar {
+  width: 0px;
+  height: 0;
+}
+::-ms-scrollbar {
+  width: 0px;
+  height: 0;
+}
+::scrollbar[orient="vertical"] {
+min-width: 0px !important;
+}
+/* 滚动条的滑轨背景颜色 */
+::-webkit-scrollbar-track {
+background-color: rgba(0, 0, 0, .05);
+}
+/* 滑块颜色 */
+::-webkit-scrollbar-thumb {
+background-color: rgba(0, 0, 0, .15);
+}
+/* 滑轨两头的监听按钮颜色 */
+::-webkit-scrollbar-button {
+height: 0;
+background-color: rgba(0, 0, 0, .05);
+}
+/* 横向滚动条和纵向滚动条相交处尖角的颜色 */
+::-webkit-scrollbar-corner {
+background-color: black;
+}
+#app{
+  // padding-bottom: 20px;
+  height: 100%;
+}
+/* 字体图标 */
+.icon {
+  width: 1em;
+  height: 1em;
+  vertical-align: middle;
+  fill: currentColor;
+  overflow: hidden;
+  position: relative;
+  top: -2px;
+}
+img{
+  object-fit: contain;
+  // background-color: #A1A1A1;
+}
+.uploadPackage{
+  input{
+    cursor: pointer;
+  }
+}
+// 底部版权
+.copyright{
+  text-align: center;
+  font-size: $fontSize - 2;
+  background-color: $clf;
+  & .copy-link{
+    padding-top: 45px;
+    & .url{
+      color: $fontColor1;
+      cursor: pointer;
+      &:hover{
+        color: $themeColor80;
+      }
+    }
+  }
+  & .copy-word{
+    padding-bottom: 45px;
+    margin-top: 15px;
+  }
+}
+// 主体内容居中
+.wd-1220 {
+  width: 1220px;
+  margin: 0 auto;
+}
+
+// logo文字
+.logo-font {
+  font-size: $fontSize + 6;
+  color: $clf;
+  font-weight: 700;
+}
+
+// 可点击文字
+.click-font {
+  font-size: $fontSize - 2;
+  color: $themeColor80;
+  cursor: pointer;
+  font-weight: normal;
+}
+.click-dark{
+  font-size: $fontSize - 2;
+  color: #BACCF2;
+  cursor: pointer;
+  font-weight: normal;
+}
+.click-font-warn{
+  font-size: $fontSize - 2;
+  color: $red;
+  cursor: pointer;
+  font-weight: normal;
+}
+
+.click-font:hover {
+  color: $themeColor60;
+}
+
+// 可点击按钮文字
+.click-btn-font {
+  font-size: $fontSize - 2;
+  color: $themeColor5;
+}
+
+.click-btn-font:hover {
+  color: $clf;
+}
+
+// 版块标题
+.section-title {
+  font-size: $fontSize;
+  color: $fontColor1;
+  border-bottom: 1px solid $themeColor5;
+  line-height: 40px;
+  padding: 0 15px;
+  box-sizing: border-box;
+  font-weight: 700;
+  & .desc{
+    font-size: $fontSize - 2;
+    color: $fontColor2;
+    font-weight: normal;
+    margin-left: 5px;
+  }
+}
+
+// 次要文字
+.secondary-font {
+  font-size: $fontSize - 2;
+  color: $fontColor2;
+}
+
+// 数据展示文字
+.data-font {
+  font-size: $fontSize + 10;
+  color: $fontColor1;
+  & .small{
+    font-size: $fontSize - 2;
+    font-weight: normal;
+  }
+}
+
+// 主体内容模块
+.main-container{
+  width: 1080px;
+}
+.model-container {
+  margin-top: 10px;
+
+  & .model-bg {
+    background-color: $clf;
+  }
+}
+
+.clearfix {
+  position: relative;
+
+  &::after {
+    display: block;
+    content: '';
+    height: 0;
+    width: 0;
+    clear: both;
+  }
+}
+
+.float-left {
+  float: left;
+}
+
+.float-right {
+  float: right;
+}
+// 无图片背景
+.no-pic{
+  background-color: $themeColor20;
+  display: inline-block;
+  vertical-align: middle;
+}
+// 数据标签条
+.data-tab {
+  display: inline-block;
+  font-size: $fontSize - 2;
+  border-radius: 5px;
+  padding: 2px 5px;
+  margin: 0 3px;
+  line-height: normal;
+  &.data-tab-click{
+    padding:2px 10px;
+    cursor: pointer;
+  }
+}
+
+.data-tab.data-tab-one {
+  color: $fontColor1;
+  background-color: $themeColor20;
+}
+
+.data-tab.data-tab-two {
+  color: $red;
+  background-color: $lightRed;
+}
+.data-tab.data-tab-three {
+  color: $green;
+  background-color: $lightGreen;
+}
+.data-tab.data-tab-three {
+  color: $green;
+  background-color: $lightGreen;
+}
+.data-tab.data-tab-four{
+  color: $clf;
+  background-color: $green;
+  &.active{
+    opacity: 0.5;
+  }
+}
+.data-tab.data-tab-five{
+  color: $clf;
+  background-color: $orange;
+  &.active{
+    opacity: 0.5;
+  }
+}
+.data-tab.data-tab-six{
+  color: $clf;
+  background-color: $fontColor2;
+  &.active{
+    opacity: 0.5;
+  }
+}
+.data-tab.data-tab-seven{
+  color: $orange;
+  background-color: rgba(255, 153, 0, 0.2);
+}
+// 错误状态
+.wrong-status{
+  position: absolute;
+  width: 100%;
+  top: 50%;
+  margin-top: -65px;
+}
+// 表格
+.table {
+  font-size: $fontSize - 2;
+  padding: 0 15px;
+
+  & table {
+    & td {
+      padding: 10px;
+      box-sizing: border-box;
+    }
+
+    & tbody {
+      & td {
+        border-top: 1px solid $themeColor5;
+        & .main-font {
+          color: $fontColor1;
+        }
+
+        & .sub-font {
+          color: $fontColor2;
+        }
+
+        & .percent{
+          color: $red;
+        }
+        & .green{
+          color: $green;
+        }
+        & .goods-desc{
+          @include displayFlex(flex,null,center);
+          & .goods-image{
+            display: inline-block;
+            width:40px;
+            height: 40px;
+          }
+          & .goods-name{
+            margin-left: 10px;
+            -webkit-box-flex-grow: 1;
+            -moz-box-flex-grow: 1;
+            -ms-box-flex-grow: 1;
+            -o-box-flex-grow: 1;
+            flex-grow: 1;
+            @include twoColtextOverflow;
+          }
+        }
+        & .author{
+          position: relative;
+          &:hover{
+            & .author-list{
+              // display: block;
+            }
+          }
+          & .author-name{
+            @include twoColtextOverflow;
+          }
+          & .author-list{
+            position: absolute;
+            // display: none;
+            box-shadow:0 0 10px rgba(0, 0, 0, .15);
+            background-color: $clf;
+            z-index: 9;
+            & .author-item{
+              padding: 0 15px;
+              // min-width: 240px;
+              white-space: nowrap;
+              color: $fontColor1;
+              line-height: 44px;
+              &.click{
+                cursor: pointer;
+              }
+              &:hover{
+                background-color: $themeColor5;
+              }
+            }
+          }
+        }
+        & .one-text{
+          @include textOverflow;
+        }
+        & .tag {
+          display: inline-block;
+          padding: 2px 10px;
+          font-size: $fontSize - 2;
+          color: $orange;
+          background-color: rgba(255, 153, 0, 0.2);
+          border-radius: 5px;
+          &.red{
+            color: $red;
+          }
+        }
+        & .goods{
+          & .goods-title{
+            display: inline-block;
+            @include textOverflow;
+            vertical-align: middle;
+          }
+        }
+        & .saleforcast{
+          border:1px solid $themeColor5;
+          color: $themeColor80;
+          border-radius: 5px;
+          text-align: center;
+          cursor: pointer;
+          line-height: 38px;
+          box-sizing: border-box;
+          &:hover{
+            border:1px dashed $themeColor80;
+          }
+        }
+      }
+    }
+  }
+  &.small{
+    & table{
+      & td{
+        padding:10px 5px;
+      }
+    }
+  }
+  &.noline{
+    & table{
+      & tbody{
+        & td{
+          border-top:none;
+        }
+      }
+    }
+  }
+}
+
+/*******组件******/
+// 按钮
+.ant-btn{
+  color: $themeColor80 !important;
+  border-color: $themeColor20 !important;
+  font-size: $fontSize - 2 !important;
+  &:hover{
+    border-color: $themeColor60 !important;
+  }
+}
+.ant-btn-primary {
+  background-color: $themeColor80 !important;
+  border-color: $themeColor80 !important;
+  font-weight: normal !important;
+  color: $clf !important;
+  font-size: $fontSize - 2 !important;
+
+  &:hover {
+    background-color: $themeColor60 !important;
+    border-color: $themeColor60 !important;
+  }
+}
+.ant-btn-default{
+  color: $fontColor2 !important;
+  border-color: $themeColor20 !important;
+  font-size: $fontSize - 2 !important;
+  &:hover{
+    border-color: $themeColor100 !important;
+  }
+}
+.ant-btn-danger{
+  color: $clf !important;
+  border-color: $red !important;
+  font-size: $fontSize - 2 !important;
+  &:hover{
+    border-color: $red !important;
+  }
+}
+.modelNoPower {
+  .ant-btn-primary {
+    background-color: $themeColor5 !important;
+    color: $themeColor80 !important;
+    border-color: $themeColor5 !important;
+    font-weight: normal !important;
+    font-size: $fontSize - 2 !important;
+
+    &:hover {
+      color: $themeColor60 !important;
+      background-color: $themeColor5 !important;
+    }
+  }
+}
+
+
+// 输入框
+#organizePage,#paramPage,#functionPage,#taopuPage,#competePage,#eventPage {
+  & .content.user {
+    & .ant-input {
+      padding-left: 100px;
+      &::placeholder{
+        margin-top: -2px;
+      }
+    }
+    & .ant-input-prefix{
+      // margin-top: 2px;
+      & .icon{
+        font-size: $fontSize - 2 ;
+      }
+    }
+  }
+  & .content.common{
+    & .ant-input-prefix{
+      & .rowLine{
+        color: $themeColor5;
+        margin-left: 5px;
+        font-size: $fontSize - 2;
+      }
+      & .icon{
+        // margin-top: 4px;
+      }
+    }
+    & .ant-input {
+      padding-left: 50px;
+    }
+  }
+  & .ant-input-search-button{
+    font-size: $fontSize - 2;
+  }
+}
+
+.ant-input {
+  font-size: $fontSize - 2  !important;
+  &::placeholder {
+    font-size: $fontSize - 2 !important;
+    color: $fontColor2 !important;
+  }
+}
+.time-choose{
+  & .week{
+    & .ant-input{
+      cursor: pointer !important;
+    }
+  }
+}
+// 单选
+.ant-radio-group-small {
+  & .ant-radio-wrapper {
+    font-size: $fontSize - 2 !important;
+    color: $fontColor1 !important;
+  }
+}
+
+.ant-tabs-bar {
+  margin: 0 !important;
+  border-bottom: none !important;
+}
+
+.ant-modal-body {
+  padding: 0 !important;
+}
+// 全局提示
+.ant-message-custom-content.ant-message-info{
+  color: $fontColor2 !important;
+  font-size: $fontSize - 2 !important;
+  & .anticon{
+    color: $themeColor100 !important;
+  }
+}
+// 确认框
+.ant-modal-body{
+  padding: 0 !important;
+  & .ant-modal-confirm-body{
+    & .anticon-question-circle{
+      display: none !important;
+    }
+    & .ant-modal-confirm-title{
+      padding:15px !important;
+      font-size: $fontSize !important;
+      border-bottom: 1px solid $themeColor5 !important;
+    }
+    & .ant-modal-confirm-content{
+      font-size: $fontSize - 2 !important;
+      color: $fontColor2 !important;
+      margin-left: 0 !important !important;
+      padding: 15px !important;
+      border-bottom: 1px solid $themeColor5 !important;
+    }
+  }
+  & .ant-modal-confirm-btns{
+    margin-top: 10px !important;
+    margin-bottom: 10px !important;
+    margin-right: 15px !important;
+  }
+}
+.ant-modal-confirm-body > .anticon + .ant-modal-confirm-title + .ant-modal-confirm-content{
+  margin-left: 0 !important;
+}
+// 对话框
+.ant-modal-content{
+  & .ant-modal-title{
+    font-size: $fontSize !important;
+  }
+  & .ant-btn{
+    font-size: $fontSize - 2 !important;
+  }
+}
+// 下拉菜单
+.ant-dropdown-menu{
+  max-height: 230px;
+  overflow-y: auto;
+}
+.ant-cascader-picker{
+  &
+  & .ant-cascader-picker-label{
+    font-size: $fontSize - 2 !important;
+  }
+  & .ant-cascader-input{
+    border-color: $themeColor20 !important;
+    &::placeholder{
+      color: $fontColor1 !important;
+    }
+  }
+}
+.ant-cascader-menus{
+  font-size: $fontSize - 2 !important;
+  color: $fontColor1 !important;
+  z-index: 8 !important;
+  & .ant-cascader-menu{
+    height: auto !important;
+    max-height: 180px !important;
+  }
+}
+// tab标签页
+.ant-tabs-nav{
+  & .ant-tabs-tab{
+    margin: 0 !important;
+    &:hover{
+      color: $themeColor80 !important;
+    }
+  }
+  & .ant-tabs-tab-disabled:hover{
+    color: rgba(54, 26, 26, 0.25) !important;
+  }
+  & .ant-tabs-tab-active{
+    color: $themeColor80 !important;
+  }
+}
+
+.ant-tabs-ink-bar{
+  background-color: $themeColor80 !important;
+  bottom: 2px !important;
+}
+// 多项选择
+.ant-select-selection--multiple{
+  & .ant-select-selection__choice{
+    border-radius: 5px !important;
+    padding: 0 10px 0 10px !important;
+    font-size: $fontSize - 2 !important;
+    background-color: $themeColor5 !important;
+    & .ant-select-selection__choice__remove{
+      display: none !important;
+    }
+  }
+}
+.ant-select-dropdown-menu-item-selected{
+  color: $clf !important;
+  background-color: $themeColor80 !important;
+  font-size: $fontSize - 2 !important;
+  font-weight: normal !important;
+}
+.ant-select-dropdown.ant-select-dropdown--multiple .ant-select-dropdown-menu-item-selected .ant-select-selected-icon{
+  color: $clf !important;
+}

@@ -1,0 +1,235 @@
+@charset "UTF-8";
+#detailPage{
+  padding-bottom: 20px;
+  & .main-container{
+    & .goods-detail{
+      padding: 15px 15px 0 15px;
+      & .goods-img{
+        display: inline-block;
+        vertical-align: top;
+        position: relative;
+        & .descrip{
+          position: absolute;
+          bottom: 0;
+          left: 0;
+          padding:2px 10px;
+          border-radius: 5px;
+          color: $clf;
+          font-size: $fontSize - 2;
+          background-color: rgba(0, 0, 0, 0.4);
+        }
+      }
+      & img{
+        vertical-align: top;
+      }
+      & .goods-desc{
+        display: inline-block;
+        vertical-align: top;
+        margin-left: 10px;
+        font-size: $fontSize - 2;
+        position: relative;
+        & .title{
+          width: 350px;
+          font-size: $fontSize + 2;
+          @include twoColtextOverflow;
+          color: $fontColor1;
+          max-height: 48px;
+          &.important{
+            color: $orange;
+          }
+        }
+        & .money,& .author,& .publish,& .publish-time,& .cate{
+          margin-top: 5px;
+        }
+        & .isbn{
+          margin-top: 20px;
+        }
+        & .value{
+          color: $fontColor1;
+          margin-left: 42px;
+        }
+        & .publish{
+          & .value{
+            margin-left: 30px;
+          }
+        }
+        & .publish-time{
+          & .value{
+            margin-left: 18px;
+          }
+        }
+        & .authors{
+          width: 350px;
+          font-size: $fontSize + 2;
+          @include textOverflow;
+          color: $fontColor1;
+        }
+        & .description{
+          height: 80px;
+          // & .value{
+          //   display: inline-block;
+          //   width: 350px;
+          //   height: 75px;
+          //   overflow: hidden;
+          //   text-overflow: ellipsis;
+          // }
+        }
+        & .author{
+          width: 350px;
+          @include textOverflow;
+          & .value{
+            margin-left:41px;
+          }
+        }
+        & .author-list{
+          position: absolute;
+          box-shadow:0 0 10px rgba(0, 0, 0, .15);
+          background-color: $clf;
+          z-index: 9;
+          left:70px;
+          top:135px;
+          & .author-item{
+            padding: 0 15px;
+            // min-width: 240px;
+            white-space: nowrap;
+            color: $fontColor1;
+            line-height: 44px;
+            &.click{
+              cursor: pointer;
+            }
+            &:hover{
+              background-color: $themeColor5;
+            }
+          }
+        }
+      }
+      & .radarMap{
+        display: inline-block;
+        margin-left: 60px;
+        vertical-align: middle;
+      }
+      & .tabs{
+        margin-top: 40px;
+      }
+    }
+    & .choose{
+      padding: 7px 15px;
+    }
+    & .core-data{
+      & .content{
+        padding: 10px 15px;
+        & .data-block{
+          width: 260px;
+          padding: 15px 20px;
+          box-sizing: border-box;
+          border: 1px solid $themeColor5;
+          cursor: pointer;
+          &.active{
+            border-color: $themeColor80;
+          }
+          & .compare{
+            font-size: $fontSize - 2;
+            & .down-number{
+              color:$green;
+            }
+            & .up-number{
+              color: $red;
+            }
+          }
+        }
+      }
+    }
+    & .life-cycle{
+      & .data-choose{
+        padding: 10px 15px;
+        & .data-block{
+          display: inline-block;
+          width: 230px;
+          padding:10px 15px;
+          background-color: $themeColor5;
+          margin-right: 10px;
+        }
+        & .set-compare{
+          position: relative;
+          display: inline-block;
+          width: 260px;
+          text-align: center;
+          line-height: 72px;
+          height: 72px;
+          border: 1px dashed $themeColor80;
+          box-sizing: border-box;
+          cursor: pointer;
+          & .names{
+            @include textOverflow;
+            padding:0 10px;
+          }
+          &.active{
+            border-style: solid;
+          }
+          & .anticon{
+            position: absolute;
+            right: 5px;
+            top: 5px;
+          }
+          & .search{
+            position: absolute;
+            width: 100%;
+            left: 0;
+            top: 75px;
+            max-height: 245px;
+            overflow-y: auto;
+            border-radius: 5px;
+            background-color: $clf;
+            box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.078);
+            line-height: normal;
+            padding: 5px 0;
+            z-index: 9;
+            & .list{
+              margin-top: 5px;
+              & .content{
+                line-height: 32px;
+                text-align: left;
+                color: $fontColor1;
+                padding: 0 15px;
+                &:hover{
+                  background-color: $themeColor5;
+                }
+                & .title{
+                  display: inline-block;
+                  width: 88%;
+                  vertical-align: middle;
+                  @include textOverflow;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    & .basic{
+      & .feature{
+        padding: 15px;
+      }
+    }
+    & .detail-desc{
+      padding:15px;
+      font-size: $fontSize - 2;
+      & .content{
+        margin-bottom: 5px;
+        & .title{
+          display: inline-block;
+          width: 50px;
+        }
+        & .desc{
+          color: $fontColor1;
+          margin-left: 60px;
+        }
+      }
+    }
+    & .no-data{
+      padding:118px 0;
+      font-size: $fontSize - 2;
+      text-align: center;
+    }
+  }
+}

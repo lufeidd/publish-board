@@ -1,5 +1,5 @@
 <template>
-  <div id="detailPage" @click="show1 = false;if(tabKey == '1') {$refs.time.showYear = false}">
+  <div id="detailPage" @click="bodyClick">
     <HeadNav
       type="publish"
       ref="head"
@@ -17,24 +17,88 @@
             <div class="model-container">
               <div class="model-bg goods-detail">
                 <div v-if="goodsDetailPower">
-                  <img
-                    :src="goodsInfo.cover_pic"
-                    alt
-                    width="200px"
-                    height="200px"
-                    v-if="goodsInfo.cover_pic"
-                  />
-                  <span
-                    v-else
-                    class="no-pic"
-                    style="
-                      min-width: 200px;
-                      min-height: 200px;
-                      vertical-align: top;
-                    "
-                  ></span>
+                  <div class="goods-img">
+                    <img
+                      :src="goodsInfo.cover_pic"
+                      alt
+                      style="width: 220px; height: 220px"
+                      v-if="goodsInfo.cover_pic"
+                    />
+                    <span
+                      v-else
+                      class="no-pic"
+                      style="
+                        min-width: 220px;
+                        min-height: 220px;
+                        vertical-align: top;
+                      "
+                    ></span>
+                    <div class="descrip" v-if="goodsInfo.remain_sale_info">
+                      {{ goodsInfo.remain_sale_info }}
+                    </div>
+                    <div
+                      class="quanping"
+                      v-if="goodsInfo.cover_pic"
+                      :src="goodsInfo.cover_pic"
+                      v-image-preview
+                    >
+                      <svg class="icon" aria-hidden="true">
+                        <use xlink:href="#icon-quanping" />
+                      </svg>
+                    </div>
+                  </div>
                   <div class="goods-desc">
-                    <div class="title">{{ goodsInfo.title }}</div>
+                    <div style="height: 67px">
+                      <div
+                        class="title important"
+                        v-if="goodsInfo.title_color == 1"
+                      >
+                        {{ goodsInfo.title }}
+                      </div>
+                      <div class="title" v-else>
+                        {{ goodsInfo.title }}
+                      </div>
+                      <div style="padding-top: 3px">
+                        <span
+                          v-if="goodsInfo.is_presale == 1"
+                          class="data-tab data-tab-one"
+                          style="margin: 0; color: #1754d2"
+                          >预售品种</span
+                        >
+                        <span
+                          v-else-if="goodsInfo.have_presale == 1"
+                          class="data-tab data-tab-seven"
+                          style="margin: 0"
+                          >组套品种</span
+                        >
+                        <span class="data-tab data-tab-one"
+                          style="margin: 0; color: #1754d2" v-if="goodsInfo.sale_type == 1">
+                        新品品种
+                      </span>
+                      <span class="data-tab data-tab-one"
+                          style="margin: 0; color: #1754d2" v-else-if="goodsInfo.sale_type == 2">
+                        畅销品种
+                      </span>
+                      <span class="data-tab data-tab-one"
+                          style="margin: 0; color: #1754d2" v-else-if="goodsInfo.sale_type == 3">
+                        常销品种
+                      </span>
+                      <span class="data-tab data-tab-one"
+                          style="margin: 0; color: #1754d2" v-else-if="goodsInfo.sale_type == 4">
+                        一般品种
+                      </span>
+                      <span class="data-tab data-tab-one"
+                          style="margin: 0; color: #1754d2" v-else-if="goodsInfo.sale_type == 5">
+                        滞销品种
+                      </span>
+                        <span
+                          v-if="goodsInfo.best_rank_info"
+                          class="data-tab data-tab-seven"
+                          style="margin: 0"
+                          >{{ goodsInfo.best_rank_info }}</span
+                        >
+                      </div>
+                    </div>
                     <div class="isbn">
                       <span>ISBN</span>
                       <span class="value">{{ goodsInfo.isbn }}</span>
@@ -47,7 +111,23 @@
                     </div>
                     <div class="author">
                       <span>作者</span>
-                      <span class="value" :title="goodsInfo.author">{{ goodsInfo.author }}</span>
+                      <span class="value">
+                        <span v-if="goodsInfo.authors.length == 0">{{
+                          goodsInfo.author
+                        }}</span>
+                        <span
+                          class="click-font"
+                          v-if="goodsInfo.authors.length == 1"
+                          @click="$toAuthor(goodsInfo.authors[0].author_id)"
+                          >{{ goodsInfo.author }}</span
+                        >
+                        <span
+                          class="click-font"
+                          v-if="goodsInfo.authors.length > 1"
+                          @click.stop="openActive"
+                          >{{ goodsInfo.author }}</span
+                        >
+                      </span>
                     </div>
                     <div class="publish">
                       <span>出版社</span>
@@ -60,21 +140,45 @@
                     <div class="cate">
                       <span>类目</span>
                       <span class="value">
-                        <span v-if="goodsInfo.cate_node_2">{{ goodsInfo.cate_node_2 }}</span>
-                        <span v-if="goodsInfo.cate_node_3">＞
-                        {{ goodsInfo.cate_node_3 }}</span>
-                        <span v-if="goodsInfo.cate_node_4"> ＞
-                        {{ goodsInfo.cate_node_4 }}</span>
+                        <span v-if="goodsInfo.cate_node_2">{{
+                          goodsInfo.cate_node_2
+                        }}</span>
+                        <span v-if="goodsInfo.cate_node_3"
+                          >＞ {{ goodsInfo.cate_node_3 }}</span
+                        >
+                        <span v-if="goodsInfo.cate_node_4">
+                          ＞ {{ goodsInfo.cate_node_4 }}</span
+                        >
                       </span>
+                    </div>
+                    <div class="author-list" v-if="authorActive">
+                      <div v-if="goodsInfo.authors.length > 0">
+                        <div
+                          class="author-item click"
+                          v-for="(aitem, aindex) in goodsInfo.authors"
+                          :key="aindex"
+                          @click.stop="$toAuthor(aitem.author_id)"
+                        >
+                          {{ aitem.name }}
+                        </div>
+                      </div>
+                      <div v-else>
+                        <div class="author-item">未查询到对应作者信息</div>
+                      </div>
                     </div>
                   </div>
                   <!-- 雷达图 -->
                   <div class="radarMap" style="width: 400px">
-                    <div id="radar"></div>
+                    <div id="radar" v-if="radarEmpty"></div>
+                    <div class="no-data" style="padding:101px 0;" v-else>尚未生成品种评分数据</div>
                   </div>
                 </div>
                 <div style="height: 240px; position: relative" v-else>
-                  <ModelNoPower type="noPower" :id="goodsDetailPowerID" :organizeId="$refs.head.publishInfo.organization_id"></ModelNoPower>
+                  <ModelNoPower
+                    type="noPower"
+                    :id="goodsDetailPowerID"
+                    :organizeId="$refs.head.publishInfo.organization_id"
+                  ></ModelNoPower>
                 </div>
                 <!-- 标签页 -->
                 <div class="tabs">
@@ -82,7 +186,8 @@
                     <a-tab-pane key="1" tab="销售走势"></a-tab-pane>
                     <a-tab-pane key="2" tab="生命周期"></a-tab-pane>
                     <a-tab-pane key="3" tab="读者画像"></a-tab-pane>
-                    <a-tab-pane key="4" tab="详细介绍"></a-tab-pane>
+                    <a-tab-pane key="4" tab="关联搭配"></a-tab-pane>
+                    <a-tab-pane key="5" tab="详细介绍"></a-tab-pane>
                   </a-tabs>
                 </div>
               </div>
@@ -96,43 +201,13 @@
                 </div>
               </div>
             </div>
-            <!-- 生命周期选择时间 -->
-            <!-- <div class="model-container" v-if="tabKey == '2'">
-              <div class="model-bg choose clearfix">
-                <div class></div>
-                <div class="float-right">
-                  <span class="time-picker">
-                    <span
-                      :class="dateLifeType == 3?'picker active':'picker'"
-                      @click="lifeChange(3)"
-                    >月</span>
-                  </span>
-                  <span class="time-picker">
-                    <span
-                      :class="dateLifeType == 4?'picker active':'picker'"
-                      @click="lifeChange(4)"
-                    >年</span>
-                  </span>
-                  <span class="time-picker">
-                    <span :class="canLeft?'picker':'picker disabled'" @click="checkMonth">
-                      <a-icon type="left" />
-                    </span>
-                  </span>
-                  <span class="time-picker">
-                    <span :class="canRight?'picker':'picker disabled'" @click="checkYear">
-                      <a-icon type="right" />
-                    </span>
-                  </span>
-                </div>
-              </div>
-            </div>-->
             <!-- 核心数据监控 -->
             <div class="model-container core-data" v-if="tabKey == '1'">
               <div v-if="salePower">
                 <div class="section-title model-bg">核心数据监控</div>
                 <div class="content model-bg">
                   <div class="clearfix">
-                    <!-- 销售点数 -->
+                    <!-- 销售指数 -->
                     <span
                       :class="
                         typeText == 'sale_total'
@@ -143,7 +218,7 @@
                     >
                       <div>
                         <a-icon type="line-chart" />
-                        <span class="secondary-font">销售点数</span>
+                        <span class="secondary-font">销售指数</span>
                       </div>
                       <div class="data-font">{{ sale_total_info.now }}</div>
                       <div class="clearfix compare" style="width: 160px">
@@ -166,7 +241,7 @@
                           class="float-right down-number"
                           v-if="sale_total_info.pre_compare < 0"
                         >
-                          {{ sale_total_info.pre_compare*-1 }}% ↓
+                          {{ sale_total_info.pre_compare * -1 }}% ↓
                         </div>
                         <div
                           class="float-right down-number"
@@ -193,7 +268,7 @@
                           class="float-right down-number"
                           v-if="sale_total_info.last_compare < 0"
                         >
-                          {{ sale_total_info.last_compare*-1 }}% ↓
+                          {{ sale_total_info.last_compare * -1 }}% ↓
                         </div>
                         <div
                           class="float-right down-number"
@@ -311,13 +386,13 @@
                           上年对比
                         </div>
                         <div
-                          class="float-right up-number"
+                          class="float-right down-number"
                           v-if="sale_cate_rank_info.pre_compare > 0"
                         >
                           {{ sale_cate_rank_info.pre_compare }} ↓
                         </div>
                         <div
-                          class="float-right down-number"
+                          class="float-right up-number"
                           v-if="sale_cate_rank_info.pre_compare < 0"
                         >
                           {{ sale_cate_rank_info.pre_compare * -1 }} ↑
@@ -366,7 +441,11 @@
                   </div>
                   <!-- 折线图 -->
                   <div style="margin-top: 20px">
-                    <div id="broken-line1"></div>
+                    <div
+                      id="broken-line1"
+                      v-if="brokenLineData1.length > 0"
+                    ></div>
+                    <div class="no-data" v-else>暂无数据</div>
                   </div>
                 </div>
               </div>
@@ -375,7 +454,11 @@
                 style="height: 450px; position: relative"
                 v-else
               >
-                <ModelNoPower type="noPower" :id="salePowerID" :organizeId="$refs.head.publishInfo.organization_id"></ModelNoPower>
+                <ModelNoPower
+                  type="noPower"
+                  :id="salePowerID"
+                  :organizeId="$refs.head.publishInfo.organization_id"
+                ></ModelNoPower>
               </div>
             </div>
             <!-- 生命周期走势 -->
@@ -387,24 +470,9 @@
                     <span class="data-block">
                       <div>
                         <a-icon type="line-chart" />
-                        <span class="secondary-font">品种类型</span>
+                        <span class="secondary-font">累计销售指数</span>
                       </div>
-                      <div class="data-font" v-if="sale_type == 1">
-                        新品品种
-                      </div>
-                      <div class="data-font" v-else-if="sale_type == 2">
-                        畅销品种
-                      </div>
-                      <div class="data-font" v-else-if="sale_type == 3">
-                        常销品种
-                      </div>
-                      <div class="data-font" v-else-if="sale_type == 4">
-                        一般品种
-                      </div>
-                      <div class="data-font" v-else-if="sale_type == 5">
-                        滞销品种
-                      </div>
-                      <div class="data-font" v-else>--</div>
+                      <div class="data-font">{{sale_type}}</div>
                     </span>
                     <span class="data-block">
                       <div>
@@ -412,8 +480,10 @@
                         <span class="secondary-font">上市日期</span>
                       </div>
                       <div class="data-font">
-                        {{goodsInfo.publish_date}}
-                        <span class="small" v-if="publish_duration > 0">({{ publish_duration }}个月)</span>
+                        {{ goodsInfo.publish_date }}
+                        <span class="small" v-if="publish_duration > 0"
+                          >({{ publish_duration }}个月)</span
+                        >
                         <span class="small" v-else>(预售中)</span>
                       </div>
                     </span>
@@ -447,8 +517,7 @@
                             <img
                               :src="item1.cover_pic"
                               alt
-                              width="20px"
-                              height="20px"
+                              style="width: 20px; height: 20px"
                               v-if="item1.cover_pic"
                             />
                             <span
@@ -482,7 +551,11 @@
                 v-else
                 style="height: 450px; position: relative"
               >
-                <ModelNoPower type="noPower" :id="lifePowerID" :organizeId="$refs.head.publishInfo.organization_id"></ModelNoPower>
+                <ModelNoPower
+                  type="noPower"
+                  :id="lifePowerID"
+                  :organizeId="$refs.head.publishInfo.organization_id"
+                ></ModelNoPower>
               </div>
             </div>
             <!-- 读者画像 -->
@@ -516,7 +589,7 @@
                     <div class="section-title">基础特征</div>
                     <div class="feature">
                       <div class="clearfix">
-                        <div class="float-left" style="width:500px;">
+                        <div class="float-left" style="width: 500px">
                           <div>性别分布</div>
                           <div v-if="ringData1.length > 0">
                             <div
@@ -538,8 +611,11 @@
                             <div class="no-data">数据量较小，暂不支持分析</div>
                           </div>
                         </div>
-                        <div class="float-left" style="margin-left: 10px;width:500px;">
-                          <div style="margin-left:40px;">年龄分布</div>
+                        <div
+                          class="float-left"
+                          style="margin-left: 10px; width: 500px"
+                        >
+                          <div style="margin-left: 40px">年龄分布</div>
                           <div v-if="columnData1.length > 0">
                             <div
                               id="column1"
@@ -550,10 +626,12 @@
                               "
                             ></div>
                           </div>
-                          <div style="width: 500px;margin-left:38px;" v-else>
+                          <div style="width: 500px; margin-left: 38px" v-else>
                             <div class="no-data">数据量较小，暂不支持分析</div>
                           </div>
-                          <div style="margin-top: 20px;margin-left:40px;">兴趣分布</div>
+                          <div style="margin-top: 20px; margin-left: 40px">
+                            兴趣分布
+                          </div>
                           <div v-if="columnData2.length > 0">
                             <div
                               id="column2"
@@ -564,7 +642,7 @@
                               "
                             ></div>
                           </div>
-                          <div style="width: 500px;margin-left:38px;" v-else>
+                          <div style="width: 500px; margin-left: 38px" v-else>
                             <div class="no-data">数据量较小，暂不支持分析</div>
                           </div>
                         </div>
@@ -611,14 +689,18 @@
                         <div v-if="barData2.length > 0">
                           <div id="bar-chart2"></div>
                         </div>
-                        <div class="no-data" v-else>数据量较小，暂不支持分析</div>
+                        <div class="no-data" v-else>
+                          数据量较小，暂不支持分析
+                        </div>
                       </div>
                       <div class="float-left" style="width: 500px">
                         <p>作家偏好</p>
                         <div v-if="barData3.length > 0">
                           <div id="bar-chart3"></div>
                         </div>
-                        <div class="no-data" v-else>数据量较小，暂不支持分析</div>
+                        <div class="no-data" v-else>
+                          数据量较小，暂不支持分析
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -630,13 +712,145 @@
                     class="model-bg"
                     style="height: 450px; position: relative"
                   >
-                    <ModelNoPower type="noPower" :id="readerPowerID" :organizeId="$refs.head.publishInfo.organization_id"></ModelNoPower>
+                    <ModelNoPower
+                      type="noPower"
+                      :id="readerPowerID"
+                      :organizeId="$refs.head.publishInfo.organization_id"
+                    ></ModelNoPower>
                   </div>
                 </div>
               </div>
             </div>
-            <!-- 详细介绍 -->
+            <!-- 关联搭配 -->
             <div v-if="tabKey == '4'">
+              <div class="model-container">
+                <div class="model-bg" style="min-height: 312px">
+                  <div class="section-title">关联品种</div>
+                  <div class="table">
+                    <table style="table-layout: fixed">
+                      <colgroup>
+                        <col width="50" />
+                        <col width="240" />
+                        <col width="160" />
+                        <col width="140" />
+                        <col width="330" />
+                        <col width="130" />
+                      </colgroup>
+                      <thead>
+                        <tr>
+                          <td>排名</td>
+                          <td>品种</td>
+                          <td>作者</td>
+                          <td>出版社</td>
+                          <td>类目</td>
+                          <td style="text-align: right">关联度</td>
+                        </tr>
+                      </thead>
+                      <tbody v-if="relateList.length > 0">
+                        <tr v-for="(item, index) in relateList" :key="index">
+                          <td>{{ item.rank }}</td>
+                          <td>
+                            <div class="goods-desc">
+                              <span class="goods-image" v-if="item.cover_pic">
+                                <img
+                                  :src="item.cover_pic"
+                                  alt
+                                  style="width: 40px; height: 40px"
+                                />
+                              </span>
+                              <span
+                                v-else
+                                class="no-pic"
+                                style="min-width: 40px; min-height: 40px"
+                              ></span>
+                              <span
+                                class="click-font goods-name"
+                                @click.stop="$toDetail(item.goods_id)"
+                                >{{ item.goods_name }}</span
+                              >
+                            </div>
+                          </td>
+                          <td>
+                            <div class="author">
+                              <div
+                                class="author-name"
+                                v-if="item.authors.length == 0"
+                              >
+                                {{ item.goods_author }}
+                              </div>
+                              <div
+                                class="author-name click-font"
+                                v-if="item.authors.length == 1"
+                                @click.stop="
+                                  $toAuthor(item.authors[0].author_id)
+                                "
+                              >
+                                {{ item.goods_author }}
+                              </div>
+                              <div
+                                class="author-name click-font"
+                                v-if="item.authors.length > 1"
+                                @click.stop="openAuthor(item, index)"
+                              >
+                                {{ item.goods_author }}
+                              </div>
+                              <div class="author-list" v-if="item.active">
+                                <div v-if="item.authors.length > 0">
+                                  <div
+                                    class="author-item click"
+                                    v-for="(aitem, aindex) in item.authors"
+                                    :key="aindex"
+                                    @click.stop="$toAuthor(aitem.author_id)"
+                                  >
+                                    {{ aitem.name }}
+                                  </div>
+                                </div>
+                                <div v-else>
+                                  <div class="author-item">
+                                    未查询到对应作者信息
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </td>
+                          <td>{{ item.publisher_name }}</td>
+                          <td>
+                            <span>{{ item.cate_node_2 }}</span>
+                            <span v-if="item.cate_node_3"
+                              >>{{ item.cate_node_3 }}</span
+                            >
+                          </td>
+                          <td style="text-align: right">
+                            <span class="percent" v-if="item.support > 0"
+                              >{{ item.support }}%</span
+                            >
+                            <span class="green" v-else-if="item.support < 0"
+                              >{{ item.support }}%</span
+                            >
+                            <span v-else>--</span>
+                          </td>
+                        </tr>
+                      </tbody>
+                      <tbody v-else>
+                        <tr>
+                          <td colspan="6">
+                            <a-empty />
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                  <!-- <div v-else class="modelNoPower" style="text-align:center;font-size:12px;">
+                    <div style="margin-top:100px;">暂无关联品种数据</div>
+                    <div style="margin-top:5px;">
+                      <a-button type="primary" shape="round" @click="apply">申请查询</a-button>
+                    </div>
+                  </div> -->
+                </div>
+              </div>
+            </div>
+            <!-- 详细介绍 -->
+            <div v-if="tabKey == '5'">
               <div class="model-container">
                 <div class="model-bg" style="min-height: 312px">
                   <div class="section-title">出版信息</div>
@@ -687,12 +901,14 @@
 <style scoped lang="scss" src="@/style/scss/pages/publish/detail.scss"></style>
 
 <script>
-import DataSet from "@antv/data-set";
 // import G2 from "@antv/g2";
-import { Chart, registerShape, registerComponentController } from "@antv/g2";
-import Slider from "@antv/g2/lib/chart/controller/slider";
-registerComponentController("slider", Slider);
-// import Slider from '@antv/g2-plugin-slider';
+import {
+  Chart,
+  Util,
+  registerShape,
+  registerComponentController,
+} from "@antv/g2";
+import DataSet from "@antv/data-set";
 import { Scene } from "@antv/l7";
 import { CountryLayer } from "@antv/l7-district";
 import { Mapbox } from "@antv/l7-maps";
@@ -703,6 +919,7 @@ import {
   TOP_GOODS_HISTORY,
   TOP_SEARCH,
   TOP_GOODS_READER_BASE,
+  TOP_GOODS_RELATION,
 } from "../../apis/publish.js";
 export default {
   data() {
@@ -717,38 +934,13 @@ export default {
       readerPowerID: 0,
       isOwnPublishID: 0,
       radarData: [
-        { item: "综合评分", 本社: 70 },
-        { item: "销售评分", 本社: 60 },
-        { item: "读者评分", 本社: 50 },
-        { item: "热点评分", 本社: 40 },
-        { item: "生命周期评分", 本社: 60 },
+        { item: "历史评分", 本品: 0 },
+        { item: "销售评分", 本品: 0 },
+        { item: "读者评分", 本品: 0 },
+        { item: "热点评分", 本品: 0 },
+        { item: "趋势评分", 本品: 0 },
       ],
-      brokenLineData1: [
-        // { month: "01月", city: "当期", temperature: 3000 },
-        // { month: "01月", city: "上年同期", temperature: 3500 },
-        // { month: "Feb", city: "当期", temperature: 4500 },
-        // { month: "Feb", city: "上年同期", temperature: 6000 },
-        // { month: "Mar", city: "当期", temperature: 6400 },
-        // { month: "Mar", city: "上年同期", temperature: 5000 },
-        // { month: "Apr", city: "当期", temperature: 7500 },
-        // { month: "Apr", city: "上年同期", temperature: 5300 },
-        // { month: "May", city: "当期", temperature: 6000 },
-        // { month: "May", city: "上年同期", temperature: 5500 },
-        // { month: "Jun", city: "当期", temperature: 7600 },
-        // { month: "Jun", city: "上年同期", temperature: 6300 },
-        // { month: "Jul", city: "当期", temperature: 5000 },
-        // { month: "Jul", city: "上年同期", temperature: 5200 },
-        // { month: "Aug", city: "当期", temperature: 4600 },
-        // { month: "Aug", city: "上年同期", temperature: 4200 },
-        // { month: "Sep", city: "当期", temperature: 6500 },
-        // { month: "Sep", city: "上年同期", temperature: 5600 },
-        // { month: "Oct", city: "当期", temperature: 8600 },
-        // { month: "Oct", city: "上年同期", temperature: 7000 },
-        // { month: "Nov", city: "当期", temperature: 12000 },
-        // { month: "Nov", city: "上年同期", temperature: 7600 },
-        // { month: "Dec", city: "当期", temperature: 9000 },
-        // { month: "Dec", city: "上年同期", temperature: 8600 }
-      ],
+      brokenLineData1: [],
       saleTotalList: [],
       saleRankList: [],
       saleCateList: [],
@@ -759,17 +951,18 @@ export default {
       value: "",
       dataSource: [],
       goods_id: 0,
-      radarMax: 0,
+      radarEmpty: true,
       radarChart: null,
       radardv: null,
       radarFirst: true,
       goodsInfo: {
         fixed_price: 0,
+        authors: [],
       },
       dateType: 2,
       typeText: "sale_total",
       sale_total_info: {
-        // 销售点数
+        // 销售指数
         now: 0, // 现在
         pre_compare: 0, // 上一周期对比
         last_compare: 0, // 上年同期
@@ -813,7 +1006,9 @@ export default {
       inputVal1: "",
       show1: false,
       goodshList1: [],
-      isLoading:true,
+      relateList: [],
+      isLoading: true,
+      authorActive: false,
     };
   },
   updated() {
@@ -825,8 +1020,8 @@ export default {
     // console.log(666,G2);
     this.getData();
     this.getCoreData();
-    this.getDefault();
-    this.getLifeData();
+    // this.getDefault();
+    // this.getLifeData();
   },
   watch: {
     value(val) {
@@ -846,6 +1041,16 @@ export default {
       data.sign = this.$getSign(data);
       let res = await TOP_GOODS_INFO(data);
       if (res.code == 0) {
+        if (res.data.pre_sale_goods_id) {
+          this.$router.replace({
+            name: "detail",
+            query: {
+              goods_id: res.data.pre_sale_goods_id,
+            },
+          });
+          this.$router.go(0);
+          return;
+        }
         this.goodsDetailPower = true;
         this.goodsInfo = res.data;
         if (
@@ -853,51 +1058,50 @@ export default {
           this.$refs.head.accountInfo.type != 1
         ) {
           this.isOwnPublish = false;
-          this.tabKey = "4";
+          this.tabKey = "5";
         } else {
           this.isOwnPublish = true;
         }
+        let _count = 0;
         this.radarData = this.radarData.map((value, key) => {
-          if (value.item == "综合评分") {
-            value.本社 = res.data.score_chart.score_all;
+          if (value.item == "历史评分") {
+            value.本品 = res.data.score_chart.score_all;
           } else if (value.item == "销售评分") {
-            value.本社 = res.data.score_chart.score_sale;
+            value.本品 = res.data.score_chart.score_sale;
           } else if (value.item == "读者评分") {
-            value.本社 = res.data.score_chart.score_reader;
+            value.本品 = res.data.score_chart.score_reader;
           } else if (value.item == "热点评分") {
-            value.本社 = res.data.score_chart.score_hot;
-          } else if (value.item == "生命周期评分") {
-            value.本社 = res.data.score_chart.score_life;
+            value.本品 = res.data.score_chart.score_hot;
+          } else if (value.item == "趋势评分") {
+            value.本品 = res.data.score_chart.score_life;
           }
           return value;
         });
-        let _max = 0;
         for (let key in res.data.score_chart) {
-          if (_max < res.data.score_chart[key]) {
-            _max = res.data.score_chart[key];
+          if (res.data.score_chart[key] > 0) {
+            _count++;
           }
         }
-        this.radarMax = _max;
-        // console.log(this.radarData);
-        if (this.radarFirst) {
-          setTimeout(() => {
-            this.initRadarData();
-          }, 500);
+        if (_count > 3) {
+          this.radarEmpty = true;
         } else {
-          setTimeout(() => {
-            var { DataView } = DataSet;
-            this.radardv = new DataView().source(this.radarData);
-            this.radardv.transform({
-              type: "fold",
-              fields: ["本社"], // 展开字段集
-              key: "user", // key字段
-              value: "score", // value字段
-            });
-            this.radarChart.changeData(this.radardv.rows);
-          }, 500);
+          this.radarEmpty = false;
         }
-        this.radarFirst = false;
-
+        // console.log(this.radarData);
+        let _this = this;
+        if (this.radarEmpty) {
+          if (this.radarFirst) {
+            setTimeout(() => {
+              _this.initRadarData();
+            }, 500);
+          } else {
+            setTimeout(() => {
+              _this.radarChart.destroy();
+              _this.initRadarData();
+            }, 500);
+          }
+          this.radarFirst = false;
+        }
       } else {
         if (res.code == 1009) {
           this.goodsDetailPower = false;
@@ -937,6 +1141,9 @@ export default {
             _obj.month = value.date.toString();
             _obj.city = "当期";
             _obj.temperature = value.value;
+            if (value.week_range) {
+              _obj.range = value.week_range;
+            }
             _arr1.unshift(_obj);
           });
         }
@@ -946,6 +1153,9 @@ export default {
             _obj.month = value.date.toString();
             _obj.city = "上年同期";
             _obj.temperature = value.value;
+            if (value.week_range) {
+              _obj.range = value.week_range;
+            }
             _arr2.unshift(_obj);
           });
         }
@@ -962,6 +1172,9 @@ export default {
             _obj.month = value.date.toString();
             _obj.city = "当期";
             _obj.temperature = value.value;
+            if (value.week_range) {
+              _obj.range = value.week_range;
+            }
             _arr1.unshift(_obj);
           });
         }
@@ -971,6 +1184,9 @@ export default {
             _obj.month = value.date.toString();
             _obj.city = "上年同期";
             _obj.temperature = value.value;
+            if (value.week_range) {
+              _obj.range = value.week_range;
+            }
             _arr2.unshift(_obj);
           });
         }
@@ -986,6 +1202,9 @@ export default {
             _obj.month = value.date.toString();
             _obj.city = "当期";
             _obj.temperature = value.value;
+            if (value.week_range) {
+              _obj.range = value.week_range;
+            }
             _arr1.unshift(_obj);
           });
         }
@@ -995,6 +1214,9 @@ export default {
             _obj.month = value.date.toString();
             _obj.city = "上年同期";
             _obj.temperature = value.value;
+            if (value.week_range) {
+              _obj.range = value.week_range;
+            }
             _arr2.unshift(_obj);
           });
         }
@@ -1013,18 +1235,18 @@ export default {
           this.brokenLineData1 = this.saleCateList;
         }
         // console.log(777, this.saleTotalList,this.saleRankList,this.saleCateList);
-        let _this = this;
-        if (this.lineFirst1) {
+        if (this.brokenLineData1.length > 0) {
+          let _this = this;
           setTimeout(() => {
-            _this.initLineData1();
-          }, 500);
-        } else {
-          setTimeout(() => {
-            _this.lineChart1.data(_this.brokenLineData1);
-            _this.lineChart1.render();
+            if (_this.lineFirst1) {
+              _this.initLineData1();
+            } else {
+              _this.lineChart1.destroy();
+              _this.initLineData1();
+            }
+            _this.lineFirst1 = false;
           }, 500);
         }
-        this.lineFirst1 = false;
       } else {
         if (res.code == 1009) {
           this.salePower = false;
@@ -1047,7 +1269,7 @@ export default {
       let res = await TOP_GOODS_HISTORY(data);
       if (res.code == 0) {
         this.lifePower = true;
-        this.sale_type = res.data.sale_type;
+        this.sale_type = res.data.sale_total;
         this.publish_duration = res.data.publish_duration;
       } else {
         if (res.code == 1009) {
@@ -1080,17 +1302,18 @@ export default {
           this.goodsData.push(_obj);
         });
         this.brokenLineData2 = this.goodsData;
-        if (this.tabKey == 2) {
+        // console.log(this.lineFirst2);return
+        if (this.tabKey == "2") {
           let _this = this;
-          setTimeout(()=>{
+          setTimeout(() => {
             if (_this.lineFirst2) {
-              this.initLineData2();
-            }else{
-              this.lineChart2.destroy();
+              _this.initLineData2();
+            } else {
+              _this.lineChart2.destroy();
               _this.initLineData2();
             }
-          },500)
-          this.lineFirst2 = false;
+            _this.lineFirst2 = false;
+          }, 500);
         }
       } else {
         if (res.code == 1009) {
@@ -1170,12 +1393,44 @@ export default {
         this.barData2 = [];
         this.barData3 = [];
         if (Object.keys(res.data).length > 0) {
+          let _total1 = 0,
+            _total2 = 0,
+            _total3 = 0,
+            _total4 = 0;
           this.readerBase = res.data.reader_num;
           this.readerAverage = res.data.reader_avg_buy;
-          this.ringData1 = res.data.persona_sex;
-          this.ringData2 = res.data.persona_money;
-          this.columnData1 = res.data.persona_age;
-          this.columnData2 = res.data.persona_role;
+          // 性别分布
+          res.data.persona_sex.map((value, key) => {
+            _total1 += Number(value.value);
+          });
+          res.data.persona_sex.map((value, key) => {
+            value.value = Math.round((Number(value.value) / _total1) * 100);
+            this.ringData1.push(value);
+          });
+          // 消费能力
+          res.data.persona_money.map((value, key) => {
+            _total2 += Number(value.value);
+          });
+          res.data.persona_money.map((value, key) => {
+            value.value = Math.round((Number(value.value) / _total2) * 100);
+            this.ringData2.push(value);
+          });
+          // 年龄分布
+          res.data.persona_age.map((value, key) => {
+            _total3 += Number(value.value);
+          });
+          res.data.persona_age.map((value, key) => {
+            value.value = Math.round((Number(value.value) / _total3) * 100);
+            this.columnData1.push(value);
+          });
+          // 兴趣分布
+          res.data.persona_role.map((value, key) => {
+            _total4 += Number(value.value);
+          });
+          res.data.persona_role.map((value, key) => {
+            value.value = Math.round((Number(value.value) / _total4) * 100);
+            this.columnData2.push(value);
+          });
           this.barData1 = res.data.persona_region.map((value, key) => {
             this.barMapData.push(value.name);
             value.name = value.name;
@@ -1215,7 +1470,6 @@ export default {
             if (_this.barData3.length > 0) {
               _this.inintBar3(_this.barData3[0].value);
             }
-
           }, 500);
         }
       } else {
@@ -1226,8 +1480,68 @@ export default {
         }
       }
     },
-    changeTime(){
+    // 获取关联商品
+    async getRelateData() {
+      var tStamp = this.$getTimeStamp();
+      let data = {
+        organization_id: this.$refs.head.publishInfo.organization_id,
+        isbn: this.goodsInfo.isbn,
+        timestamp: tStamp,
+      };
+      data.sign = this.$getSign(data);
+      let res = await TOP_GOODS_RELATION(data);
+      if (res.code == 0) {
+        this.relateList = [];
+        res.data.map((value, key) => {
+          value.active = false;
+          this.relateList.push(value);
+        });
+      } else {
+        this.$refs.head.globalTip(1, res.message, res.code);
+      }
+    },
+    // 申请关联品种
+    async apply() {},
+    openActive() {
+      this.authorActive = true;
+      this.show1 = false;
+      if (this.tabKey == "1") {
+        this.$refs.time.showYear = false;
+      }
+      if (this.tabKey == "4") {
+        this.relateList = this.relateList.map((value, key) => {
+          value.active = false;
+          return value;
+        });
+      }
+    },
+    bodyClick() {
+      this.show1 = false;
+      this.authorActive = false;
+      if (this.tabKey == "1") {
+        this.$refs.time.showYear = false;
+      }
+      if (this.tabKey == "4") {
+        this.relateList = this.relateList.map((value, key) => {
+          value.active = false;
+          return value;
+        });
+      }
+    },
+    openAuthor(item, index) {
+      this.authorActive = false;
+      this.relateList = this.relateList.map((value, key) => {
+        if (index == key) {
+          value.active = true;
+        } else {
+          value.active = false;
+        }
+        return value;
+      });
+    },
+    changeTime() {
       this.dateType = this.$refs.time.dateType;
+      this.authorActive = false;
       this.getCoreData();
     },
     coreTypeChange(text) {
@@ -1241,51 +1555,41 @@ export default {
         this.brokenLineData1 = this.saleCateList;
       }
       // console.log(this.brokenLineData1);
-      this.lineChart1.data(this.brokenLineData1);
-      this.lineChart1.render();
-    },
-    lifeChange(type) {
-      this.dateLifeType = type;
-      if (type == 3) {
-        this.canLeft = false;
-        this.canRight = true;
+      if (this.lineFirst1) {
+        this.initLineData1();
       } else {
-        this.canLeft = true;
-        this.canRight = false;
+        this.lineChart1.destroy();
+        this.initLineData1();
       }
-    },
-    checkMonth() {
-      this.dateLifeType = 3;
-      this.canLeft = false;
-      this.canRight = true;
-    },
-    checkYear() {
-      this.dateLifeType = 4;
-      this.canLeft = true;
-      this.canRight = false;
+      this.lineFirst1 = false;
     },
     callback(key) {
       if (this.isOwnPublish) {
         this.tabKey = key;
       } else {
-        this.tabKey = "4";
+        this.tabKey = "5";
         this.$refs.head.globalTip(1, "暂无权限", 0);
       }
       var _this = this;
       if (this.tabKey == "1") {
-        setTimeout(function () {
-          _this.initLineData1();
-        }, 500);
+        this.typeText = "sale_total";
+        this.$nextTick(() => {
+          _this.getCoreData();
+        });
+        // setTimeout(function () {
+        //   _this.getCoreData();
+        // }, 100);
       } else if (this.tabKey == "2") {
-        setTimeout(function () {
-          _this.initLineData2();
-        }, 500);
+        this.getDefault();
+        this.getLifeData();
+        // setTimeout(function () {
+        //   _this.initLineData2();
+        // }, 500);
       } else if (this.tabKey == "3") {
         this.getReaderData();
+      } else if (this.tabKey == "4") {
+        this.getRelateData();
       }
-      setTimeout(() => {
-
-      }, 500);
       // console.log(this.tabKey);
     },
     onSelect1(item1, index1) {
@@ -1363,7 +1667,6 @@ export default {
       this.radarChart.data(this.radardv.rows);
       this.radarChart.scale("score", {
         min: 0,
-        // max: this.radarMax + 2,
         max: 10,
         show: false,
       });
@@ -1422,7 +1725,6 @@ export default {
           fillOpacity: 0.3,
         });
       this.radarChart.render();
-
     },
     initLineData2() {
       this.lineChart2 = new Chart({
@@ -1477,26 +1779,19 @@ export default {
         .line()
         .position("month*temperature")
         .color("city")
-        .tooltip("city*temperature",(city,temperature)=>{
-          return{
-            name:city+'销售点数',
-            value:temperature,
-          }
+        .tooltip("city*temperature", (city, temperature) => {
+          return {
+            name: city + "销售指数",
+            value: temperature,
+          };
         })
         .shape("smooth")
         .style({ lineWidth: 1 });
 
-      // this.lineChart2
-      //   .line()
-      //   // .point()
-      //   .position("month*temperature")
-      //   .color("city")
-      //   .shape("circle");
-
       this.lineChart2.render();
-
     },
     initLineData1() {
+      let _this = this;
       this.lineChart1 = new Chart({
         container: "broken-line1",
         autoFit: true,
@@ -1529,30 +1824,47 @@ export default {
       this.lineChart1
         .line()
         .position("month*temperature")
-        .color("city",(city) =>{
-          if(city == '上年同期'){
+        .color("city", (city) => {
+          if (city == "上年同期") {
             return "#D1DDF6";
-          }else if(city == '当期'){
-            return "#5A8BEE"
+          } else if (city == "当期") {
+            return "#5A8BEE";
           }
         })
         .shape("circle")
-        .style({ lineWidth: 2 });
+        .style({ lineWidth: 2 })
+        .tooltip(
+          "month*temperature*city*range",
+          function (month, temperature, city, range) {
+            // tooltip的第一个参数写上需要显示的字段'item1*item2*...'；第二个参数为一个函数，该函数的参数为需要显示的字段。
+            let _title;
+            if (_this.$refs.time.dateType == 2) {
+              _title = month + "（" + range + "）";
+            } else {
+              _title = month;
+            }
+            return {
+              title: _title,
+              name: city,
+              value: temperature, // 这里也可以通过调用其他自定义函数的方式，去对数据进行更深层次的变换。但要注意this的指向问题！
+            };
+          }
+        );
 
       this.lineChart1
         .point()
         .position("month*temperature")
-        .color("city",(city) =>{
-          if(city == '上年同期'){
+        .color("city", (city) => {
+          if (city == "上年同期") {
             return "#D1DDF6";
-          }else if(city == '当期'){
-            return "#5A8BEE"
+          } else if (city == "当期") {
+            return "#5A8BEE";
           }
         })
+        .tooltip(false)
         .shape("circle");
 
       this.lineChart1.render();
-
     },
     // 环形图
     initRing1() {
@@ -1592,6 +1904,8 @@ export default {
       chart.tooltip({
         showTitle: false,
         showMarkers: false,
+        itemTpl:
+          '<li class="g2-tooltip-list-item"><span style="background-color:{color};" class="g2-tooltip-marker"></span>{name}: {value}%</li>',
       });
       chart.legend({
         position: "right",
@@ -1650,6 +1964,8 @@ export default {
       chart.tooltip({
         showTitle: false,
         showMarkers: false,
+        itemTpl:
+          '<li class="g2-tooltip-list-item"><span style="background-color:{color};" class="g2-tooltip-marker"></span>{name}: {value}%</li>',
       });
       chart.legend({
         position: "right",
@@ -1694,12 +2010,15 @@ export default {
       chart.axis("value", {
         label: {
           formatter: (val) => {
-            return val;
+            return val + "%";
           },
         },
       });
       chart.tooltip({
+        showTitle: false,
         showMarkers: false,
+        itemTpl:
+          '<li class="g2-tooltip-list-item"><span style="background-color:{color};" class="g2-tooltip-marker"></span>{name}: {value}%</li>',
       });
       chart.interaction("active-region");
       chart.legend(false);
@@ -1743,12 +2062,15 @@ export default {
       chart.axis("value", {
         label: {
           formatter: (val) => {
-            return val;
+            return val + "%";
           },
         },
       });
       chart.tooltip({
+        showTitle: false,
         showMarkers: false,
+        itemTpl:
+          '<li class="g2-tooltip-list-item"><span style="background-color:{color};" class="g2-tooltip-marker"></span>{name}: {value}%</li>',
       });
       chart.interaction("active-region");
       chart.legend(false);
@@ -1890,11 +2212,10 @@ export default {
           },
         });
       });
-
     },
     inintBar1(_max) {
       // console.log("max", _max);
-      let _height = this.barData1.length*25.4;
+      let _height = this.barData1.length * 26;
       const chart = new Chart({
         container: "bar-chart1",
         autoFit: true,
@@ -1920,12 +2241,12 @@ export default {
         line: null,
         tickLine: null,
         grid: {
-          line:{
-            style:{
-              fillOpacity:0,
-              strokeOpacity:0
-            }
-          }
+          line: {
+            style: {
+              fillOpacity: 0,
+              strokeOpacity: 0,
+            },
+          },
         },
         title: null,
       });
@@ -1949,11 +2270,10 @@ export default {
         });
       // chart.interaction("element-active");
       chart.render();
-
     },
     inintBar2(_max) {
       // console.log("max", _max);
-      let _height = this.barData2.length*25.4;
+      let _height = this.barData2.length * 26;
       const chart = new Chart({
         container: "bar-chart2",
         autoFit: true,
@@ -1985,12 +2305,12 @@ export default {
         line: null,
         tickLine: null,
         grid: {
-          line:{
-            style:{
-              fillOpacity:0,
-              strokeOpacity:0
-            }
-          }
+          line: {
+            style: {
+              fillOpacity: 0,
+              strokeOpacity: 0,
+            },
+          },
         },
         title: null,
       });
@@ -2014,11 +2334,10 @@ export default {
         });
       // chart.interaction("element-active");
       chart.render();
-
     },
     inintBar3(_max) {
       // console.log("max", _max);
-      let _height = this.barData3.length*25.4;
+      let _height = this.barData3.length * 26;
       const chart = new Chart({
         container: "bar-chart3",
         autoFit: true,
@@ -2045,12 +2364,12 @@ export default {
         line: null,
         tickLine: null,
         grid: {
-          line:{
-            style:{
-              fillOpacity:0,
-              strokeOpacity:0
-            }
-          }
+          line: {
+            style: {
+              fillOpacity: 0,
+              strokeOpacity: 0,
+            },
+          },
         },
         title: null,
       });
@@ -2074,33 +2393,40 @@ export default {
         });
       // chart.interaction("element-active");
       chart.render();
-
     },
     publisherChange() {
       // location.reload();
       this.isLoading = true;
-      if(!this.salePower){
-        this.lineFirst1 = true;
-      }
-      if(!this.lifePower){
-        this.lineFirst2 = true;
-      }
-      if (this.tabKey == "2") {
-        this.lineFirst1 = true;
-      }
+      // if (!this.salePower) {
+      //   this.lineFirst1 = true;
+      // }
+      // if (!this.lifePower) {
+      //   this.lineFirst2 = true;
+      // }
+      // if (this.tabKey == "2") {
+      //   this.lineFirst1 = true;
+      // }
       this.tabKey = "1";
-      this.$refs.time.cycle = this.$weekDate().weekth;
-      this.$refs.time.oneDay = this.$weekDate().start.replace(/-/g, "");
-      this.$refs.time.chooseWeek = this.$weekDate().start;
-      this.$refs.time.chooseMonth = this.$weekDate().start;
-      this.$refs.time.chooseYear = this.$weekDate().start;
-      this.$refs.time.dateText = this.$weekDate().start + "~" + this.$weekDate().end;
-      this.dateType = 2;
-      this.$refs.time.dateType = 2;
-      this.getData();
-      this.getCoreData();
-      this.getDefault();
-      this.getLifeData();
+      let _this = this;
+      this.$nextTick(() => {
+        _this.$refs.time.cycle = _this.$weekDate().weekth;
+        _this.$refs.time.oneDay = _this.$weekDate().start.replace(/-/g, "");
+        _this.$refs.time.chooseWeek = _this.$weekDate().start;
+        _this.$refs.time.chooseMonth = _this.$weekDate().start;
+        _this.$refs.time.chooseYear = _this.$weekDate().start;
+        _this.$refs.time.dateText =
+          _this.$weekDate().start + "~" + _this.$weekDate().end;
+        _this.dateType = 2;
+        _this.$refs.time.dateType = 2;
+        _this.$refs.time.canAdd = false;
+        _this.$refs.time.canSub = true;
+        _this.$refs.time.showYear = false;
+        _this.typeText = "sale_total";
+        _this.getData();
+        _this.getCoreData();
+        // this.getDefault();
+        // this.getLifeData();
+      });
     },
   },
 };

@@ -1,0 +1,10 @@
+<template>
+  <div>
+    <HeadNav
+      type="publish"
+      ref="head"
+      :show="1"
+      @publisherChange="publisherChange()"
+    ></HeadNav>
+  </div>
+</template>

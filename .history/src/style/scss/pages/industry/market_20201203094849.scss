@@ -1,0 +1,51 @@
+@charset "UTF-8";
+
+#industryPage{
+  padding-bottom: 20px;
+  & .market-data{
+    padding: 15px;
+    & .content{
+      width: 140px;
+      box-sizing: border-box;
+      border:1px solid $clf;
+      padding: 20px;
+      cursor: pointer;
+      text-align: center;
+      margin-right: 10px;
+      &:hover{
+        border-color: #C4E1FF;
+      }
+      & .num{
+        font-size: $fontSize - 2;
+        margin-top: 10px;
+      }
+      & .title{
+        color: $fontColor1;
+        height: 42px;
+        @include twoColtextOverflow;
+        margin-top: 10px;
+      }
+    }
+  }
+  & .rank-data{
+    width: 535px;
+  }
+  & .data-block{
+    min-width: 220px;
+    box-sizing: border-box;
+    padding: 10px;
+    background-color: $themeColor5;
+    display: inline-block;
+    & .ral
+  }
+  & .no-data{
+    position: absolute;
+    width: 100%;
+    top: 50%;
+    margin-top: -65px;
+  }
+  & .no-give{
+    font-size: $fontSize - 2;
+    text-align: center;
+  }
+}
